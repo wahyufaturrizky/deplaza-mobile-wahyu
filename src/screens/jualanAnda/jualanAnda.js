@@ -11,6 +11,7 @@ const { height, width } = Dimensions.get("window");
 
 function jualanAnda(props) {
 
+    //Pergi ke Hal List Produk
     const listProduk = () => {
         props.navigation.navigate('Produk')      
     }

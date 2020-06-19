@@ -1,7 +1,8 @@
 import React from 'react';
-import { createStackNavigator, } from '@react-navigation/stack';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
+//Navigation V.5
+import { createStackNavigator, } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
 import Login from './src/screens/login/Login'
 import Home from './src/screens/home/Home'

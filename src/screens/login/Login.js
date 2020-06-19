@@ -4,8 +4,7 @@ import {
     Text,
     Image,
     Dimensions,
-    TouchableOpacity,
-    StyleSheet
+    TouchableOpacity
 } from 'react-native'
 import { CommonActions } from '@react-navigation/native';
 
@@ -22,15 +21,14 @@ function Login(props) {
 
     const { height, width } = Dimensions.get("window");
 
+    //Pergi ke Hal Home, Indexnya di reset
     const login = () => {
-        
         props.navigation.dispatch(CommonActions.reset({
         index: 0,
         routes: [
-            { name: 'Home' },
-        ]
-        }));
-            
+                    { name: 'Home' },
+                ]
+        }));        
     }
 
 

@@ -1,15 +1,22 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native'
+
+//Untuk Linear Gradient
 import LinearGradient from 'react-native-linear-gradient'
+
+//Untuk Video
 import Video from 'react-native-video'
 
-
+//Untuk Header Var
 import Appbar from '../../components/appbarHome'
+
+//Untuk Bottom Bar
 import BottomTab from '../../components/bottomTab'
 
 function Home(props) {
     const logoStore = '../../assets/images/store.png'
 
+    //Pergi ke Hal Jualan Anda
     const mulaiJualan = () => {
         props.navigation.navigate('JualanAnda')      
     }
