@@ -38,10 +38,10 @@ function Login(props) {
 
             <Image
                 source={require(logo)}
-                style={{ width: 350, height: 350, alignSelf: 'center', marginBottom:70, marginTop:height*0.11}}
+                style={{ width: width*1.2, height:  height*0.3, alignSelf: 'center', marginBottom:height*0.07, marginTop:height*0.11}}
                 resizeMode='cover'
-                width={350}
-                height={350} />
+                width={width*1.2}
+                height={height*0.3} />
 
             <View style={{flex:1}}>
 
@@ -83,7 +83,7 @@ function Login(props) {
 
             <TouchableOpacity onPress={login}>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                    style={{padding:30}}
+                    style={{padding:15}}
                 >
                     <Text style={{fontSize:24, textAlign:'center', color:'white'}}>
                         Sign In

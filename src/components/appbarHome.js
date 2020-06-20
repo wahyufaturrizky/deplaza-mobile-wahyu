@@ -7,17 +7,17 @@ function appbarHome(props) {
     const logoHorizontal = '../assets/images/logo-horizontal.png'
 
     return (
-        <Appbar.Header style={{backgroundColor:'white', height:80}}>
+        <Appbar.Header style={{backgroundColor:'white', height:70}}>
         
             <Image 
                 source={require(logoHorizontal)}
-                style={{width:210, height:55}}
-                width={170}
-                height={60}
+                style={{width:170, height:45}}
+                width={180}
+                height={45}
             />
             <Appbar.Content/>
             
-            <Appbar.Action size={40} icon="bell-ring-outline"/>
+            <Appbar.Action size={30} icon="bell-ring-outline"/>
         </Appbar.Header>
     );
 }

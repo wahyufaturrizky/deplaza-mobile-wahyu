@@ -10,6 +10,7 @@ import BottomTab from '../../components/bottomTab'
 const { height, width } = Dimensions.get("window");
 
 function jualanAnda(props) {
+    const { height, width } = Dimensions.get("window");
 
     //Pergi ke Hal List Produk
     const listProduk = () => {
@@ -22,13 +23,15 @@ function jualanAnda(props) {
             
             <Image
                 source={require('../../assets/images/banner-home.png')}
-                style={{width:'100%'}}
+                style={{width:width*1, height:height*0.3}}
+                width={width*1}
+                height={height*0.3}
             />
 
-            <View style={{width:'90%', alignSelf:'center', marginTop:-50, flex:1}}>
+            <View style={{width:'90%', alignSelf:'center', marginTop:height*-0.04, flex:1}}>
                 <TouchableOpacity onPress={listProduk}>
                     <Card>
-                        <Card.Cover source={require('../../assets/images/banner-terlaris.png')} />
+                        <Card.Cover source={require('../../assets/images/banner-terlaris.png')} style={{height:height*0.2,resizeMode:'cover'}}/>
                         <View style={{flexDirection:'row', justifyContent:'space-around', padding:10, alignItems:'center'}}>
                             <Text style={{fontSize:24}}>Produk Terlaris</Text>
                             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
@@ -40,15 +43,15 @@ function jualanAnda(props) {
                 </TouchableOpacity>
 
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                    <ImageBackground width={'30%'} source={require('../../assets/images/komisi-terbesar.png')} style={{justifyContent:'flex-end', padding:15, height:200, borderRadius:30}}>
+                    <ImageBackground width={'30%'} source={require('../../assets/images/komisi-terbesar.png')} style={{justifyContent:'flex-end', padding:15, height:height*0.2, borderRadius:30}}>
                         <Text style={{color:'white'}}>Komisi Terbesar</Text>
                         <Text style={{color:'white'}}>500 Rb</Text>
                     </ImageBackground>
-                    <ImageBackground width={'30%'} source={require('../../assets/images/produk-disukai.png')} style={{justifyContent:'flex-end',  padding:15, height:200, borderRadius:30}}>
+                    <ImageBackground width={'30%'} source={require('../../assets/images/produk-disukai.png')} style={{justifyContent:'flex-end',  padding:15, height:height*0.2, borderRadius:30}}>
                         <Text style={{color:'white'}}>Produk Disukai</Text>
                         <Text style={{color:'white'}}>123 Produk</Text>
                     </ImageBackground>
-                    <ImageBackground width={'30%'} source={require('../../assets/images/produk-lain.png')} style={{justifyContent:'flex-end', padding:15, height:200, borderRadius:30}}>
+                    <ImageBackground width={'30%'} source={require('../../assets/images/produk-lain.png')} style={{justifyContent:'flex-end', padding:15, height:height*0.2, borderRadius:30}}>
                         <Text style={{color:'white'}}>Produk Lain</Text>
                         <Text style={{color:'white'}}>1 juta produk</Text>
                     </ImageBackground>
