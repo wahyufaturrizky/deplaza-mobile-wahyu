@@ -44,14 +44,14 @@ function Home(props) {
             />
             </View>
 
-            <View style={{width:'80%',marginTop:height*0.05, alignSelf:'center', flex:1}}>
+            <View style={{width:'80%',marginTop:height*0.08, alignSelf:'center', flex:1}}>
                 <Image 
                     source={require(logoStore)}
-                    style={{width:100, height:100, alignSelf:'center'}}
+                    style={{width:80, height:80, alignSelf:'center'}}
                 />
-                <Text style={{fontWeight:"bold", textAlign:'center', fontSize:22, marginBottom:10}}>Mari Bergabung!</Text>
-                <Text style={{textAlign:'center' , fontSize:22}}>Klik Tombol Di Bawah ini Untuk Ikut</Text>
-                <Text style={{textAlign:'center' , fontSize:22, marginBottom:10}}>Bergabung Menjadi Reseller</Text>
+                <Text style={{fontWeight:"bold", textAlign:'center', fontSize:18, marginBottom:10}}>Mari Bergabung!</Text>
+                <Text style={{textAlign:'center' , fontSize:14}}>Klik Tombol Di Bawah ini Untuk Ikut</Text>
+                <Text style={{textAlign:'center' , fontSize:14, marginBottom:height*0.01}}>Bergabung Menjadi Reseller</Text>
             </View>
 
             <TouchableOpacity  onPress={mulaiJualan} style={{width:'90%', alignSelf:'center', marginBottom:height*0.01}}>

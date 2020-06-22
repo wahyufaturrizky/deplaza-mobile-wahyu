@@ -42,18 +42,18 @@ function jualanAnda(props) {
                     </Card>
                 </TouchableOpacity>
 
-                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                    <ImageBackground width={'30%'} source={require('../../assets/images/komisi-terbesar.png')} style={{justifyContent:'flex-end', padding:15, height:height*0.2, borderRadius:30}}>
+                <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.02}}>
+                    <ImageBackground source={require('../../assets/images/komisi-terbesar.png')} style={{ justifyContent:'flex-end', padding:10, height:height*0.2, borderRadius:30}}>
                         <Text style={{color:'white'}}>Komisi Terbesar</Text>
                         <Text style={{color:'white'}}>500 Rb</Text>
                     </ImageBackground>
-                    <ImageBackground width={'30%'} source={require('../../assets/images/produk-disukai.png')} style={{justifyContent:'flex-end',  padding:15, height:height*0.2, borderRadius:30}}>
+                    <ImageBackground source={require('../../assets/images/produk-disukai.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, borderRadius:30}}>
                         <Text style={{color:'white'}}>Produk Disukai</Text>
                         <Text style={{color:'white'}}>123 Produk</Text>
                     </ImageBackground>
-                    <ImageBackground width={'30%'} source={require('../../assets/images/produk-lain.png')} style={{justifyContent:'flex-end', padding:15, height:height*0.2, borderRadius:30}}>
-                        <Text style={{color:'white'}}>Produk Lain</Text>
-                        <Text style={{color:'white'}}>1 juta produk</Text>
+                    <ImageBackground source={require('../../assets/images/produk-lain.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, borderRadius:30}}>
+                        <Text style={{color:'white'}}>Produk Disukai</Text>
+                        <Text style={{color:'white'}}>123 Produk</Text>
                     </ImageBackground>
                 </View>
             </View>
