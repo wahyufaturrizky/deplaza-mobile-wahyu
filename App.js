@@ -9,6 +9,7 @@ import Home from './src/screens/home/Home'
 import JualanAnda from './src/screens/jualanAnda/jualanAnda'
 import Produk from './src/screens/produk/Produk'
 import produkDetail from './src/screens/produkDetail/produkDetail';
+import Pesan from './src/screens/pesan/Pesan';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ function StackNav(props) {
         <Stack.Screen name="JualanAnda" component={JualanAnda} />
         <Stack.Screen name="Produk" component={Produk} />
         <Stack.Screen name="ProdukDetail" component={produkDetail} />
+        <Stack.Screen name="Pesan" component={Pesan} />
       </Stack.Navigator>
     </NavigationContainer>
   );

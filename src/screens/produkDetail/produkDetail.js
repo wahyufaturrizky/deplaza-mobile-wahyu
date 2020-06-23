@@ -1,16 +1,21 @@
 import React, {useState,useEffect} from 'react';
-import { View, Image, TouchableOpacity, Text, Dimensions, AsyncStorage } from 'react-native';
+import { View, Image, TouchableOpacity, Text, Dimensions, StyleSheet } from 'react-native';
+import Clipboard from "@react-native-community/clipboard";
+import AsyncStorage from '@react-native-community/async-storage'
+import { CommonActions } from '@react-navigation/native';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { Title, TextInput } from 'react-native-paper';
+import { Title, TextInput, Snackbar  } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import AppbarHome from '../../components/appbarHome';
+import Appbar from '../../components/appbarHome';
 
 
 function produkDetail(props) {
     const [dataDetail, setDataDetail] = useState([])
+    const [copy, setCopy] = useState(false)
 
+    const likeProduk = true
     const urlProdukDetail = 'http://rest-api.deplaza.id/v1/product/'
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
@@ -19,6 +24,25 @@ function produkDetail(props) {
     useEffect(() => {
         getDetailProduct()
     }, [])
+    
+    const copyToClipboard = async() => {
+        const copyText = "Harga : Rp. 67.100 \n Deskripsi : \n Warna : Black \n Bahan : Cotton \n Ukuran : M, L, XL, XXL"
+        Clipboard.setString(copyText)
+        setCopy(true)
+    }
+
+    const goToHome = () => {
+        props.navigation.dispatch(CommonActions.reset({
+            index: 0,
+            routes: [
+                        { name: 'JualanAnda', params:{title:'Jualan Anda'} },
+                    ]
+        }));  
+    }
+
+    const gotoPesan = () => {
+        props.navigation.navigate("Pesan", {title:"Pesan & Kirim"})
+    }
 
     const getDetailProduct = async() => {
 
@@ -40,9 +64,11 @@ function produkDetail(props) {
             // })
     }
 
+    const _onDismissSnackBar = () => setCopy(false);
+
     return (
         <View style={{backgroundColor:'white', flex:1}}>
-            <AppbarHome/>
+                <Appbar params={props}/>
             
                 <ScrollView >
                     <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.02 ,flex:1}}>
@@ -101,9 +127,11 @@ function produkDetail(props) {
                     <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.02}}>
                         <View style={{flexDirection:'row', paddingLeft:5, justifyContent:'space-between', backgroundColor:'#F8F8F8', alignItems:'center'}}>
                             <Title>Rincian Produk</Title>
-                            <View style={{padding:10, backgroundColor:'#D5D5D5'}}>
-                                <Text>Salin Deskripsi</Text>
-                            </View>
+                            <TouchableOpacity onPress={copyToClipboard}>
+                                <View style={{padding:10, backgroundColor:'#D5D5D5'}}>
+                                    <Text>Salin Deskripsi</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                         <View style={{marginTop:height*0.01}}>
                             <Text>Warna : Black</Text>
@@ -160,7 +188,7 @@ function produkDetail(props) {
                             </View>
                             <TextInput
                                 mode="outlined"
-                                style={{width:'30%', height:height*0.055, marginTop:height*-0.01}}
+                                style={{width:'30%', height:height*0.045, marginTop:height*-0.005}}
                             />
                             <View style={{paddingVertical:height*0.01, paddingHorizontal:15, backgroundColor:'#D5D5D5'}}>
                                 <Text style={{fontSize:20}}>+</Text>
@@ -168,23 +196,62 @@ function produkDetail(props) {
                         </View>
                     </View>
 
-
                     
                 </ScrollView>
 
-                <TouchableOpacity>
-                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                        style={{padding:15, flexDirection:"row", justifyContent:'center', alignItems:'center'}}
-                    >
-                        <Icon name="heart" size={18} color="#fff"/>
-                        <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
-                            Tandai Produk Ini
-                        </Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+                <Snackbar
+                    visible={copy}
+                    onDismiss={_onDismissSnackBar}
+                    duration = {1000}
+                >
+                    Deskripsi Berhasil di Salin
+                </Snackbar>
+
+                {!likeProduk ?
+                    <TouchableOpacity  onPress={goToHome}>
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                            style={{padding:15, flexDirection:"row", justifyContent:'center', alignItems:'center'}}
+                        >
+                            <Icon name="heart" size={20} color="#fff"/>
+                            <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
+                                Tandai Produk Ini
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                :
+                    <View style={{flexDirection:'row'}}>
+                        <TouchableOpacity style={{ width:'50%'}}>
+                            <View style={{flexDirection:'row', padding:height*0.01, justifyContent:'space-around', alignItems:'center'}}>
+                                <Icon name="cloud-download" size={height*0.04} color="#07A9F0"/>
+                                <Text style={{fontSize:height*0.02, color:'#07A9F0'}}>Tawarkan Produk</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{width:'50%'}} onPress={gotoPesan}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                style={{flexDirection:'row', padding:height*0.01,  justifyContent:'space-around', alignItems:'center'}}>
+                                    <Icon name="send" size={height*0.04} color="#fff"/>
+                                    <Text style={{fontSize:height*0.02, color:'#fff'}}>Pesan {"&"} Kirim</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
+                }
             
         </View>
     );
 }
 
 export default produkDetail;
+
+const styles=StyleSheet.create({
+    shadow : {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+    }
+})

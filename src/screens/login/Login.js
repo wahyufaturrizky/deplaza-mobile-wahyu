@@ -4,10 +4,10 @@ import {
     Text,
     Image,
     Dimensions,
-    TouchableOpacity,
-    AsyncStorage
+    TouchableOpacity
 } from 'react-native'
 import { CommonActions } from '@react-navigation/native';
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { TextInput } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient'
@@ -24,6 +24,15 @@ function Login(props) {
 
     const urlRegister = "http://rest-api.deplaza.id/v1/oauth/register"
 
+    const goToHome = () => {
+        props.navigation.dispatch(CommonActions.reset({
+            index: 0,
+            routes: [
+                        { name: 'Home', params:{title:'Home'} },
+                    ]
+        }));  
+    }
+
     useEffect(()=>{
         checkLogin()
     },[])
@@ -31,19 +40,12 @@ function Login(props) {
     const checkLogin = async() =>{
         const value = await AsyncStorage.getItem('data');
         if(value!=null){
-            props.navigation.dispatch(CommonActions.reset({
-                index: 0,
-                routes: [
-                            { name: 'Home' },
-                        ]
-            })); 
+            goToHome()
         }
     }
 
-
     //Pergi ke Hal Home, Indexnya di reset
-    const Login = () => {
-        
+    const Login = () => {  
         fetch(urlRegister, {
             method: 'POST',
             headers: {
@@ -58,29 +60,11 @@ function Login(props) {
     
         .then((response) => response.json())
         .then( async(responseData) => {
-
-                console.log(
-                    "POST Response",
-                    "Response Body -> " + JSON.stringify(responseData.data)
-                )
-                
-                await AsyncStorage.setItem('data', JSON.stringify(responseData.data) );
-
-                props.navigation.dispatch(CommonActions.reset({
-                    index: 0,
-                    routes: [
-                                { name: 'Home' },
-                            ]
-                }));  
-
-       
+                await AsyncStorage.setItem('data', JSON.stringify(responseData.data));
+                goToHome()
         })
-        
-        .done();
-
-            
-    }
-            
+        .done();   
+    }        
 
     return (
             <View style={{ backgroundColor: 'white', flex: 1}}>

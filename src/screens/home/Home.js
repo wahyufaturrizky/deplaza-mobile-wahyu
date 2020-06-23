@@ -23,12 +23,12 @@ function Home(props) {
 
     //Pergi ke Hal Jualan Anda
     const mulaiJualan = () => {
-        props.navigation.navigate('JualanAnda')      
+        props.navigation.navigate('JualanAnda',{title:'Jualan Anda'})      
     }
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
-            <Appbar/>
+            <Appbar params={props}/>
             {/* <YouTube
                 videoId="B8IIAMXig2c"
                 play

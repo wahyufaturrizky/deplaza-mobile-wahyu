@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, AsyncStorage } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage'
 
 import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
@@ -18,7 +19,7 @@ function produk(props) {
 
     //Pergi ke Hal List Produk
     const detailProduk = (id) => {
-        props.navigation.navigate('ProdukDetail',{id})      
+        props.navigation.navigate('ProdukDetail',{id, title:'Lihat Produk'})      
     }
 
     const getProduct = async() => {
@@ -34,15 +35,15 @@ function produk(props) {
             .then(response => response.json())
             .then(responseData => {
                 setProducts(responseData.data)
-                let image = responseData.data[1].variation
-                console.log(image)
+                // let image = responseData.data[1].variation
+                // console.log(image)
             })
     }
 
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
-            <Appbar/>
+            <Appbar params={props}/>
 
             <ScrollView style={{flex:1, marginTop:10}}>
 
@@ -61,7 +62,7 @@ function produk(props) {
                         <Text style={{color:'#949494'}}>Varian Warna</Text>
                         <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:10, paddingBottom:20}}>
                             <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%'}}>
-                                { product.variation == "ssss"  ? JSON.parse(products[product.id].variation).color.map((color,i) => (
+                                { product.variation != "ssss" && product.variation != "json variation" ? JSON.parse(products[index].variation).color.map((color,i) => (
                                     <View key={i} style={{width:width*0.05, height:height*0.03, backgroundColor: color}}></View>
                                 )) : 
                                     <View></View>
@@ -87,11 +88,3 @@ function produk(props) {
 }
 
 export default produk;
-
-const styles=StyleSheet.create({
-    shadow:{
-        borderWidth: 1,
-        borderRadius: 2,
-        borderColor: '#ddd',
-        }
-})
