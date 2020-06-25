@@ -13,6 +13,8 @@ import { TextInput } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
+import {URL} from '../../utils/global'
+
 function Login(props) {
     const [fullname, setFullname] = useState('')
     const [phone, setPhone] = useState('')
@@ -22,7 +24,7 @@ function Login(props) {
 
     const { height, width } = Dimensions.get("window");
 
-    const urlRegister = "http://rest-api.deplaza.id/v1/oauth/register"
+    const urlRegister = URL+"v1/oauth/register"
 
     const goToHome = () => {
         props.navigation.dispatch(CommonActions.reset({
@@ -38,10 +40,12 @@ function Login(props) {
     },[])
 
     const checkLogin = async() =>{
-        const value = await AsyncStorage.getItem('data');
-        if(value!=null){
+        let value = await AsyncStorage.getItem('data');
+        if(value=null){
+            console.log(value)
             goToHome()
         }
+        console.log(value)
     }
 
     //Pergi ke Hal Home, Indexnya di reset
@@ -63,7 +67,9 @@ function Login(props) {
                 await AsyncStorage.setItem('data', JSON.stringify(responseData.data));
                 goToHome()
         })
-        .done();   
+        .done();  
+        // goToHome()
+
     }        
 
     return (

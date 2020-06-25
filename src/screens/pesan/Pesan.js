@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Image, Picker, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Image, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-paper';
+import {Picker} from '@react-native-community/picker'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -9,17 +10,30 @@ import Appbar from '../../components/appbarHome';
 function Pesan(props) {
     const [fullname, setFullname] = useState('')
     const [phone, setPhone] = useState('')
-    const [provinsi, setProvinsi] = useState("=Provinsi=");
-    const [kota, setKota] = useState("=Kota=");
+    const [provinsi, setProvinsi] = useState("Provinsi");
+    const [kota, setKota] = useState("Kota");
     const [pos, setPos] = useState("");
     const [alamat, setAlamat] = useState("");
     const [metode, setMetode] = useState(true); //True = Metode Bank
+    const [qty, setQty] = useState(1)
 
     const indonesia = "../../assets/images/indonesia.png"
     const { height, width } = Dimensions.get("window");
 
     const ubahPembayaran = () => {
         setMetode(!metode)
+    }
+
+    const gotoPesanan = () => {
+        props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
+    }
+
+    const changeQty = (simbol) => {
+        if(simbol === "+"){
+            setQty(qty+1)
+        }else if(simbol === "-"){
+            setQty(qty-1)
+        }
     }
 
     return (
@@ -152,7 +166,7 @@ function Pesan(props) {
                                     onValueChange={(itemValue, itemIndex) => setProvinsi(itemValue)}
                                     
                                 >
-                                    <Picker.Item label="= Provinsi =" value="=Provinsi=" />
+                                    <Picker.Item label="Provinsi" value="Provinsi" />
                                     <Picker.Item label="Jawa Barat" value="jawa barat" />
                                 </Picker>
                             </View>
@@ -162,7 +176,7 @@ function Pesan(props) {
                                     selectedValue={kota}
                                     onValueChange={(itemValue, itemIndex) => setKota(itemValue)}
                                 >
-                                    <Picker.Item label="= Kota =" value="=Provinsi=" />
+                                    <Picker.Item label="Kota" value="Provinsi" />
                                     <Picker.Item label="Jawa Barat" value="jawa barat" />
                                 </Picker>
                             </View>
@@ -209,16 +223,21 @@ function Pesan(props) {
                                 <View style={{width:'50%', justifyContent:'space-between', alignItems:'center', flexDirection:'row'}}>
                                     <Text style={{fontSize:14, color:'gray'}}>Jumlah: </Text>
                                     <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'60%'}}>
-                                        <View style={{paddingVertical:height*0.005, paddingHorizontal:10, marginRight:width*0.005, backgroundColor:'#D5D5D5'}}>
-                                            <Text style={{fontSize:16}}>-</Text>
-                                        </View>
+                                        <TouchableOpacity onPress={() => changeQty("-")}>
+                                            <View style={{paddingVertical:height*0.005, paddingHorizontal:10, marginRight:width*0.005, backgroundColor:'#D5D5D5'}}>
+                                                <Text style={{fontSize:16}}>-</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                         <TextInput
                                             mode="outlined"
                                             style={{width:'50%',  marginTop:height*-0.005}}
+                                            value={qty.toString()}
                                         />
-                                        <View style={{paddingVertical:height*0.005, paddingHorizontal:10, marginLeft:width*0.005, backgroundColor:'#D5D5D5'}}>
-                                            <Text style={{fontSize:16}}>+</Text>
-                                        </View>
+                                        <TouchableOpacity onPress={() => changeQty("+")}>
+                                            <View style={{paddingVertical:height*0.005, paddingHorizontal:10, marginLeft:width*0.005, backgroundColor:'#D5D5D5'}}>
+                                                <Text style={{fontSize:16}}>+</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </View>
@@ -229,7 +248,7 @@ function Pesan(props) {
 
             </ScrollView>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={gotoPesanan}>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                     style={{padding:15, justifyContent:'center', alignItems:'center'}}
                 >

@@ -14,6 +14,9 @@ import Appbar from '../../components/appbarHome';
 function produkDetail(props) {
     const [dataDetail, setDataDetail] = useState([])
     const [copy, setCopy] = useState(false)
+    const [qty, setQty] = useState(1)
+    const [pressSize, setPressSize] = useState(false)
+    const [pressColor, setPressColor] = useState(false)
 
     const likeProduk = true
     const urlProdukDetail = 'http://rest-api.deplaza.id/v1/product/'
@@ -29,6 +32,14 @@ function produkDetail(props) {
         const copyText = "Harga : Rp. 67.100 \n Deskripsi : \n Warna : Black \n Bahan : Cotton \n Ukuran : M, L, XL, XXL"
         Clipboard.setString(copyText)
         setCopy(true)
+    }
+
+    const changeQty = (simbol) => {
+        if(simbol === "+"){
+            setQty(qty+1)
+        }else if(simbol === "-"){
+            setQty(qty-1)
+        }
     }
 
     const goToHome = () => {
@@ -55,16 +66,21 @@ function produkDetail(props) {
             'Access-Control-Allow-Origin': '*',
         }
 
-        fetch(urlProdukDetail+id, {headers})
-            .then(response => console.log(response))
+        // fetch(urlProdukDetail+id, {headers})
+            // .then(response => console.log(response))
             // .then(responseData => {
                 // setProducts(responseData.data)
                 // let image = responseData.data[0]
                 // console.log(responseData.data)
             // })
     }
+    
 
-    const _onDismissSnackBar = () => setCopy(false);
+    const _onDismissSnackBar = () => setCopy(false)
+
+    const clickSize = () => setPressSize(!pressSize)
+
+    const clickColor = () => setPressColor(!pressColor)
 
     return (
         <View style={{backgroundColor:'white', flex:1}}>
@@ -151,9 +167,11 @@ function produkDetail(props) {
                             <Text> Stok Habis</Text>
                         </View>
                         <View style={{flexDirection:'row', marginTop:height*0.02}}>
-                            <View style={{padding:10, backgroundColor:'#D5D5D5', marginRight:5}}>
-                                <Text style={{fontSize:20}}>M</Text>
-                            </View>
+                            <TouchableOpacity onPress={clickSize}>
+                                <View style={{padding:10, backgroundColor: (!pressSize ? '#D5D5D5' : '#555555'), marginRight:5,}}>
+                                    <Text style={{fontSize:20}}>M</Text>
+                                </View>
+                            </TouchableOpacity>
                             <View style={{padding:10, backgroundColor:'#D5D5D5', marginRight:5}}>
                                 <Text style={{fontSize:20}}>L</Text>
                             </View>
@@ -171,7 +189,9 @@ function produkDetail(props) {
                     <View style={{width:'90%', alignSelf:'center',flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                         <Title>Warna</Title>
                         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'50%'}}>
-                            <View style={{backgroundColor:'#F41111', marginRight:5, height:height*0.03, width:'10%'}}></View>
+                            <TouchableOpacity style={{width:'10%'}} onPress={clickColor}>
+                                <View style={{backgroundColor:'#F41111', opacity : (pressColor ? 0.5 : 1), marginRight:5, height:height*0.03, }}></View>
+                            </TouchableOpacity>
                             <View style={{backgroundColor:'red', marginRight:5, height:height*0.03, width:'10%'}}></View>
                             <View style={{backgroundColor:'green', marginRight:5, height:height*0.03, width:'10%'}}></View>
                             <View style={{backgroundColor:'blue', marginRight:5, height:height*0.03, width:'10%'}}></View>
@@ -183,16 +203,21 @@ function produkDetail(props) {
                     <View style={{width:'90%', alignSelf:'center', flexDirection:'row', justifyContent:'space-between', paddingVertical:height*0.01, alignItems:'center'}}>
                         <Title>Jumlah</Title>
                         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'50%'}}>
-                            <View style={{paddingVertical:height*0.01, paddingHorizontal:15, backgroundColor:'#D5D5D5'}}>
-                                <Text style={{fontSize:20}}>-</Text>
-                            </View>
+                            <TouchableOpacity  onPress={() => changeQty("-")}>
+                                <View style={{paddingVertical:height*0.01, paddingHorizontal:15, backgroundColor:'#D5D5D5'}}>
+                                    <Text style={{fontSize:20}}>-</Text>
+                                </View>
+                            </TouchableOpacity>
                             <TextInput
                                 mode="outlined"
-                                style={{width:'30%', height:height*0.045, marginTop:height*-0.005}}
+                                style={{width:'30%', marginTop:height*-0.005}}
+                                value={qty.toString()}
                             />
-                            <View style={{paddingVertical:height*0.01, paddingHorizontal:15, backgroundColor:'#D5D5D5'}}>
-                                <Text style={{fontSize:20}}>+</Text>
-                            </View>
+                            <TouchableOpacity onPress={() => changeQty("+")}>
+                                <View style={{paddingVertical:height*0.01, paddingHorizontal:15, backgroundColor:'#D5D5D5'}}>
+                                    <Text style={{fontSize:20}}>+</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
 
@@ -220,7 +245,7 @@ function produkDetail(props) {
                     </TouchableOpacity>
                 :
                     <View style={{flexDirection:'row'}}>
-                        <TouchableOpacity style={{ width:'50%'}}>
+                        <TouchableOpacity style={{ width:'50%'}} onPress={copyToClipboard}>
                             <View style={{flexDirection:'row', padding:height*0.01, justifyContent:'space-around', alignItems:'center'}}>
                                 <Icon name="cloud-download" size={height*0.04} color="#07A9F0"/>
                                 <Text style={{fontSize:height*0.02, color:'#07A9F0'}}>Tawarkan Produk</Text>

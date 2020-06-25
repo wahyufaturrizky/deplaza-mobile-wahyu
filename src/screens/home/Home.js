@@ -1,5 +1,6 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import {View, Text, Image, TouchableOpacity, Dimensions} from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage'
 
 //Untuk Linear Gradient
 import LinearGradient from 'react-native-linear-gradient'
@@ -20,7 +21,19 @@ function Home(props) {
     const logoStore = '../../assets/images/store.png'
 
     const { height, width } = Dimensions.get("window");
+    const YOUR_API_KEY = "AIzaSyDq1wgEsDvlY9QPUEMA8GDhiFkEtGQNwrI";
 
+    const _youTubeRef = React.createRef();
+
+    useEffect(()=>{
+        checkLogin()
+    },[])
+
+    const checkLogin = async() =>{
+        const value = await AsyncStorage.getItem('data');
+        console.log(value)
+    }
+    
     //Pergi ke Hal Jualan Anda
     const mulaiJualan = () => {
         props.navigation.navigate('JualanAnda',{title:'Jualan Anda'})      
@@ -29,14 +42,15 @@ function Home(props) {
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             <Appbar params={props}/>
+            
+            <View style={{backgroundColor:'blue'}}>
             {/* <YouTube
+                ref={_youTubeRef}
+                apiKey = {YOUR_API_KEY}
                 videoId="B8IIAMXig2c"
                 play
-                fullscreen
-                loop
                 style={{ alignSelf: 'stretch', height: height*0.3 }}
             /> */}
-            <View style={{backgroundColor:'blue'}}>
             <Video
                 source={{uri : 'https://gitlab.com/new-deplaza/deplaza-mobile/-/raw/master/src/assets/video/babastudio.mp4'}}
                 style={{ alignSelf:'stretch', height:height*0.25 }}

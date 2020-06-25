@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 function bottomTab(props){
     
     return (
-        <View style={[styles.shadow, {padding:20, backgroundColor:'white', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}]}>
+        <View style={[styles.shadow, {backgroundColor:'white', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}]}>
             <View style={{alignItems:'center'}}>
                 <Icon name="home" size={30} color="#949494" />
                 <Text>Home</Text>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         shadowOffset: {
             width: 0,
-            height: -3,
+            height: 1,
         },
         shadowColor: '#000000',
         shadowOpacity: 1.0,
