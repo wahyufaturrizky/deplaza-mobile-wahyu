@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Appbar from '../../components/appbarHome';
+import InputNormal from '../../components/inputNormal'
 
 function Pesan(props) {
     const [fullname, setFullname] = useState('')
@@ -75,12 +76,13 @@ function Pesan(props) {
                             <Text>Tambahan Margin Jika Ada</Text>
                             <Text style={{color:'gray', fontSize:12}}>*Boleh Tidak Diisi</Text>
                         </View>
-                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', borderBottomWidth:1, borderBottomColor:'gray'}}>
+                        <View style={{flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}}>
                             <Text>Rp. </Text>
-                            <TextInput
-                                placeholder="Isi di Sini"
-                                mode="outlined"
-                            />
+                            <View style={{backgroundColor:'#d5d5d5', width:'30%'}}>
+                                <InputNormal
+                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.035, fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
+                                />
+                            </View>
                         </View>
                     </View>
 
@@ -131,12 +133,12 @@ function Pesan(props) {
                             value={fullname}
                             mode = "outlined"
                             onChangeText={(val)=> setFullname(val)}
-                            style={{width:'90%', alignSelf:'center',  backgroundColor:'white'}}
+                            style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10}}
                             
                         />             
 
                         <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', flexDirection:'row', marginTop:height*0.005}}>
-                            <View style={{height:57, width:'25%', marginTop:7, borderRadius: 5, borderColor: 'grey', borderWidth: 1,}}>
+                            <View style={{height:57, width:'25%', marginTop:7, borderRadius: 5, borderColor: 'grey', borderWidth: 1, borderRadius:10}}>
 
                                 <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', flex:1}}>
                                     <Image
@@ -155,7 +157,7 @@ function Pesan(props) {
                                 value={phone}
                                 onChangeText={(val)=> setPhone(val)}
                                 mode="outlined"
-                                style={{width:'70%', backgroundColor:'white'}}
+                                style={{width:'70%', backgroundColor:'white', borderRadius:10}}
                             />
                         </View>
 
@@ -164,7 +166,7 @@ function Pesan(props) {
                                 <Picker
                                     selectedValue={provinsi}
                                     onValueChange={(itemValue, itemIndex) => setProvinsi(itemValue)}
-                                    
+                                    style={{justifyContent:'center', alignItems:'center'}}
                                 >
                                     <Picker.Item label="Provinsi" value="Provinsi" />
                                     <Picker.Item label="Jawa Barat" value="jawa barat" />

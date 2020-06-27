@@ -41,7 +41,6 @@ function jualanAnda(props) {
                         <Text style={{color:'white', marginVertical:5}}>Per 10 Produk</Text>
                     </View>
                 </ImageBackground>
-
             }
 
             <View style={{width:'90%', alignSelf:'center', marginTop:height*-0.05, flex:1}}>
@@ -85,19 +84,19 @@ function jualanAnda(props) {
 
                 <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
                     <TouchableOpacity onPress={() => listProduk('Komisi Terbesar')} style={{width:'30%'}}>
-                        <ImageBackground source={require('../../assets/images/komisi-terbesar.png')} style={{ justifyContent:'flex-end', padding:10, height:height*0.2, borderRadius:20}}>
+                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/komisi-terbesar.png')} style={{ justifyContent:'flex-end', padding:10, height:height*0.2, }}>
                             <Text style={{color:'white'}}>Komisi Terbesar</Text>
                             <Text style={{color:'white'}}>500 Rb</Text>
                         </ImageBackground>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => listProduk('Produk Disukai')} style={{width:'30%'}}>
-                        <ImageBackground source={require('../../assets/images/produk-disukai.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, borderRadius:20}}>
+                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/produk-disukai.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
                             <Text style={{color:'white'}}>Produk Disukai</Text>
                             <Text style={{color:'white'}}>123 Produk</Text>
                         </ImageBackground>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => listProduk('Produk Lain')} style={{width:'30%'}}>
-                        <ImageBackground source={require('../../assets/images/produk-lain.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, borderRadius:20}}>
+                    <TouchableOpacity imageStyle={{borderRadius:20}} onPress={() => listProduk('Produk Lain')} style={{width:'30%'}}>
+                        <ImageBackground source={require('../../assets/images/produk-lain.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
                             <Text style={{color:'white'}}>Produk Lain</Text>
                             <Text style={{color:'white'}}>123 Produk</Text>
                         </ImageBackground>

@@ -3,23 +3,37 @@ import { View, Image, TouchableOpacity, Text, Dimensions, StyleSheet } from 'rea
 import Clipboard from "@react-native-community/clipboard";
 import AsyncStorage from '@react-native-community/async-storage'
 import { CommonActions } from '@react-navigation/native';
+import {SliderBox} from 'react-native-image-slider-box'
+import {URL} from '../../utils/global'
+
+import Select2 from 'react-native-select-two';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { Title, TextInput, Snackbar  } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Appbar from '../../components/appbarHome';
+import InputNormal from '../../components/inputNormal'
 
+const mockData = [
+    { id: 1, name: 'Kota, Kecamatan' },
+    { id: 2, name: 'Kota, Kecamatan' },
+    { id: 3, name: 'Kota, Kecamatan' }
+];
 
 function produkDetail(props) {
     const [dataDetail, setDataDetail] = useState([])
+    const [dataGambar, setDataGambar] = useState([])
     const [copy, setCopy] = useState(false)
     const [qty, setQty] = useState(1)
     const [pressSize, setPressSize] = useState(false)
     const [pressColor, setPressColor] = useState(false)
+    const [selectKota, setSelectKota] = useState(false)
+    
 
     const likeProduk = true
-    const urlProdukDetail = 'http://rest-api.deplaza.id/v1/product/'
+    const urlProdukDetail = URL+'v1/product/'
+
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
     
@@ -59,20 +73,25 @@ function produkDetail(props) {
 
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
-        console.log(data.token)
+        // console.log(id)
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
         }
 
-        // fetch(urlProdukDetail+id, {headers})
-            // .then(response => console.log(response))
-            // .then(responseData => {
-                // setProducts(responseData.data)
+        fetch(urlProdukDetail+id, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                setDataDetail(responseData.data)
+                for(let i=0; i<=(responseData.data.images.length)-1; i++){
+                    // let arr = [...dataGambar]
+                    // arr[2] = responseData.data.images[i].file_upload
+                    setDataGambar([...dataGambar, responseData.data.images[i].file_upload], console.log(dataGambar))
+                }
                 // let image = responseData.data[0]
-                // console.log(responseData.data)
-            // })
+                console.log(responseData.data)
+            })
     }
     
 
@@ -88,33 +107,48 @@ function produkDetail(props) {
             
                 <ScrollView >
                     <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.02 ,flex:1}}>
-                        <Image
-                            source={require('../../assets/images/ex-produk.png')}
+                        {/* <Image
+                            source={{uri : dataDetail.images[0].file_upload}}
                             style={{width:'100%', height:height*0.5 , resizeMode:'cover'}}
-                        />
+                        /> */}
 
-                        <Title>Topi Anti Corona/Pelindung Wajah</Title>
+                        <SliderBox images={dataGambar} style={{width:'90%', height:height*0.5 , resizeMode:'cover'}}/>
+
+                        <Title>{dataDetail.name}</Title>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
-                            <TextInput
-                                mode="outlined"
-                                style={{width:'60%'}}
+                            <Select2
+                                isSelectSingle
+                                style={{ borderRadius: 5, width:'60%' }}
+                                colorTheme={'blue'}
+                                popupTitle='Pilih Kota dan kecamatan'
+                                title='Pilih Kota dan Kecamatan'
+                                data={mockData}
+                                onSelect={data => {
+                                    setSelectKota(data)
+                                }}
+                                onRemoveItem={data => {
+                                    setSelectKota(data)
+                                }}
+                                cancelButtonText="Batal"
+                                selectButtonText="Pilih"
+                                searchPlaceHolderText="Ketik Nama Kota Atau Kecamatan"
                             />
 
                             <TouchableOpacity style={{width:'30%'}}>
                                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                    style={{padding:15}}
+                                    style={{padding:10, borderRadius:10}}
                                 >
-                                    <Text style={{fontSize:16, textAlign:'center', color:'white'}}>
+                                    <Text style={{textAlign:'center', color:'white'}}>
                                         Cek Harga
                                     </Text>
                                 </LinearGradient>
                             </TouchableOpacity>
                         </View>
 
-                        <View style={{padding:10, width:'100%', backgroundColor:'#93DCFC', flexDirection:'row', justifyContent:'space-around'}}>
+                        <View style={{padding:10, width:'100%', backgroundColor:'#93DCFC', flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}>
                             <Icon name="help-circle-outline" size={20} color="#949494" />
-                            <Text>Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
+                            <Text> Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
                         </View>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
@@ -122,13 +156,13 @@ function produkDetail(props) {
                                 <Text style={{fontSize:24}}>Rp. 67.100</Text>
                                 <Text style={{fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                             </View>
-                            <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, paddingHorizontal:20, justifyContent:'center'}}>
-                                <Text style={{fontSize:14}}>Komisi Rp. 5.000</Text>
+                                <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, paddingHorizontal:20, justifyContent:'center'}}>
+                                <Text style={{fontSize:14}}>Komisi Rp. {dataDetail.price_commission}</Text>
                             </View>
                         </View>
 
                         <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, width:'30%', paddingHorizontal:20, marginTop:height*0.01, alignItems:'center', justifyContent:'center'}}>
-                            <Text style={{fontSize:14}}>Stok {'>'} 50</Text>
+                            <Text style={{fontSize:14}}>Stok {dataDetail.stock}</Text>
                         </View>
 
                         <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, width:'60%', flexDirection:'row', alignItems:'center', paddingHorizontal:20, marginTop:height*0.01, justifyContent:'flex-start'}}>
@@ -150,6 +184,7 @@ function produkDetail(props) {
                             </TouchableOpacity>
                         </View>
                         <View style={{marginTop:height*0.01}}>
+                            <Text>{dataDetail.description}</Text>
                             <Text>Warna : Black</Text>
                             <Text>Bahan : Cotton</Text>
                             <Text>Ukuran : M, L, XL, XXL</Text>
@@ -188,13 +223,11 @@ function produkDetail(props) {
 
                     <View style={{width:'90%', alignSelf:'center',flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                         <Title>Warna</Title>
-                        <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'50%'}}>
-                            <TouchableOpacity style={{width:'10%'}} onPress={clickColor}>
-                                <View style={{backgroundColor:'#F41111', opacity : (pressColor ? 0.5 : 1), marginRight:5, height:height*0.03, }}></View>
-                            </TouchableOpacity>
-                            <View style={{backgroundColor:'red', marginRight:5, height:height*0.03, width:'10%'}}></View>
-                            <View style={{backgroundColor:'green', marginRight:5, height:height*0.03, width:'10%'}}></View>
-                            <View style={{backgroundColor:'blue', marginRight:5, height:height*0.03, width:'10%'}}></View>
+                        <View style={{flexDirection:'row', alignItems:'center', flexWrap:'wrap', justifyContent:'flex-end', width:'50%'}}>
+                            <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>Green</Text></View>
+                            <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>Red</Text></View>
+                            <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>Blue</Text></View>
+                            
                         </View>
                     </View>
 
@@ -204,17 +237,19 @@ function produkDetail(props) {
                         <Title>Jumlah</Title>
                         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'50%'}}>
                             <TouchableOpacity  onPress={() => changeQty("-")}>
-                                <View style={{paddingVertical:height*0.01, paddingHorizontal:15, backgroundColor:'#D5D5D5'}}>
+                                <View style={{height:height*0.035, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
                                     <Text style={{fontSize:20}}>-</Text>
                                 </View>
                             </TouchableOpacity>
-                            <TextInput
-                                mode="outlined"
-                                style={{width:'30%', marginTop:height*-0.005}}
-                                value={qty.toString()}
-                            />
+                            <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'20%'}}>
+                                <InputNormal
+                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.035, fontSize:10}}
+                                    value={qty.toString()}
+                                    disabled
+                                />
+                            </View>
                             <TouchableOpacity onPress={() => changeQty("+")}>
-                                <View style={{paddingVertical:height*0.01, paddingHorizontal:15, backgroundColor:'#D5D5D5'}}>
+                                <View style={{height:height*0.035, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
                                     <Text style={{fontSize:20}}>+</Text>
                                 </View>
                             </TouchableOpacity>
@@ -244,14 +279,14 @@ function produkDetail(props) {
                         </LinearGradient>
                     </TouchableOpacity>
                 :
-                    <View style={{flexDirection:'row'}}>
-                        <TouchableOpacity style={{ width:'50%'}} onPress={copyToClipboard}>
+                    <View style={[styles.shadow, {flexDirection:'row', height:height*0.06}]}>
+                        <TouchableOpacity style={{ width:'50%', height:height*0.06}} onPress={copyToClipboard}>
                             <View style={{flexDirection:'row', padding:height*0.01, justifyContent:'space-around', alignItems:'center'}}>
                                 <Icon name="cloud-download" size={height*0.04} color="#07A9F0"/>
                                 <Text style={{fontSize:height*0.02, color:'#07A9F0'}}>Tawarkan Produk</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{width:'50%'}} onPress={gotoPesan}>
+                        <TouchableOpacity style={{width:'50%', height:height*0.06}} onPress={gotoPesan}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{flexDirection:'row', padding:height*0.01,  justifyContent:'space-around', alignItems:'center'}}>
                                     <Icon name="send" size={height*0.04} color="#fff"/>
