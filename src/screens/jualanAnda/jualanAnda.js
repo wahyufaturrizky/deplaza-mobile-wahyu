@@ -104,7 +104,7 @@ function jualanAnda(props) {
                 </View>
             </View>
 
-            <BottomTab/>
+            <BottomTab {...props}/>
 
         </View>
     );

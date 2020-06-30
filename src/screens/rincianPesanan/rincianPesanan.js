@@ -1,12 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Dimensions, Image, ScrollView } from 'react-native';
 import Clipboard from "@react-native-community/clipboard";
 import { TextInput, Snackbar } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage'
 import {Picker} from '@react-native-community/picker'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {URL} from '../../utils/global'
 
 import Appbar from '../../components/appbarHome';
+import produkDetail from '../produkDetail/produkDetail';
 
 function Pesan(props) {
     const [fullname, setFullname] = useState('')
@@ -18,9 +21,19 @@ function Pesan(props) {
     const [metode, setMetode] = useState(true); //True = Metode Bank
     const [qty, setQty] = useState(1)
     const [copy, setCopy] = useState(false)
+    const [dataDetail, setDataDetail] = useState([])
+    const [productDetail, setProductDetail] = useState([])
 
-    const indonesia = "../../assets/images/indonesia.png"
+
+    const urlRincianPesanan = URL+"/v1/orders/"
+    const urlProdukDetail = URL+'v1/product/'
+    
+    const id_order = props.route.params.id
     const { height, width } = Dimensions.get("window");
+
+    useEffect(() => {
+        getRincianPesanan()
+    }, [])
 
     const ubahPembayaran = () => {
         setMetode(!metode)
@@ -31,9 +44,36 @@ function Pesan(props) {
     }
 
     const copyToClipboard = async() => {
-        const copyText = "#ID36591480"
+        const copyText = dataDetail.invoice
         Clipboard.setString(copyText)
         setCopy(true)
+    }
+
+    const getRincianPesanan = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlRincianPesanan+id_order, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                setDataDetail(responseData.data, console.log(JSON.parse(dataDetail.details[0].variation).color[0]))
+
+                let id_produk = responseData.data.details[0].product_id
+                // console.log(responseData.data.details[0].product_id)
+
+                fetch(urlProdukDetail+id_produk, {headers})
+                    .then(response => response.json())
+                    .then(responseData => {
+                        // console.log(responseData.data.images[0].file_upload)
+                        // setProductDetail(responseData.data, console.log(productDetail))
+                })
+                
+            })
+
     }
 
     const _onDismissSnackBar = () => setCopy(false)
@@ -52,14 +92,10 @@ function Pesan(props) {
                 <View style={{backgroundColor:'#F8F8F8', padding:10}}>
                     <Text style={{fontSize:18}}>Metode Pembayaran</Text>
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                        {metode ?
-                            <View>
-                                <Text style={{fontWeight:'bold', fontSize:18}}>Transfer Bank #ID36591480</Text>
-                                <Text>JNE JN534120N101</Text>
-                            </View>
-                        :
-                            <Text style={{fontWeight:'bold', fontSize:18}}>COD</Text>
-                        }
+                        <View>
+                            <Text style={{fontWeight:'bold', fontSize:18}}>{dataDetail.payment.method.id != 1 ? "COD" : "TRANSFER BANK"} {dataDetail.invoice}</Text>
+                            {/* <Text>JNE JN534120N101</Text> */}
+                        </View>
                         <TouchableOpacity style={{backgroundColor:'#E6E6E6', width:'20%', padding:10, flexDirection:'row', justifyContent:'space-around', alignItems:'center'}} onPress={copyToClipboard}>
                             <Icon name="content-copy" size={16}/>
                             <Text> No. Resi</Text>
@@ -74,9 +110,9 @@ function Pesan(props) {
                     <View>
                         <Text style={{fontSize:18}}>Alamat Pengiriman</Text>
                         <View style={{marginTop:height*0.02}}>
-                            <Text style={{fontSize:12}}>Nama Penerima</Text>
-                            <Text style={{fontSize:12}}>Jl. Hj. Humar Depok, Limo, Jawa Barat, 16512</Text>
-                            <Text style={{fontSize:12}}>085813494327</Text>
+                            <Text style={{fontSize:12}}>{dataDetail.delivery.receiver_name}</Text>
+                            <Text style={{fontSize:12}}>{dataDetail.delivery.receiver_address}</Text>
+                            <Text style={{fontSize:12}}>{dataDetail.customer.phone}</Text>
                         </View>
                     </View>
 
@@ -88,24 +124,24 @@ function Pesan(props) {
                     <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'flex-start', height:height*0.2}}>
                         <View style={{width:'30%'}}>
                             <Image
-                                source={require('../../assets/images/ex-produk.png')}
+                                source={{uri:productDetail.images[0].file_upload}}
                                 style={{width:'100%', height:height*0.2 , resizeMode:'cover'}}
                             />
                         </View>
                         <View style={{width:'60%', justifyContent:'space-between', height:'100%', flexDirection:'column'}}>
                             <View>
-                                <Text style={{fontSize:18}}>Pelindung Wajah</Text>
+                                <Text style={{fontSize:18}}>{productDetail.name}</Text>
                                 <View style={{flexDirection:'row', justifyContent:'space-between', width:'70%', alignItems:'center'}}>
                                     <View style={{width:'50%'}}>
                                         <Text>Rp. 67.000</Text>
-                                        <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text>
-                                        <Text style={{fontSize:14, color:'gray'}}>Warna: Merah</Text>
+                                        {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
+                                        <Text style={{fontSize:14, color:'gray'}}>Warna: {JSON.parse(dataDetail.details[0].variation).color[0]}</Text>
                                     </View>
-                                    <Text style={{fontSize:14, color:'gray'}}>Jumlah: 1</Text>
+                                    <Text style={{fontSize:14, color:'gray'}}>Jumlah: {dataDetail.details[0].qty}</Text>
                                 </View>
                             </View>
 
-                            <View>
+                            {/* <View>
                                 <TouchableOpacity style={{width:'90%', alignSelf:'center',}}>
                                     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                         style={{padding:5, justifyContent:'center', alignItems:'center', borderRadius:10,}}
@@ -115,7 +151,7 @@ function Pesan(props) {
                                         </Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
-                            </View>
+                            </View> */}
                         </View>
                         
                     </View>
@@ -129,7 +165,7 @@ function Pesan(props) {
                             <Text>Biaya Produk</Text>
                             <Text style={{color:'gray', fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                         </View>
-                        <Text>Rp. 67.000</Text>
+                        <Text>Rp. {dataDetail.total_price}</Text>
                     </View>
 
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
@@ -137,7 +173,7 @@ function Pesan(props) {
                             <Text>Tunai yang Dikumpulkan dari Pelanggan</Text>
                             <Text style={{color:'gray', fontSize:12}}>(Termasuk Margin Anda)</Text>
                         </View>
-                        <Text>Rp. 70.000</Text>
+                        <Text>Rp. {dataDetail.payment.ammount}</Text>
                     </View>
 
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
@@ -146,8 +182,8 @@ function Pesan(props) {
                             <Text style={{color:'gray', fontSize:12}}>(Komisi + Tambahan Margin)</Text>
                         </View>
                         <View style={{alignItems:'flex-end'}}>
-                            <Text style={{fontSize:12}}>Rp. 5.000 + Rp. 3.000</Text>
-                            <Text>Rp. 8.000</Text>
+                            <Text style={{fontSize:12}}>Rp. {dataDetail.details[0].commission} + Rp. {dataDetail.details[0].custom_commission}</Text>
+                            <Text>Rp. {(parseInt(dataDetail.details[0].commission)+parseInt(dataDetail.details[0].custom_commission)).toString()}</Text>
                         </View>
                     </View>
                 </View>
@@ -157,12 +193,12 @@ function Pesan(props) {
                     onDismiss={_onDismissSnackBar}
                     duration = {1000}
                 >
-                    Deskripsi Berhasil di Salin
+                    Nomor Resi Berhasil di Salin
                 </Snackbar>
 
             </ScrollView>
 
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                     style={{padding:15, justifyContent:'center', alignItems:'center'}}
                 >
@@ -170,7 +206,7 @@ function Pesan(props) {
                         Bukti Transfer Bank
                     </Text>
                 </LinearGradient>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     );
 }

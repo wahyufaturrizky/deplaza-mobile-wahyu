@@ -1,8 +1,13 @@
 import * as React from 'react';
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet, TouchableHighlight} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function bottomTab(props){
+
+    const gotoPesanan = () => {
+        console.log(props)
+        props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
+    }
     
     return (
         <View style={[styles.shadow, {backgroundColor:'white', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}]}>
@@ -14,10 +19,16 @@ function bottomTab(props){
                 <Icon name="help-circle-outline" size={30} color="#949494" />
                 <Text>Bantuan Jualan</Text>
             </View>
-            <View style={{alignItems:'center'}}>
+            <TouchableHighlight onPress={gotoPesanan}>
+                <View style={{alignItems:'center'}}>
+                    <Icon name="account" size={30} color="#949494" />
+                    <Text>Pesanan Saya</Text>
+                </View>
+            </TouchableHighlight>
+            {/* <View style={{alignItems:'center'}}>
                 <Icon name="account" size={30} color="#949494" />
                 <Text>Akun</Text>
-            </View>
+            </View> */}
         </View>
     );
 }

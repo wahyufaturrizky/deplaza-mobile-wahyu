@@ -6,7 +6,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-community/async-storage'
 
-// import ImagePicker from 'react-native-image-picker'
+import ImagePicker from 'react-native-image-crop-picker';
 
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
@@ -31,6 +31,7 @@ function Pesan(props) {
     const [cities, setCities] = useState([])
     const [idOrder, setIdOrder] = useState(0)
     const [photo, setPhoto] = useState(0)
+    const [pesan, setPesan] = useState(false)
 
     const metodeCOD = props.route.params.data.metodeCOD
     const id_produk = props.route.params.data.id_produk
@@ -65,20 +66,25 @@ function Pesan(props) {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
         }
-        
-        // ImagePicker.launchImageLibrary(options, response => {
-        //   if (response.uri) {
-        //     setPhoto(response)
 
-        //     fetch(urlOrder+idOrder+"/pay", {method: 'POST', headers,
-        //         body:JSON.stringify({proof_payment : response.uri})
-        //     })
-        //     .then(response => response.json())
-        //     .then(async(responseData) => {
-        //         console.log(responseData)
-        //     })
-        //   }
-        // })
+        ImagePicker.openPicker({
+            width: 300,
+            height: 400,
+            cropping: true
+        }).then(image => {
+            // console.log(image);
+            setPhoto(image)
+
+            fetch(urlOrder+idOrder+"/pay", {method: 'POST', headers,
+                body:JSON.stringify({proof_payment : image.path})
+            })
+            .then(response => response.json())
+            .then(async(responseData) => {
+                console.log(responseData)
+                gotoPesanan()
+            })
+        });
+
       }
 
     const ubahPembayaran = () => {
@@ -157,7 +163,7 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setCities(responseData.rajaongkir.results)
-                console.log(responseData.rajaongkir.results)
+                // console.log(responseData.rajaongkir.results)
                 // console.log(responseData.rajaongkir.results)
             })
     }
@@ -178,55 +184,91 @@ function Pesan(props) {
             'Content-Type' : 'application/json'
         }
 
+        // const dataBody = {
+        //     "voucher": "",
+        //     "products": [
+        //         {
+        //             "product_id": id_produk,
+        //             "product_name": dataDetail.name,
+        //             "product_qty": qty,
+        //             "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
+        //             "product_note": "",
+        //             "product_custom_commission" : margin //Margin yang ditambahkan manual
+        //         }
+        //     ],
+        //     "customer": {
+        //         "save_customer": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+        //         "customer_id": 0,
+        //         "customer_name": fullname,
+        //         "customer_phone": phone,
+        //         "customer_email": ""
+        //     },
+        //     "delivery": {
+        //         "save_address": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+        //         "delivery_address_id": 0,
+        //         "delivery_reciver_name": fullname,
+        //         "delivery_reciver_city": kota,
+        //         "delivery_reciver_post": pos,
+        //         "delivery_reciver_address": alamat
+        //     },
+        //     "shipping": {
+        //         "courier_id" : 1, //kurir dari raja ongkir (JNE)
+        //         "package_courier" : "REG",
+        //         "sipping_cost": totalOngkir
+        //     },
+        //     "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
+        // }
+
         const dataBody = {
-            "voucher": "",
-            "products": [
+            "customer": 
                 {
-                    "product_id": id_produk,
-                    "product_name": dataDetail.name,
-                    "product_qty": qty,
-                    "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
-                    "product_note": "",
-                    "product_custom_commission" : margin //Margin yang ditambahkan manual
-                }
-            ],
-            "customer": {
-                "save_customer": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
-                "customer_id": 0,
-                "customer_name": fullname,
-                "customer_phone": phone,
-                "customer_email": ""
-            },
-            "delivery": {
-                "save_address": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
-                "delivery_address_id": 0,
-                "delivery_reciver_name": fullname,
-                "delivery_reciver_city": kota,
-                "delivery_reciver_post": pos,
-                "delivery_reciver_address": alamat
-            },
-            "shipping": {
-                "courier_id" : 1, //kurir dari raja ongkir (JNE)
-                "package_courier" : "REG",
-                "sipping_cost": totalOngkir
-            },
-            "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
+                    "customer_email": "", 
+                    "customer_id": 0, 
+                    "customer_name": "Test Reza", 
+                    "customer_phone": "817234123", 
+                    "save_customer": 1
+                }, 
+            "delivery": 
+                {
+                    "delivery_address_id": 0, 
+                    "delivery_reciver_address": "Bekasi", 
+                    "delivery_reciver_city": "54", 
+                    "delivery_reciver_name": "Test Reza", 
+                    "delivery_reciver_post": "17711", 
+                    "save_address": 1
+                }, 
+            "payment_method_id": 3, 
+            "products": 
+                [
+                    {
+                        "product_custom_commission": "2000", 
+                        "product_id": 12, 
+                        "product_name": "Product COD insan", 
+                        "product_note": "", 
+                        "product_qty": 6, 
+                        "product_variation": "{\"color\":[\"red\"],\"size\":[\"\"]}"}], 
+            "shipping": 
+                {
+                    "courier_id": 1, 
+                    "package_courier": "REG", 
+                    "sipping_cost": 68000
+                }, 
+            "voucher": ""
         }
 
-        fetch(urlOrder, {method: 'POST', headers,
+        console.log(urlOrder)
+
+        fetch(URL+"v1/orders", {method: 'POST', headers,
             body:JSON.stringify(dataBody)
         })
         .then(response => response.json())
         .then(async(responseData) => {
-           console.log(responseData.id)
-           setIdOrder(responseData.id)
+           console.log(responseData.data.id)
+           setIdOrder(responseData.data.id)
+        //    setPesan(true)
+            gotoPesanan()
         })
 
-    }
-
-    const uploadBuktiPembayaran = () => {
-        console.log("url")
-        
     }
 
     return (
@@ -262,7 +304,7 @@ function Pesan(props) {
                             <Text>Biaya Produk</Text>
                             <Text style={{color:'gray', fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                         </View>
-                        <Text>Rp. {totalHarga}</Text>
+                        <Text>Rp. {totalHarga.toString()}</Text>
                     </View>
 
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
@@ -306,7 +348,7 @@ function Pesan(props) {
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                     
-                {metode &&
+                {/* {(metode || pesan) &&
                     <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                             style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}
@@ -317,12 +359,12 @@ function Pesan(props) {
                             </Text>
                         </LinearGradient>
                     </TouchableOpacity>
-                }
+                } */}
 
-                {photo && (
+                {photo != 0 && (
                     <Image
-                        source={{ uri: photo.uri }}
-                        style={{ width: 300, height: 300 }}
+                        source={{ uri: photo.path }}
+                        style={{ width: width*0.8, height: height*0.3, alignSelf:'center', marginTop:height*0.02 }}
                     />
                 )}
 

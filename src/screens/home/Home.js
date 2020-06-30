@@ -107,7 +107,7 @@ function Home(props) {
                 </LinearGradient>
             </TouchableOpacity>
 
-            <BottomTab/>
+            <BottomTab {...props}/>
 
         </View>
     );

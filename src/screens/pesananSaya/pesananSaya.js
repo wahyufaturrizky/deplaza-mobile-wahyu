@@ -6,13 +6,20 @@ import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
 import { Title } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
+import {URL} from '../../utils/global'
+import produkDetail from '../produkDetail/produkDetail';
 
 function produk(props) {
-    const [products, setProducts] = useState([])
+    const [orders, setOrders] = useState([])
+    const [productDetail, setProductDetail] = useState([])
+
     let halaman = props.route.params.title
 
     const { height, width } = Dimensions.get("window");
     const urlProduk = "http://rest-api.deplaza.id/v1/product"
+    const urlOrder = URL+"/v1/orders/my-order?details=1"
+    const urlProdukDetail = URL+'v1/product/'
+    
 
     useEffect(() => {
         getProduct()
@@ -26,20 +33,35 @@ function produk(props) {
     const getProduct = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
+        console.log(data.token)
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
         }
 
-        // fetch(urlProduk, {headers})
-        //     .then(response => response.json())
-        //     .then(responseData => {
-        //         setProducts(responseData.data)
-                // console.log(JSON.parse(products[3].variation).color)
-                // let image = JSON.parse(responseData.data.brand)
-                // console.log(image)
-            // })
+        fetch(urlOrder, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                setOrders(responseData.data)
+                let res = responseData.data
+                
+                res.map((data,i) => {
+                    let id_produk = data.details[0].product.id
+
+                    // console.log(data.details[0].product.id)
+
+                    fetch(urlProdukDetail+id_produk, {headers})
+                        .then(response => response.json())
+                        .then(responseData => {
+                            console.log(responseData.data.images[0].file_upload)
+                            setProductDetail([...productDetail, responseData.data])
+                    })
+
+                })
+
+                
+            })
     }
 
 
@@ -88,40 +110,46 @@ function produk(props) {
 
                 ))} */}
 
-                <View style={{flexDirection:'row', marginVertical:10, height:height*0.25, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
+                {orders.map((data, index) => 
+                <View key={index} style={{flexDirection:'row', marginVertical:10, height:height*0.25, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
                     <View style={{width:width*0.35}}>
-                        <ImageBackground source={require('../../assets/images/ex-produk.png')} resizeMode="cover" style={{height:'100%', justifyContent:'flex-start', alignItems:'center', paddingTop:5, width:'100%', borderRadius:10}}>
-                            <View style={{padding:5, backgroundColor:'white', borderWidth:1, borderColor:'black'}}>
-                                <Text>#ID495993635</Text>
-                            </View>
-                        </ImageBackground>
+                        {productDetail.map((dataProduk,i) => { if(dataProduk.id === data.details[0].product.id )
+                            return(
+                            <ImageBackground source={{uri :dataProduk.images[0].file_upload}} resizeMode="cover" style={{height:'100%', justifyContent:'flex-start', alignItems:'center', paddingTop:5, width:'100%', borderRadius:10}}>
+                                <View style={{padding:5, backgroundColor:'white', borderWidth:1, borderColor:'black'}}>
+                                    <Text style={{fontSize:10}}>{data.invoice}</Text>
+                                </View>
+                            </ImageBackground>
+                            )
+                        })}
                     </View>
                     
                     <View style={{width:width*0.50}}>
-                        <Title style={{fontSize:16, lineHeight:18}}>Topi Anti Corona/Pelindung Wajah</Title>
+                        <Title style={{fontSize:16, lineHeight:18}}>{data.details[0].product.name}</Title>
                         <View style={{flexDirection:'row', alignItems:'center', marginBottom:height*0.01}}>
                             <View style={{width:'60%'}}>
-                                <Text style={{fontSize:14}}>Rp. 70.000 - Ayu</Text>
-                                <Text style={{color:'#949494'}}>COD Margin Rp. 8000</Text>
+                                <Text style={{fontSize:14}}>Rp. {data.payment.ammount}</Text>
+                                <Text style={{color:'#949494'}}>{data.payment.method.id != 1 ? "COD" : "BANK"} Margin Rp. {data.total_commission}</Text>
                             </View>
                             <View style={{width:'30%', borderWidth:1, borderColor:'green', padding:5, borderRadius:10}}>
-                                <Text style={{textAlign:'center', fontSize:8, color:'green'}}>Pembayaran Sudah di Konfirmasi</Text>
+                                <Text style={{textAlign:'center', fontSize:8, color:'green'}}>{data.payment.status_label}</Text>
                             </View>
                         </View>
                         
                         <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10, paddingBottom:20}}>
                             <View style={{justifyContent:'space-around', width:'50%'}}>
-                                <Text style={{fontSize:10}}>JNE JN534120N101</Text>
+                                {/* <Text style={{fontSize:10}}>JNE JN534120N101</Text> */}
                                 {/* <Text style={{fontSize:14, color:'red'}}>Resi Belum di Input</Text> */}
-                                <Text style={{color:'#949494', fontSize:10}}>15 May, 09:15pm</Text>
+                                <Text style={{color:'#949494', fontSize:10}}>{data.created_at}</Text>
                             </View>
-                            <TouchableOpacity style={{width:'40%'}}  onPress={() => detailProduk("1")}>
+                            <TouchableOpacity style={{width:'40%'}}  onPress={() => detailProduk(data.id)}>
                                 <Text style={{color:'#07A9F0', fontSize:12}}>Cek Pesanan</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
+                )}
 
                 
 
