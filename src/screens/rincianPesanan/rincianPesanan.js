@@ -12,14 +12,6 @@ import Appbar from '../../components/appbarHome';
 import produkDetail from '../produkDetail/produkDetail';
 
 function Pesan(props) {
-    const [fullname, setFullname] = useState('')
-    const [phone, setPhone] = useState('')
-    const [provinsi, setProvinsi] = useState("=Provinsi=");
-    const [kota, setKota] = useState("=Kota=");
-    const [pos, setPos] = useState("");
-    const [alamat, setAlamat] = useState("");
-    const [metode, setMetode] = useState(true); //True = Metode Bank
-    const [qty, setQty] = useState(1)
     const [copy, setCopy] = useState(false)
     const [dataDetail, setDataDetail] = useState([])
     const [productDetail, setProductDetail] = useState([])
@@ -35,13 +27,6 @@ function Pesan(props) {
         getRincianPesanan()
     }, [])
 
-    const ubahPembayaran = () => {
-        setMetode(!metode)
-    }
-
-    const gotoPesanan = () => {
-        props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
-    }
 
     const copyToClipboard = async() => {
         const copyText = dataDetail.invoice
@@ -49,6 +34,7 @@ function Pesan(props) {
         setCopy(true)
     }
 
+    // Untuk Mengcoopy ID Invoice
     const getRincianPesanan = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -76,6 +62,7 @@ function Pesan(props) {
 
     }
 
+    // Fungsi yang jalan ketika snackbar menghilang
     const _onDismissSnackBar = () => setCopy(false)
 
 

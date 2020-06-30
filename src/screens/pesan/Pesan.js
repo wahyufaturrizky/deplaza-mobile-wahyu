@@ -47,13 +47,13 @@ function Pesan(props) {
     
 
     const { height, width } = Dimensions.get("window");
-    
 
     useEffect(() => {
         getProvinsi()
         getDetailProduct()
     }, [])
 
+    // Fungsi untuk get gambar dari gallery
     const handleChoosePhoto = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -91,10 +91,12 @@ function Pesan(props) {
         setMetode(!metode)
     }
 
+    // Fungsi menuju ke halaman pesanan
     const gotoPesanan = () => {
         props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
     }
 
+    // Fungsi untuk mengganti Quantity
     const changeQty = (simbol) => {
         if(simbol === "+"){
             setQty(qty+1)
@@ -103,6 +105,7 @@ function Pesan(props) {
         }
     }
 
+    // Fungsi untuk get data detail
     const getDetailProduct = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -122,6 +125,7 @@ function Pesan(props) {
             })
     }
     
+    // Fungsi untuk mengganti margin
     const changeMargin = (text) => {
         setMargin(text)
 
@@ -132,6 +136,7 @@ function Pesan(props) {
         setTotalPendapatan(tmargin+tkomisi)
     }
 
+    // Fungsi untuk get data provinsi
     const getProvinsi = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -148,6 +153,7 @@ function Pesan(props) {
             })
     }
 
+    // Fungsi untuk get data kota
     const getKota = async(id_prov) => {
         setProvinsi(id_prov)
 
@@ -168,6 +174,7 @@ function Pesan(props) {
             })
     }
 
+    // Fungsi untuk get mengorder
     const postProduct = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -184,77 +191,77 @@ function Pesan(props) {
             'Content-Type' : 'application/json'
         }
 
-        // const dataBody = {
-        //     "voucher": "",
-        //     "products": [
-        //         {
-        //             "product_id": id_produk,
-        //             "product_name": dataDetail.name,
-        //             "product_qty": qty,
-        //             "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
-        //             "product_note": "",
-        //             "product_custom_commission" : margin //Margin yang ditambahkan manual
-        //         }
-        //     ],
-        //     "customer": {
-        //         "save_customer": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
-        //         "customer_id": 0,
-        //         "customer_name": fullname,
-        //         "customer_phone": phone,
-        //         "customer_email": ""
-        //     },
-        //     "delivery": {
-        //         "save_address": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
-        //         "delivery_address_id": 0,
-        //         "delivery_reciver_name": fullname,
-        //         "delivery_reciver_city": kota,
-        //         "delivery_reciver_post": pos,
-        //         "delivery_reciver_address": alamat
-        //     },
-        //     "shipping": {
-        //         "courier_id" : 1, //kurir dari raja ongkir (JNE)
-        //         "package_courier" : "REG",
-        //         "sipping_cost": totalOngkir
-        //     },
-        //     "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
-        // }
-
         const dataBody = {
-            "customer": 
+            "voucher": "",
+            "products": [
                 {
-                    "customer_email": "", 
-                    "customer_id": 0, 
-                    "customer_name": "Test Reza", 
-                    "customer_phone": "817234123", 
-                    "save_customer": 1
-                }, 
-            "delivery": 
-                {
-                    "delivery_address_id": 0, 
-                    "delivery_reciver_address": "Bekasi", 
-                    "delivery_reciver_city": "54", 
-                    "delivery_reciver_name": "Test Reza", 
-                    "delivery_reciver_post": "17711", 
-                    "save_address": 1
-                }, 
-            "payment_method_id": 3, 
-            "products": 
-                [
-                    {
-                        "product_custom_commission": "2000", 
-                        "product_id": 12, 
-                        "product_name": "Product COD insan", 
-                        "product_note": "", 
-                        "product_qty": 6, 
-                        "product_variation": "{\"color\":[\"red\"],\"size\":[\"\"]}"}], 
-            "shipping": 
-                {
-                    "courier_id": 1, 
-                    "package_courier": "REG", 
-                    "sipping_cost": 68000
-                }, 
-            "voucher": ""
+                    "product_id": id_produk,
+                    "product_name": dataDetail.name,
+                    "product_qty": qty,
+                    "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
+                    "product_note": "",
+                    "product_custom_commission" : margin //Margin yang ditambahkan manual
+                }
+            ],
+            "customer": {
+                "save_customer": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+                "customer_id": 0,
+                "customer_name": fullname,
+                "customer_phone": phone,
+                "customer_email": ""
+            },
+            "delivery": {
+                "save_address": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+                "delivery_address_id": 0,
+                "delivery_reciver_name": fullname,
+                "delivery_reciver_city": kota,
+                "delivery_reciver_post": pos,
+                "delivery_reciver_address": alamat
+            },
+            "shipping": {
+                "courier_id" : 1, //kurir dari raja ongkir (JNE)
+                "package_courier" : "REG",
+                "sipping_cost": totalOngkir
+            },
+            "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
         }
+
+        // const dataBody = {
+        //     "customer": 
+        //         {
+        //             "customer_email": "", 
+        //             "customer_id": 0, 
+        //             "customer_name": "Test Reza", 
+        //             "customer_phone": "817234123", 
+        //             "save_customer": 1
+        //         }, 
+        //     "delivery": 
+        //         {
+        //             "delivery_address_id": 0, 
+        //             "delivery_reciver_address": "Bekasi", 
+        //             "delivery_reciver_city": "54", 
+        //             "delivery_reciver_name": "Test Reza", 
+        //             "delivery_reciver_post": "17711", 
+        //             "save_address": 1
+        //         }, 
+        //     "payment_method_id": 3, 
+        //     "products": 
+        //         [
+        //             {
+        //                 "product_custom_commission": "2000", 
+        //                 "product_id": 12, 
+        //                 "product_name": "Product COD insan", 
+        //                 "product_note": "", 
+        //                 "product_qty": 6, 
+        //                 "product_variation": "{\"color\":[\"red\"],\"size\":[\"\"]}"}], 
+        //     "shipping": 
+        //         {
+        //             "courier_id": 1, 
+        //             "package_courier": "REG", 
+        //             "sipping_cost": 68000
+        //         }, 
+        //     "voucher": ""
+        // }
 
         console.log(urlOrder)
 
