@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function bottomTab(props){
 
+    //Pergi menuju halaman pesanan
     const gotoPesanan = () => {
         console.log(props)
         props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
