@@ -15,24 +15,35 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
 
-const mockData = [
-    { id: 1, name: 'Kota, Kecamatan' },
-    { id: 2, name: 'Kota, Kecamatan' },
-    { id: 3, name: 'Kota, Kecamatan' }
-];
-
 function produkDetail(props) {
     const [dataDetail, setDataDetail] = useState([])
+    const [dataColor, setDataColor] = useState([])
     const [dataGambar, setDataGambar] = useState([])
+
     const [copy, setCopy] = useState(false)
     const [qty, setQty] = useState(1)
+
     const [pressSize, setPressSize] = useState(false)
-    const [pressColor, setPressColor] = useState(false)
+    const [pressColor, setPressColor] = useState(-1)
+
     const [selectKota, setSelectKota] = useState(false)
-    
+    const [selectColor, setSelectColor] = useState("")
+    const [selectUkuran, setSelectUkuran] = useState("")
+
+    const [kota, setKota] = useState([
+        { id: 1, name: 'Pilih Kota' }
+    ])
+    const [allKota, setAllKota] = useState([])
+    const [kecamatan, setKecamatan] = useState([])
+    const [totalOngkir, setTotalOngkir] = useState(0)
+    const [totalHarga, setTotalHarga] = useState(0)
+    const [metodeCOD, setmetodeCOD] = useState(false)
 
     const likeProduk = true
     const urlProdukDetail = URL+'v1/product/'
+    const urlKota = URL+"v1/shipment/cities"
+    const urlKecamatan = URL+"v1/shipment/subdistrict/city/"
+    const urlOngkir = URL+"v1/shipment/cost"
 
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
@@ -40,10 +51,11 @@ function produkDetail(props) {
 
     useEffect(() => {
         getDetailProduct()
+        getKota()
     }, [])
     
     const copyToClipboard = async() => {
-        const copyText = "Harga : Rp. 67.100 \n Deskripsi : \n Warna : Black \n Bahan : Cotton \n Ukuran : M, L, XL, XXL"
+        const copyText = `Harga : Rp. ${totalHarga} \n Deskripsi : \n ${dataDetail.description}`
         Clipboard.setString(copyText)
         setCopy(true)
     }
@@ -56,6 +68,11 @@ function produkDetail(props) {
         }
     }
 
+    const changeColor = (data,color) => {
+        setPressColor(data)
+        setSelectColor(color)
+    }
+
     const goToHome = () => {
         props.navigation.dispatch(CommonActions.reset({
             index: 0,
@@ -65,16 +82,13 @@ function produkDetail(props) {
         }));  
     }
 
-    const gotoPesan = () => {
-        props.navigation.navigate("Pesan", {title:"Pesan & Kirim"})
+    const gotoPesan = () => { //{"color": ["red", "yellow"], "size": ["s", "m", "l", "xl"]}
+        props.navigation.navigate("Pesan", {title:"Pesan & Kirim", data: {id_produk : id, variation:{color:[selectColor],size:[selectUkuran]}, qty, metodeCOD, totalHarga, totalOngkir, imageDetail:dataGambar[0]}})
     }
 
     const getDetailProduct = async() => {
-
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
-        // console.log(id)
-
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
@@ -82,24 +96,94 @@ function produkDetail(props) {
 
         fetch(urlProdukDetail+id, {headers})
             .then(response => response.json())
-            .then(responseData => {
-                setDataDetail(responseData.data)
+            .then(async(responseData) => {
+                await setDataDetail(responseData.data)
+                // getColor(responseData.data)
+                console.log(responseData.data.variation_data.color)
+                
                 for(let i=0; i<=(responseData.data.images.length)-1; i++){
-                    // let arr = [...dataGambar]
-                    // arr[2] = responseData.data.images[i].file_upload
-                    setDataGambar([...dataGambar, responseData.data.images[i].file_upload], console.log(dataGambar))
+                    setDataGambar([...dataGambar, responseData.data.images[i].file_upload])
                 }
-                // let image = responseData.data[0]
-                console.log(responseData.data)
+
+                
             })
+
+    }
+
+    const getColor = (data) => {
+        // console.log(data)
+        let variation = JSON.parse(data.variation)[0]
+        let slug = variation.split('[').pop();
+        let slug2= slug.substr(0, slug.indexOf(']')); 
+        let color = slug2.replace(/[']+/g, '');
+        console.log(color)
+        setDataColor(color.split(','))
+        
+    }
+
+    const getKota = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+        
+        fetch(urlKota, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                // setKota(responseData.rajaongkir.results)
+                const mapKota = responseData.rajaongkir.results
+
+                let data = mapKota.map( s => ({id:s.city_id, name:s.city_name}) );
+                setKota(data)
+            })
+            .catch(e => console.log(e))
+    }
+
+    const _selectKota = async(data_kota) => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        console.log(dataDetail.cod_city_id)     
+        let cod_city =  dataDetail.cod_city_id
+        let cek_code_city = cod_city.indexOf(data_kota);
+        if(cek_code_city >= 0) {
+            setmetodeCOD(true)
+        }else{
+            setmetodeCOD(false)
+        }
+
+        let formdata = new FormData();
+        formdata.append("origin", dataDetail.city_id)
+        formdata.append("destination", parseInt(data_kota))
+        formdata.append("weight", dataDetail.weight)
+        formdata.append("courier", 'jne')
+
+        fetch(urlOngkir, {method: 'POST', headers,
+            body: formdata
+        })
+        .then(response => response.json())
+        .then(async(responseData) => {
+            let tipe= await responseData.rajaongkir.results[0].costs
+            tipe.map((type) => {
+                if(type.service === "REG"){
+                    setTotalOngkir(type.cost[0].value, setTotalHarga(dataDetail.price_basic+type.cost[0].value))
+                }
+            })
+        })
     }
     
 
     const _onDismissSnackBar = () => setCopy(false)
 
     const clickSize = () => setPressSize(!pressSize)
-
-    const clickColor = () => setPressColor(!pressColor)
 
     return (
         <View style={{backgroundColor:'white', flex:1}}>
@@ -123,9 +207,10 @@ function produkDetail(props) {
                                 colorTheme={'blue'}
                                 popupTitle='Pilih Kota dan kecamatan'
                                 title='Pilih Kota dan Kecamatan'
-                                data={mockData}
+                                data={kota}
                                 onSelect={data => {
                                     setSelectKota(data)
+                                    _selectKota(data)
                                 }}
                                 onRemoveItem={data => {
                                     setSelectKota(data)
@@ -146,14 +231,16 @@ function produkDetail(props) {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={{padding:10, width:'100%', backgroundColor:'#93DCFC', flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}>
-                            <Icon name="help-circle-outline" size={20} color="#949494" />
-                            <Text> Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
-                        </View>
+                        {!metodeCOD &&
+                            <View style={{padding:10, width:'100%', backgroundColor:'#93DCFC', flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}>
+                                <Icon name="help-circle-outline" size={20} color="#949494" />
+                                <Text> Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
+                            </View> 
+                        }
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
                             <View>
-                                <Text style={{fontSize:24}}>Rp. 67.100</Text>
+                                <Text style={{fontSize:24}}>Rp. {totalHarga}</Text>
                                 <Text style={{fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                             </View>
                                 <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, paddingHorizontal:20, justifyContent:'center'}}>
@@ -185,9 +272,9 @@ function produkDetail(props) {
                         </View>
                         <View style={{marginTop:height*0.01}}>
                             <Text>{dataDetail.description}</Text>
-                            <Text>Warna : Black</Text>
+                            {/* <Text>Warna : Black</Text>
                             <Text>Bahan : Cotton</Text>
-                            <Text>Ukuran : M, L, XL, XXL</Text>
+                            <Text>Ukuran : M, L, XL, XXL</Text> */}
                         </View>
                     </View>
 
@@ -195,9 +282,9 @@ function produkDetail(props) {
 
                     <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.02}}>
                         <View style={{backgroundColor:'#F8F8F8', padding:5}}>
-                            <Title>Pilih Ukuran, Warna, dan Jumlah</Title>
+                            <Title>Pilih Variasi dan Jumlah</Title>
                         </View>
-                        <View style={{marginTop:height*0.01, flexDirection:'row', alignItems:'center'}}>
+                        {/* <View style={{marginTop:height*0.01, flexDirection:'row', alignItems:'center'}}>
                             <Icon name="close" size={20}/>
                             <Text> Stok Habis</Text>
                         </View>
@@ -216,7 +303,7 @@ function produkDetail(props) {
                             <View style={{padding:10, backgroundColor:'#D5D5D5', marginRight:5}}>
                                 <Text style={{fontSize:20}}>XXL</Text>
                             </View>
-                        </View>
+                        </View> */}
                     </View>
                     
                     <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
@@ -224,10 +311,13 @@ function produkDetail(props) {
                     <View style={{width:'90%', alignSelf:'center',flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                         <Title>Warna</Title>
                         <View style={{flexDirection:'row', alignItems:'center', flexWrap:'wrap', justifyContent:'flex-end', width:'50%'}}>
-                            <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>Green</Text></View>
-                            <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>Red</Text></View>
-                            <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>Blue</Text></View>
-                            
+                            { dataDetail.variation_data !=  null ? dataDetail.variation_data.color.map((color,i) => (
+                                <TouchableOpacity onPress={() => changeColor(i, color)}>
+                                    <View key={i} style={{backgroundColor:'white', borderWidth:1, borderColor: (pressColor === i ? 'red' : 'gray'), padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>{color}</Text></View>
+                                </TouchableOpacity>
+                            )) : 
+                                <View></View>
+                            }
                         </View>
                     </View>
 
@@ -246,6 +336,7 @@ function produkDetail(props) {
                                     style={{borderColor:'rgb(18, 48, 92)',height:height*0.035, fontSize:10}}
                                     value={qty.toString()}
                                     disabled
+                                    editable={false}
                                 />
                             </View>
                             <TouchableOpacity onPress={() => changeQty("+")}>

@@ -81,6 +81,8 @@ target 'DplazaMobile' do
 
   pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
 
+  pod 'RNCustomizedImagePicker', :path => '../node_modules/react-native-customized-image-picker'
+
   target 'DplazaMobileTests' do
     inherit! :complete
     # Pods for testing

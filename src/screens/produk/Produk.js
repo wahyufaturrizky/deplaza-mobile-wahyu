@@ -14,10 +14,9 @@ function produk(props) {
     const [loading, setLoading] = useState(false)
 
     let halaman = props.route.params.title
-    
 
     const { height, width } = Dimensions.get("window");
-    const urlProduk = URL+"v1/product"
+    const urlProduk = URL+"v1/product" 
 
     useEffect(() => {
         getProduct()
@@ -40,15 +39,12 @@ function produk(props) {
         fetch(urlProduk, {headers})
             .then(response => response.json())
             .then(responseData => {
-                setProducts(responseData.data, console.log(products[0]))
+                setProducts(responseData.data)
+                console.log(responseData.data[6].variation_data.color)
                 setLoading(false)
-                
-                // let image = JSON.parse(responseData.data.brand)
-                // console.log(responseData.data)
             })
             .catch(e => console.log(e))
     }
-
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
@@ -57,7 +53,14 @@ function produk(props) {
 
             <ScrollView style={{flex:1, marginTop:10}}>
                 
-                {products.map((product, index) => (
+                {products.map((product, index) => {
+                    // let variation = JSON.parse(products[0].variation)[0]
+                    // let slug = variation.split('[').pop();
+                    // let slug2= slug.substr(0, slug.indexOf(']')); 
+                    // let color = slug2.replace(/[']+/g, '');
+                    // let colorArray = color.split(',');
+
+                return (
                 
                 <View key={product.id} style={{flexDirection:'row', marginVertical:10, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
                     {products[index].images[0] != null ? 
@@ -76,21 +79,21 @@ function produk(props) {
                     <View style={{width:'68%'}}>
                         <Title style={{fontSize:16, lineHeight:18}}>{product.name}</Title>
                         <Text style={{fontSize:14}}>Mulai Dari Rp {product.price_basic}</Text>
-                        <Text style={{color:'#949494'}}>Stok = {product.stock}</Text>
+                        <Text style={{color:'#949494'}}>Stok {product.stock}</Text>
                         <Text style={{color:'#949494'}}>Varian Warna</Text>
                         <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:10, paddingBottom:20}}>
-                            {/* <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%'}}>
-                                { product.variation != "[]" && product.variation != "ssss" && product.variation != [] && product.variation != null ? JSON.parse(products[index].variation).color.map((color,i) => (
-                                    <View key={i} style={{width:width*0.05, height:height*0.03, backgroundColor: color}}></View>
+                            <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%'}}>
+                                { products[6].variation_data != null ? products[6].variation_data.color.map((color,i) => (
+                                    <View key={i} style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>{color}</Text></View>
                                 )) : 
                                     <View></View>
                                 }
-                            </View> */}
-                            <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%', flexWrap:'wrap'}}>  
+                            </View>
+                            {/* <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%', flexWrap:'wrap'}}>  
                                 <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>Red</Text></View>
                                 <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>Green</Text></View>
                                 <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>Blue</Text></View>
-                            </View>
+                            </View> */}
                             <TouchableOpacity style={{width:'38%'}}  onPress={() => detailProduk(product.id)}>
                                 <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
                             </TouchableOpacity>
@@ -98,7 +101,8 @@ function produk(props) {
                     </View>
                 </View>
 
-                ))}
+                )
+                })}
 
             </ScrollView>
             {loading &&

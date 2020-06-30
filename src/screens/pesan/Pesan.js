@@ -1,25 +1,85 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Dimensions, Image, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import {Picker} from '@react-native-community/picker'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-community/async-storage'
+
+// import ImagePicker from 'react-native-image-picker'
 
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
+import {URL} from '../../utils/global'
 
 function Pesan(props) {
+    const totalHarga = props.route.params.data.totalHarga
+
     const [fullname, setFullname] = useState('')
+    const [dataDetail, setDataDetail] = useState([])
     const [phone, setPhone] = useState('')
     const [provinsi, setProvinsi] = useState("Provinsi");
     const [kota, setKota] = useState("Kota");
     const [pos, setPos] = useState("");
     const [alamat, setAlamat] = useState("");
+    const [margin, setMargin] = useState("0");
+    const [totalKeseluruhan, setTotalKeseluruhan] = useState(totalHarga);
+    const [totalPendapatan, setTotalPendapatan] = useState("0");
     const [metode, setMetode] = useState(true); //True = Metode Bank
-    const [qty, setQty] = useState(1)
+    const [qty, setQty] = useState(props.route.params.data.qty)
+    const [provinces, setProvinces] = useState([])
+    const [cities, setCities] = useState([])
+    const [idOrder, setIdOrder] = useState(0)
+    const [photo, setPhoto] = useState(0)
+
+    const metodeCOD = props.route.params.data.metodeCOD
+    const id_produk = props.route.params.data.id_produk
+    const variation = props.route.params.data.variation
+    const totalOngkir = props.route.params.data.totalOngkir
+    const imageDetail = props.route.params.data.imageDetail
 
     const indonesia = "../../assets/images/indonesia.png"
+    const urlProdukDetail = URL+'v1/product/'
+    const urlProvinces = URL+'v1/shipment/provinces'
+    const urlCities = URL+'v1/shipment/city/province/'
+    const urlOrder = URL+'v1/orders/'
+    
+
     const { height, width } = Dimensions.get("window");
+    
+
+    useEffect(() => {
+        getProvinsi()
+        getDetailProduct()
+    }, [])
+
+    const handleChoosePhoto = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        const options = {
+          noData: true,
+        }
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+        
+        // ImagePicker.launchImageLibrary(options, response => {
+        //   if (response.uri) {
+        //     setPhoto(response)
+
+        //     fetch(urlOrder+idOrder+"/pay", {method: 'POST', headers,
+        //         body:JSON.stringify({proof_payment : response.uri})
+        //     })
+        //     .then(response => response.json())
+        //     .then(async(responseData) => {
+        //         console.log(responseData)
+        //     })
+        //   }
+        // })
+      }
 
     const ubahPembayaran = () => {
         setMetode(!metode)
@@ -35,6 +95,138 @@ function Pesan(props) {
         }else if(simbol === "-"){
             setQty(qty-1)
         }
+    }
+
+    const getDetailProduct = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        setFullname(data.fullname)
+        setPhone(data.phone)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlProdukDetail+id_produk, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                await setDataDetail(responseData.data)
+                setTotalPendapatan(responseData.data.price_commission)
+            })
+    }
+    
+    const changeMargin = (text) => {
+        setMargin(text)
+
+        let tmargin = parseInt(text)
+        let tkomisi = parseInt(dataDetail.price_commission)
+
+        setTotalKeseluruhan(totalHarga+tmargin)
+        setTotalPendapatan(tmargin+tkomisi)
+    }
+
+    const getProvinsi = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlProvinces, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                await setProvinces(responseData.rajaongkir.results)
+            })
+    }
+
+    const getKota = async(id_prov) => {
+        setProvinsi(id_prov)
+
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlCities+id_prov, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                await setCities(responseData.rajaongkir.results)
+                console.log(responseData.rajaongkir.results)
+                // console.log(responseData.rajaongkir.results)
+            })
+    }
+
+    const postProduct = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        
+        let id_metode = 1
+        if(metode){
+            id_metode=3
+        }
+
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type' : 'application/json'
+        }
+
+        const dataBody = {
+            "voucher": "",
+            "products": [
+                {
+                    "product_id": id_produk,
+                    "product_name": dataDetail.name,
+                    "product_qty": qty,
+                    "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
+                    "product_note": "",
+                    "product_custom_commission" : margin //Margin yang ditambahkan manual
+                }
+            ],
+            "customer": {
+                "save_customer": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+                "customer_id": 0,
+                "customer_name": fullname,
+                "customer_phone": phone,
+                "customer_email": ""
+            },
+            "delivery": {
+                "save_address": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+                "delivery_address_id": 0,
+                "delivery_reciver_name": fullname,
+                "delivery_reciver_city": kota,
+                "delivery_reciver_post": pos,
+                "delivery_reciver_address": alamat
+            },
+            "shipping": {
+                "courier_id" : 1, //kurir dari raja ongkir (JNE)
+                "package_courier" : "REG",
+                "sipping_cost": totalOngkir
+            },
+            "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
+        }
+
+        fetch(urlOrder, {method: 'POST', headers,
+            body:JSON.stringify(dataBody)
+        })
+        .then(response => response.json())
+        .then(async(responseData) => {
+           console.log(responseData.id)
+           setIdOrder(responseData.id)
+        })
+
+    }
+
+    const uploadBuktiPembayaran = () => {
+        console.log("url")
+        
     }
 
     return (
@@ -55,9 +247,11 @@ function Pesan(props) {
                         :
                             <Text style={{fontWeight:'bold', fontSize:18}}>COD</Text>
                         }
-                        <TouchableOpacity style={{backgroundColor:'#E6E6E6', padding:10}} onPress={ubahPembayaran}>
-                            <Text>Ubah Metode Pembayaran</Text>
-                        </TouchableOpacity>
+                        {metodeCOD &&
+                            <TouchableOpacity style={{backgroundColor:'#E6E6E6', padding:10}} onPress={ubahPembayaran}>
+                                <Text>Ubah Metode Pembayaran</Text>
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
 
@@ -68,7 +262,7 @@ function Pesan(props) {
                             <Text>Biaya Produk</Text>
                             <Text style={{color:'gray', fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                         </View>
-                        <Text>Rp. 67.000</Text>
+                        <Text>Rp. {totalHarga}</Text>
                     </View>
 
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
@@ -81,6 +275,9 @@ function Pesan(props) {
                             <View style={{backgroundColor:'#d5d5d5', width:'30%'}}>
                                 <InputNormal
                                     style={{borderColor:'rgb(18, 48, 92)',height:height*0.035, fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
+                                    value={margin}
+                                    onChangeText={(text) => changeMargin(text)}
+                                    keyboardType = 'numeric'
                                 />
                             </View>
                         </View>
@@ -91,7 +288,7 @@ function Pesan(props) {
                             <Text>Total Pesanan</Text>
                             <Text style={{color:'gray', fontSize:12}}>(Tunai yang Dikumpulkan dari Pelanggan)</Text>
                         </View>
-                        <Text>Rp. 67.000</Text>
+                        <Text>Rp. {totalKeseluruhan}</Text>
                     </View>
 
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
@@ -100,8 +297,8 @@ function Pesan(props) {
                             <Text style={{color:'gray', fontSize:12}}>(Komisi + Tambahan Margin)</Text>
                         </View>
                         <View style={{alignItems:'flex-end'}}>
-                            <Text style={{fontSize:12}}>Rp. 5.000 + Rp. 3.000</Text>
-                            <Text>Rp. 8.000</Text>
+                            <Text style={{fontSize:12}}>Rp. {dataDetail.price_commission} + Rp. {margin}</Text>
+                            <Text>Rp. {totalPendapatan}</Text>
                         </View>
                     </View>
 
@@ -110,7 +307,7 @@ function Pesan(props) {
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                     
                 {metode &&
-                    <TouchableOpacity style={{width:'90%', alignSelf:'center'}}>
+                    <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                             style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}
                         >
@@ -121,6 +318,13 @@ function Pesan(props) {
                         </LinearGradient>
                     </TouchableOpacity>
                 }
+
+                {photo && (
+                    <Image
+                        source={{ uri: photo.uri }}
+                        style={{ width: 300, height: 300 }}
+                    />
+                )}
 
                 <View style={{backgroundColor:'#F8F8F8', padding:10, marginVertical:height*0.02}}>
                     <Text style={{fontSize:18}}>Alamat Pengiriman</Text>
@@ -165,11 +369,12 @@ function Pesan(props) {
                             <View style={{borderWidth:1, borderColor:'gray', width:'30%', borderRadius:10, height:height*0.055}}>
                                 <Picker
                                     selectedValue={provinsi}
-                                    onValueChange={(itemValue, itemIndex) => setProvinsi(itemValue)}
+                                    onValueChange={(itemValue, itemIndex) => getKota(itemValue)}
                                     style={{justifyContent:'center', alignItems:'center'}}
                                 >
-                                    <Picker.Item label="Provinsi" value="Provinsi" />
-                                    <Picker.Item label="Jawa Barat" value="jawa barat" />
+                                    {provinces.map((prov,i) => (
+                                        <Picker.Item key={i} label={prov.province} value={prov.province_id} />
+                                    ))}
                                 </Picker>
                             </View>
 
@@ -178,8 +383,9 @@ function Pesan(props) {
                                     selectedValue={kota}
                                     onValueChange={(itemValue, itemIndex) => setKota(itemValue)}
                                 >
-                                    <Picker.Item label="Kota" value="Provinsi" />
-                                    <Picker.Item label="Jawa Barat" value="jawa barat" />
+                                    {cities.map((city,i) => (
+                                        <Picker.Item key={i} label={city.city_name} value={city.city_id} />
+                                    ))}
                                 </Picker>
                             </View>
 
@@ -210,33 +416,36 @@ function Pesan(props) {
                     <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'flex-start'}}>
                         <View style={{width:'30%'}}>
                             <Image
-                                source={require('../../assets/images/ex-produk.png')}
+                                source={{uri : imageDetail}}
                                 style={{width:'100%', height:height*0.2 , resizeMode:'cover'}}
                             />
                         </View>
                         <View style={{width:'60%'}}>
-                            <Text style={{fontSize:18}}>Pelindung Wajah</Text>
+                            <Text style={{fontSize:18}}>{dataDetail.name}</Text>
                             <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                                 <View style={{width:'50%'}}>
-                                    <Text>Rp. 67.000</Text>
-                                    <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text>
-                                    <Text style={{fontSize:14, color:'gray'}}>Warna: Merah</Text>
+                                    <Text>Rp. {dataDetail.price_basic}</Text>
+                                    {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
+                                    <Text style={{fontSize:14, color:'gray'}}>Warna: {variation.color}</Text>
                                 </View>
-                                <View style={{width:'50%', justifyContent:'space-between', alignItems:'center', flexDirection:'row'}}>
-                                    <Text style={{fontSize:14, color:'gray'}}>Jumlah: </Text>
+                                <View style={{width:'50%', justifyContent:'space-between', alignItems:'center'}}>
+                                    <Text style={{fontSize:14, color:'gray', marginBottom:height*0.01}}>Jumlah: </Text>
                                     <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'60%'}}>
                                         <TouchableOpacity onPress={() => changeQty("-")}>
-                                            <View style={{paddingVertical:height*0.005, paddingHorizontal:10, marginRight:width*0.005, backgroundColor:'#D5D5D5'}}>
+                                            <View style={{paddingHorizontal:10, backgroundColor:'#D5D5D5',height:height*0.035, justifyContent:'center', alignItems:'center'}}>
                                                 <Text style={{fontSize:16}}>-</Text>
                                             </View>
                                         </TouchableOpacity>
-                                        <TextInput
-                                            mode="outlined"
-                                            style={{width:'50%',  marginTop:height*-0.005}}
-                                            value={qty.toString()}
-                                        />
+                                        <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'30%'}}>
+                                            <InputNormal
+                                                style={{borderColor:'rgb(18, 48, 92)',height:height*0.035, fontSize:10}}
+                                                value={qty.toString()}
+                                                disabled
+                                                editable={false}
+                                            />
+                                        </View>
                                         <TouchableOpacity onPress={() => changeQty("+")}>
-                                            <View style={{paddingVertical:height*0.005, paddingHorizontal:10, marginLeft:width*0.005, backgroundColor:'#D5D5D5'}}>
+                                            <View style={{paddingHorizontal:10, backgroundColor:'#D5D5D5',height:height*0.035, justifyContent:'center', alignItems:'center'}}>
                                                 <Text style={{fontSize:16}}>+</Text>
                                             </View>
                                         </TouchableOpacity>
@@ -250,7 +459,7 @@ function Pesan(props) {
 
             </ScrollView>
 
-            <TouchableOpacity onPress={gotoPesanan}>
+            <TouchableOpacity onPress={postProduct}>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                     style={{padding:15, justifyContent:'center', alignItems:'center'}}
                 >
