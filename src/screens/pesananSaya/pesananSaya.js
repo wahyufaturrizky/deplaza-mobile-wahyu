@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
-
+import moment from "moment";
 import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
 import { Title } from 'react-native-paper';
@@ -54,7 +54,7 @@ function produk(props) {
                     fetch(urlProdukDetail+id_produk, {headers})
                         .then(response => response.json())
                         .then(responseData => {
-                            console.log(responseData.data.images[0].file_upload)
+                            console.log(responseData.data)
                             setProductDetail([...productDetail, responseData.data])
                     })
 
@@ -112,14 +112,16 @@ function produk(props) {
 
                 {orders.map((data, index) => 
                 <View key={index} style={{flexDirection:'row', marginVertical:10, height:height*0.25, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
-                    <View style={{width:width*0.35}}>
+                    <View style={{width:width*0.35, height:height*0.2}}>
                         {productDetail.map((dataProduk,i) => { if(dataProduk.id === data.details[0].product.id )
                             return(
-                            <ImageBackground source={{uri :dataProduk.images[0].file_upload}} resizeMode="cover" style={{height:'100%', justifyContent:'flex-start', alignItems:'center', paddingTop:5, width:'100%', borderRadius:10}}>
-                                <View style={{padding:5, backgroundColor:'white', borderWidth:1, borderColor:'black'}}>
-                                    <Text style={{fontSize:10}}>{data.invoice}</Text>
-                                </View>
-                            </ImageBackground>
+                            <View key={i} style={{height:height*0.4}}>
+                                <ImageBackground source={{uri :dataProduk.images[0].image_url}} resizeMode="stretch" style={{height:height*0.25, justifyContent:'flex-start', alignItems:'center', paddingTop:5, width:'100%', borderRadius:10}}>
+                                    <View style={{padding:5, backgroundColor:'white', borderWidth:1, borderColor:'black'}}>
+                                        <Text style={{fontSize:10}}>{data.invoice}</Text>
+                                    </View>
+                                </ImageBackground>
+                            </View>
                             )
                         })}
                     </View>
@@ -141,7 +143,7 @@ function produk(props) {
                             <View style={{justifyContent:'space-around', width:'50%'}}>
                                 {/* <Text style={{fontSize:10}}>JNE JN534120N101</Text> */}
                                 {/* <Text style={{fontSize:14, color:'red'}}>Resi Belum di Input</Text> */}
-                                <Text style={{color:'#949494', fontSize:10}}>{data.created_at}</Text>
+                                <Text style={{color:'#949494', fontSize:10}}>{moment(data.created_at).format("MMMM D, YYYY")}</Text>
                             </View>
                             <TouchableOpacity style={{width:'40%'}}  onPress={() => detailProduk(data.id)}>
                                 <Text style={{color:'#07A9F0', fontSize:12}}>Cek Pesanan</Text>
@@ -155,7 +157,7 @@ function produk(props) {
 
             </ScrollView>
 
-            <BottomTab/>
+            <BottomTab {...props}/>
 
         </View>
     );

@@ -18,7 +18,7 @@ function appbarHome(props) {
     return (
         <Appbar.Header style={{backgroundColor:'transparent', height:70}}>
 
-            { (title!=="Home" && title!=="Jualan Anda") &&
+            { (title!=="Home" && title!=="Jualan Anda" && title!=="Pesanan Saya") &&
                 <Appbar.BackAction onPress={() => {props.params.navigation.goBack()}} />
             }
 

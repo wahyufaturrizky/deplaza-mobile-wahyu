@@ -47,7 +47,7 @@ function Login(props) {
 
     const checkLogin = async() =>{
         let value = await AsyncStorage.getItem('data');
-        if(value=null){
+        if(value!=null){
             console.log(value)
             goToHome()
         }
@@ -71,7 +71,7 @@ function Login(props) {
     
         .then((response) => response.json())
         .then( async(responseData) => {
-            console.log(responseData)
+            // console.log(responseData)
             setLoading(false)
             if(responseData.data=="Password incorrect"){
                 alert("Password Anda Salah")
@@ -106,12 +106,19 @@ function Login(props) {
         .then((response) => response.json())
         .then( async(responseData) => {
                 setLoading(false)
-                await AsyncStorage.setItem('data', JSON.stringify(responseData.data));
-                // console.log(responseData.data)
-                goToHome()
+                if(!responseData.status){
+                    if(responseData.data.email!=null){
+                        alert("Email Sudah Terdaftar")
+                    }else if(responseData.data.phone!=null){
+                        alert("Nomor Handphone Sudah Terdaftar")
+                    }
+                }else if(responseData.status){
+                    await AsyncStorage.setItem('data', JSON.stringify(responseData.data));
+                    alert("Pendaftaran Berhasil")
+                    goToHome()
+                }
         })
-        .done();  
-        // goToHome()
+        .done();
 
     }      
     
@@ -126,7 +133,7 @@ function Login(props) {
                 
                     <Image
                         source={require(logo)}
-                        style={{ width: width*1.2, height:  height*0.3, alignSelf: 'center', marginBottom:height*0.05, marginTop:height*0.11}}
+                        style={{ width: width*1.2, height:  height*0.3, alignSelf: 'center', marginBottom:height*0.05, marginTop:height*0.08}}
                         resizeMode='cover'
                         width={width*1.2}
                         height={height*0.3} />
@@ -146,6 +153,7 @@ function Login(props) {
                             label='Email'
                             value={email}
                             mode = "outlined"
+                            keyboardType="email-address"
                             onChangeText={(val)=> setEmail(val)}
                             style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginBottom:height*0.01}} 
                         />    
@@ -168,9 +176,11 @@ function Login(props) {
 
                                 <TextInput
                                     value={phone}
+                                    placeholder="Nomor Handphone"
                                     onChangeText={(val)=> setPhone(val)}
                                     mode="outlined"
-                                    style={{width:'70%', backgroundColor:'white'}}
+                                    keyboardType="numeric"
+                                    style={{width:'70%',  backgroundColor:'white'}}
                                 />
                                 
                             </View>

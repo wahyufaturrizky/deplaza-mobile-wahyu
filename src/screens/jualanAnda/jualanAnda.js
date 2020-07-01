@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { View, Image, Dimensions, ImageBackground, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { Avatar, Button,Text, Card, Title, Paragraph } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,10 +14,19 @@ function jualanAnda(props) {
     const { height, width } = Dimensions.get("window");
     const haveProduk = true
 
+    useEffect(() => {
+        getListWishlist()
+    }, [])
+
     //Pergi ke Hal List Produk
     const listProduk = (title) => {
         props.navigation.navigate('Produk',{title})      
     }
+
+    const getListWishlist = () => {
+        console.log("get")
+    }
+    
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>

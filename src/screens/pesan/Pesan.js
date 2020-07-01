@@ -11,6 +11,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
 import {URL} from '../../utils/global'
+import Loading from '../../components/loading'
 
 function Pesan(props) {
     const totalHarga = props.route.params.data.totalHarga
@@ -18,20 +19,24 @@ function Pesan(props) {
     const [fullname, setFullname] = useState('')
     const [dataDetail, setDataDetail] = useState([])
     const [phone, setPhone] = useState('')
-    const [provinsi, setProvinsi] = useState("Provinsi");
-    const [kota, setKota] = useState("Kota");
+    const [provinsi, setProvinsi] = useState("kosong");
+    const [kota, setKota] = useState("kososng");
     const [pos, setPos] = useState("");
     const [alamat, setAlamat] = useState("");
     const [margin, setMargin] = useState("0");
     const [totalKeseluruhan, setTotalKeseluruhan] = useState(totalHarga);
     const [totalPendapatan, setTotalPendapatan] = useState("0");
-    const [metode, setMetode] = useState(true); //True = Metode Bank
+    const [totalBiaya, setTotalBiaya] = useState(totalHarga);
+    
+    const [totalKomisi, setTotalKomisi] = useState("0");
+    // const [metode, setMetode] = useState(true); //True = Metode Bank
     const [qty, setQty] = useState(props.route.params.data.qty)
     const [provinces, setProvinces] = useState([])
     const [cities, setCities] = useState([])
     const [idOrder, setIdOrder] = useState(0)
     const [photo, setPhoto] = useState(0)
     const [pesan, setPesan] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const metodeCOD = props.route.params.data.metodeCOD
     const id_produk = props.route.params.data.id_produk
@@ -65,18 +70,27 @@ function Pesan(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'multipart/form-data',
         }
 
+        let date = new Date(); //To add the time suffix in filename
+
         ImagePicker.openPicker({
-            width: 300,
-            height: 400,
+            includeBase64:true,
+            width: 768,
+            height: 1080,
             cropping: true
         }).then(image => {
             // console.log(image);
             setPhoto(image)
+            let image64 = `data:${image.mime};base64,${image.data}`;
+            // console.log(image)
 
-            fetch(urlOrder+idOrder+"/pay", {method: 'POST', headers,
-                body:JSON.stringify({proof_payment : image.path})
+            let formdata = new FormData();
+            formdata.append("proof_payment", image64)
+
+            fetch(urlOrder+idOrder+"/pay-base", {method: 'POST', headers,
+                body:formdata
             })
             .then(response => response.json())
             .then(async(responseData) => {
@@ -88,7 +102,7 @@ function Pesan(props) {
       }
 
     const ubahPembayaran = () => {
-        setMetode(!metode)
+        setMetode(!metodeCOD)
     }
 
     // Fungsi menuju ke halaman pesanan
@@ -98,10 +112,21 @@ function Pesan(props) {
 
     // Fungsi untuk mengganti Quantity
     const changeQty = (simbol) => {
+        let hargaProduk = parseInt(dataDetail.price_basic)
+        let totalOngkirNow = parseInt(totalOngkir)
+        let komisiDasar = parseInt(dataDetail.price_commission)
+        let tmargin = parseInt(margin)
+
         if(simbol === "+"){
-            setQty(qty+1)
+            let qtynow = parseInt(qty)+1
+            setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+tmargin), setTotalKomisi(komisiDasar*qtynow))
+            setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow)
+            setTotalPendapatan(tmargin+(komisiDasar*qtynow))
         }else if(simbol === "-"){
-            setQty(qty-1)
+            let qtynow = parseInt(qty)-1
+            setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+tmargin), setTotalKomisi(komisiDasar*qtynow))
+            setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow)
+            setTotalPendapatan(tmargin+(komisiDasar*qtynow))
         }
     }
 
@@ -121,7 +146,8 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setDataDetail(responseData.data)
-                setTotalPendapatan(responseData.data.price_commission)
+                setTotalPendapatan(responseData.data.price_commission*qty)
+                setTotalKomisi(responseData.data.price_commission*qty)
             })
     }
     
@@ -130,7 +156,7 @@ function Pesan(props) {
         setMargin(text)
 
         let tmargin = parseInt(text)
-        let tkomisi = parseInt(dataDetail.price_commission)
+        let tkomisi = parseInt(totalKomisi)
 
         setTotalKeseluruhan(totalHarga+tmargin)
         setTotalPendapatan(tmargin+tkomisi)
@@ -176,105 +202,85 @@ function Pesan(props) {
 
     // Fungsi untuk get mengorder
     const postProduct = async() => {
+        
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
         
-        let id_metode = 1
-        if(metode){
-            id_metode=3
+        let id_metode = 3
+        if(metodeCOD){
+            id_metode=1
         }
 
+        if(qty<1){
+            alert("Anda Belum Memasukkan Jumlah yang di Beli")
+        }else if(fullname==""){
+            alert("Anda Belum Mengisi Nama Lengkap")
+        }else if(phone==""){
+            alert("Anda Belum Mengisi Nomor Telfon")
+        }else if(provinsi=="kosong"){
+            alert("Anda Belum Mengisi Provinsi")
+        }else if(kota=="kosong"){
+            alert("Anda Belum Mengisi Kota")
+        }else if(pos==""){
+            alert("Anda Belum Mengisi Kode Pos")
+        }else if(alamat==""){
+            alert("Anda Belum Mengisi Alamat")
+        }else{
+            setLoading(true)
+            let headers = {
+                Authorization: `Bearer ${data.token}`,
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type' : 'application/json'
+            }
 
-        let headers = {
-            Authorization: `Bearer ${data.token}`,
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type' : 'application/json'
+            const dataBody = {
+                "voucher": "",
+                "products": [
+                    {
+                        "product_id": id_produk,
+                        "product_name": dataDetail.name,
+                        "product_qty": qty,
+                        "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
+                        "product_note": "",
+                        "product_custom_commission" : margin //Margin yang ditambahkan manual
+                    }
+                ],
+                "customer": {
+                    "save_customer": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+                    "customer_id": 0,
+                    "customer_name": fullname,
+                    "customer_phone": phone,
+                    "customer_email": ""
+                },
+                "delivery": {
+                    "save_address": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
+                    "delivery_address_id": 0,
+                    "delivery_reciver_name": fullname,
+                    "delivery_reciver_city": kota,
+                    "delivery_reciver_post": pos,
+                    "delivery_reciver_address": alamat
+                },
+                "shipping": {
+                    "courier_id" : 1, //kurir dari raja ongkir (JNE)
+                    "package_courier" : "REG",
+                    "sipping_cost": totalOngkir
+                },
+                "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
+            }
+
+            fetch(URL+"v1/orders", {method: 'POST', headers,
+                body:JSON.stringify(dataBody)
+            })
+            .then(response => response.json())
+            .then(async(responseData) => {
+                console.log(responseData.data.id)
+                setIdOrder(responseData.data.id)
+                setPesan(true)
+                setLoading(false)
+                alert("Silahkan Upload Bukti Pembayaran di Tombol Upload Bukti Transfer")
+                //    gotoPesanan()
+            })
         }
-
-        const dataBody = {
-            "voucher": "",
-            "products": [
-                {
-                    "product_id": id_produk,
-                    "product_name": dataDetail.name,
-                    "product_qty": qty,
-                    "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
-                    "product_note": "",
-                    "product_custom_commission" : margin //Margin yang ditambahkan manual
-                }
-            ],
-            "customer": {
-                "save_customer": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
-                "customer_id": 0,
-                "customer_name": fullname,
-                "customer_phone": phone,
-                "customer_email": ""
-            },
-            "delivery": {
-                "save_address": 1, //kedepannya untuk opsi, mau di save apa nggak data customer
-                "delivery_address_id": 0,
-                "delivery_reciver_name": fullname,
-                "delivery_reciver_city": kota,
-                "delivery_reciver_post": pos,
-                "delivery_reciver_address": alamat
-            },
-            "shipping": {
-                "courier_id" : 1, //kurir dari raja ongkir (JNE)
-                "package_courier" : "REG",
-                "sipping_cost": totalOngkir
-            },
-            "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
-        }
-
-        // const dataBody = {
-        //     "customer": 
-        //         {
-        //             "customer_email": "", 
-        //             "customer_id": 0, 
-        //             "customer_name": "Test Reza", 
-        //             "customer_phone": "817234123", 
-        //             "save_customer": 1
-        //         }, 
-        //     "delivery": 
-        //         {
-        //             "delivery_address_id": 0, 
-        //             "delivery_reciver_address": "Bekasi", 
-        //             "delivery_reciver_city": "54", 
-        //             "delivery_reciver_name": "Test Reza", 
-        //             "delivery_reciver_post": "17711", 
-        //             "save_address": 1
-        //         }, 
-        //     "payment_method_id": 3, 
-        //     "products": 
-        //         [
-        //             {
-        //                 "product_custom_commission": "2000", 
-        //                 "product_id": 12, 
-        //                 "product_name": "Product COD insan", 
-        //                 "product_note": "", 
-        //                 "product_qty": 6, 
-        //                 "product_variation": "{\"color\":[\"red\"],\"size\":[\"\"]}"}], 
-        //     "shipping": 
-        //         {
-        //             "courier_id": 1, 
-        //             "package_courier": "REG", 
-        //             "sipping_cost": 68000
-        //         }, 
-        //     "voucher": ""
-        // }
-
-        console.log(urlOrder)
-
-        fetch(URL+"v1/orders", {method: 'POST', headers,
-            body:JSON.stringify(dataBody)
-        })
-        .then(response => response.json())
-        .then(async(responseData) => {
-           console.log(responseData.data.id)
-           setIdOrder(responseData.data.id)
-        //    setPesan(true)
-            gotoPesanan()
-        })
 
     }
 
@@ -287,7 +293,7 @@ function Pesan(props) {
                 <View style={{backgroundColor:'#F8F8F8', padding:10}}>
                     <Text style={{fontSize:18}}>Metode Pembayaran</Text>
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                        {metode ?
+                        {!metodeCOD ?
                             <View>
                                 <Text style={{fontWeight:'bold', fontSize:18}}>Transfer Bank</Text>
                                 <Text>DePlaza</Text>
@@ -311,7 +317,7 @@ function Pesan(props) {
                             <Text>Biaya Produk</Text>
                             <Text style={{color:'gray', fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                         </View>
-                        <Text>Rp. {totalHarga.toString()}</Text>
+                        <Text>Rp. {totalBiaya.toString()}</Text>
                     </View>
 
                     <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
@@ -321,11 +327,12 @@ function Pesan(props) {
                         </View>
                         <View style={{flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}}>
                             <Text>Rp. </Text>
-                            <View style={{backgroundColor:'#d5d5d5', width:'30%'}}>
+                            <View style={{backgroundColor:'#d5d5d5', width:'35%'}}>
                                 <InputNormal
-                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.035, fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
+                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
                                     value={margin}
                                     onChangeText={(text) => changeMargin(text)}
+                                    disabled={pesan ? true : false}
                                     keyboardType = 'numeric'
                                 />
                             </View>
@@ -346,7 +353,7 @@ function Pesan(props) {
                             <Text style={{color:'gray', fontSize:12}}>(Komisi + Tambahan Margin)</Text>
                         </View>
                         <View style={{alignItems:'flex-end'}}>
-                            <Text style={{fontSize:12}}>Rp. {dataDetail.price_commission} + Rp. {margin}</Text>
+                            <Text style={{fontSize:12}}>Rp. {totalKomisi} + Rp. {margin}</Text>
                             <Text>Rp. {totalPendapatan}</Text>
                         </View>
                     </View>
@@ -355,7 +362,7 @@ function Pesan(props) {
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                     
-                {/* {(metode || pesan) &&
+                {(!metodeCOD && pesan) &&
                     <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                             style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}
@@ -366,7 +373,7 @@ function Pesan(props) {
                             </Text>
                         </LinearGradient>
                     </TouchableOpacity>
-                } */}
+                }
 
                 {photo != 0 && (
                     <Image
@@ -387,6 +394,7 @@ function Pesan(props) {
                             mode = "outlined"
                             onChangeText={(val)=> setFullname(val)}
                             style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10}}
+                            disabled={pesan ? true : false}
                             
                         />             
 
@@ -411,44 +419,54 @@ function Pesan(props) {
                                 onChangeText={(val)=> setPhone(val)}
                                 mode="outlined"
                                 style={{width:'70%', backgroundColor:'white', borderRadius:10}}
+                                disabled={pesan ? true : false}
                             />
                         </View>
 
-                        <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', alignItems:'center', flexDirection:'row', marginTop:height*0.01}}>
-                            <View style={{borderWidth:1, borderColor:'gray', width:'30%', borderRadius:10, height:height*0.055}}>
+                        <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', alignItems:'center', marginTop:height*0.01}}>
+                            
+                            <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'100%', marginBottom:height*0.01, borderRadius:10, height:height*0.055}}>
                                 <Picker
+                                    enabled={pesan ? false : true}
                                     selectedValue={provinsi}
                                     onValueChange={(itemValue, itemIndex) => getKota(itemValue)}
                                     style={{justifyContent:'center', alignItems:'center'}}
-                                >
+                                >   
+                                        <Picker.Item label={"Pilih Provinsi"} value={"kosong"} />
                                     {provinces.map((prov,i) => (
                                         <Picker.Item key={i} label={prov.province} value={prov.province_id} />
                                     ))}
                                 </Picker>
                             </View>
 
-                            <View style={{borderWidth:1, borderColor:'gray', width:'30%', borderRadius:10 , height:height*0.055}}>
+                            <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'100%', borderRadius:10, marginBottom:height*0.01, height:height*0.055}}>
                                 <Picker
+                                    enabled={pesan ? false : true}
                                     selectedValue={kota}
                                     onValueChange={(itemValue, itemIndex) => setKota(itemValue)}
                                 >
+                                        <Picker.Item label={"Pilih Kota"} value={"kosong"} />
                                     {cities.map((city,i) => (
                                         <Picker.Item key={i} label={city.city_name} value={city.city_id} />
                                     ))}
                                 </Picker>
                             </View>
 
-                            <View style={{borderWidth:1, borderColor:'gray', paddingTop:height*0.003, width:'30%', borderRadius:10 , height:height*0.055}}>
+                            {/* <View style={{borderWidth:1, borderColor:'gray', paddingTop:height*0.003, width:'100%', borderRadius:10 , height:height*0.055}}> */}
                                 <TextInput
-                                    placeholder="Kode Pos"
+                                    label='Kode Pos'
+                                    disabled={pesan ? true : false}
+                                    mode="outlined"
                                     value={pos}
+                                    keyboardType="numeric"
                                     onChangeText={(val)=> setPos(val)}
-                                    style={{backgroundColor:'white',borderRadius:10, height:height*0.05}}
+                                    style={{width:'100%', backgroundColor:'white', marginBottom:height*0.01, borderRadius:10}}
                                 />
-                            </View>
+                            {/* </View> */}
                         </View>
 
                         <TextInput
+                            disabled={pesan ? true : false}
                             label='Alamat Lengkap'
                             value={alamat}
                             mode = "outlined"
@@ -473,29 +491,34 @@ function Pesan(props) {
                             <Text style={{fontSize:18}}>{dataDetail.name}</Text>
                             <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                                 <View style={{width:'50%'}}>
+                                    
                                     <Text>Rp. {dataDetail.price_basic}</Text>
-                                    {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
-                                    <Text style={{fontSize:14, color:'gray'}}>Warna: {variation.color}</Text>
+                                    {variation!=null || variation!=[] &&
+                                        <View>
+                                            <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text>
+                                            <Text style={{fontSize:14, color:'gray'}}>Warna: {variation.color}</Text>
+                                        </View>
+                                    }
                                 </View>
                                 <View style={{width:'50%', justifyContent:'space-between', alignItems:'center'}}>
                                     <Text style={{fontSize:14, color:'gray', marginBottom:height*0.01}}>Jumlah: </Text>
                                     <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'60%'}}>
                                         <TouchableOpacity onPress={() => changeQty("-")}>
-                                            <View style={{paddingHorizontal:10, backgroundColor:'#D5D5D5',height:height*0.035, justifyContent:'center', alignItems:'center'}}>
-                                                <Text style={{fontSize:16}}>-</Text>
+                                            <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
+                                                <Text style={{fontSize:12}}>-</Text>
                                             </View>
                                         </TouchableOpacity>
-                                        <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'30%'}}>
+                                        <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'40%'}}>
                                             <InputNormal
-                                                style={{borderColor:'rgb(18, 48, 92)',height:height*0.035, fontSize:10}}
+                                                style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:14}}
                                                 value={qty.toString()}
                                                 disabled
                                                 editable={false}
                                             />
                                         </View>
                                         <TouchableOpacity onPress={() => changeQty("+")}>
-                                            <View style={{paddingHorizontal:10, backgroundColor:'#D5D5D5',height:height*0.035, justifyContent:'center', alignItems:'center'}}>
-                                                <Text style={{fontSize:16}}>+</Text>
+                                            <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
+                                                <Text style={{fontSize:12}}>+</Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -506,17 +529,25 @@ function Pesan(props) {
                     </View>
                 </View>
 
+                
+
             </ScrollView>
 
-            <TouchableOpacity onPress={postProduct}>
-                <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                    style={{padding:15, justifyContent:'center', alignItems:'center'}}
-                >
-                    <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
-                        Masukkan Pesanan
-                    </Text>
-                </LinearGradient>
-            </TouchableOpacity>
+            {loading &&
+                <Loading/>
+            }
+
+            {!pesan &&
+                <TouchableOpacity onPress={postProduct}>
+                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                        style={{padding:15, justifyContent:'center', alignItems:'center'}}
+                    >
+                        <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
+                            Masukkan Pesanan
+                        </Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            }
         </View>
     );
 }

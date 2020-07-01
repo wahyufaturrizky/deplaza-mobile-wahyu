@@ -13,6 +13,8 @@ function produk(props) {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(false)
 
+    const [color, setColor] = useState(false)
+
     let halaman = props.route.params.title
 
     const { height, width } = Dimensions.get("window");
@@ -40,7 +42,8 @@ function produk(props) {
             .then(response => response.json())
             .then(responseData => {
                 setProducts(responseData.data)
-                console.log(responseData.data[6].variation_data.color)
+                // setColor
+                console.log(responseData.data.brand)
                 setLoading(false)
             })
             .catch(e => console.log(e))
@@ -66,7 +69,7 @@ function produk(props) {
                     {products[index].images[0] != null ? 
                         <Image
                             // source={require('../../assets/images/ex-produk.png')}
-                            source={{uri : products[index].images[0].file_upload}}
+                            source={{uri : products[index].images[0].image_url}}
                             style={{height:'100%', width:'30%', borderRadius:10}}
                         />
                     :
@@ -80,24 +83,25 @@ function produk(props) {
                         <Title style={{fontSize:16, lineHeight:18}}>{product.name}</Title>
                         <Text style={{fontSize:14}}>Mulai Dari Rp {product.price_basic}</Text>
                         <Text style={{color:'#949494'}}>Stok {product.stock}</Text>
-                        <Text style={{color:'#949494'}}>Varian Warna</Text>
-                        <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:10, paddingBottom:20}}>
-                            <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%'}}>
-                                { products[6].variation_data != null ? products[6].variation_data.color.map((color,i) => (
+                        { products.variation_data != null ?
+                        <View>
+                            <Text style={{color:'#949494'}}>Varian Warna</Text>
+                            <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:10, paddingBottom:20}}>
+                                <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%'}}>
+                                {products[index].variation_data.color.map((color,i) => (
                                     <View key={i} style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>{color}</Text></View>
-                                )) : 
-                                    <View></View>
-                                }
+                                ))}
+                                </View>
+                                <TouchableOpacity style={{width:'38%'}}  onPress={() => detailProduk(product.id)}>
+                                    <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
+                                </TouchableOpacity>
                             </View>
-                            {/* <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%', flexWrap:'wrap'}}>  
-                                <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>Red</Text></View>
-                                <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>Green</Text></View>
-                                <View style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>Blue</Text></View>
-                            </View> */}
-                            <TouchableOpacity style={{width:'38%'}}  onPress={() => detailProduk(product.id)}>
+                        </View>
+                        : 
+                            <TouchableOpacity style={{width:'38%', paddingVertical:10}}  onPress={() => detailProduk(product.id)}>
                                 <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
                             </TouchableOpacity>
-                        </View>
+                        }
                     </View>
                 </View>
 
@@ -109,7 +113,7 @@ function produk(props) {
                 <Loading/>
             }
 
-            <BottomTab/>
+            <BottomTab {...props}/>
 
         </View>
     );
