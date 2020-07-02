@@ -8,10 +8,12 @@ import { Title } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import {URL} from '../../utils/global'
 import produkDetail from '../produkDetail/produkDetail';
+import Loading from '../../components/loading'
 
 function produk(props) {
     const [orders, setOrders] = useState([])
     const [productDetail, setProductDetail] = useState([])
+    const [loading, setLoading] = useState(true)
 
     let halaman = props.route.params.title
 
@@ -44,23 +46,9 @@ function produk(props) {
             .then(response => response.json())
             .then(responseData => {
                 setOrders(responseData.data)
-                let res = responseData.data
-                
-                res.map((data,i) => {
-                    let id_produk = data.details[0].product.id
-
-                    // console.log(data.details[0].product.id)
-
-                    fetch(urlProdukDetail+id_produk, {headers})
-                        .then(response => response.json())
-                        .then(responseData => {
-                            console.log(responseData.data)
-                            setProductDetail([...productDetail, responseData.data])
-                    })
-
-                })
-
-                
+                // console.log(responseData.data[0].payment.method_id)
+                setLoading(false)
+   
             })
     }
 
@@ -111,19 +99,15 @@ function produk(props) {
                 ))} */}
 
                 {orders.map((data, index) => 
-                <View key={index} style={{flexDirection:'row', marginVertical:10, height:height*0.25, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
+                <View key={index} style={{flexDirection:'row', marginVertical:10, height:height*0.2, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
                     <View style={{width:width*0.35, height:height*0.2}}>
-                        {productDetail.map((dataProduk,i) => { if(dataProduk.id === data.details[0].product.id )
-                            return(
-                            <View key={i} style={{height:height*0.4}}>
-                                <ImageBackground source={{uri :dataProduk.images[0].image_url}} resizeMode="stretch" style={{height:height*0.25, justifyContent:'flex-start', alignItems:'center', paddingTop:5, width:'100%', borderRadius:10}}>
+                            <View style={{height:height*0.3}}>
+                                <ImageBackground source={{uri :data.details[0].product.images[0].image_url}} resizeMode="stretch" style={{height:height*0.2, justifyContent:'flex-start', alignItems:'center', paddingTop:5, width:'100%', borderRadius:10}}>
                                     <View style={{padding:5, backgroundColor:'white', borderWidth:1, borderColor:'black'}}>
                                         <Text style={{fontSize:10}}>{data.invoice}</Text>
                                     </View>
                                 </ImageBackground>
                             </View>
-                            )
-                        })}
                     </View>
                     
                     <View style={{width:width*0.50}}>
@@ -131,7 +115,7 @@ function produk(props) {
                         <View style={{flexDirection:'row', alignItems:'center', marginBottom:height*0.01}}>
                             <View style={{width:'60%'}}>
                                 <Text style={{fontSize:14}}>Rp. {data.payment.ammount}</Text>
-                                <Text style={{color:'#949494'}}>{data.payment.method.id != 1 ? "COD" : "BANK"} Margin Rp. {data.total_commission}</Text>
+                                <Text style={{color:'#949494'}}>{data.payment.method.id != 1 ? "BANK" : "COD"} Margin Rp. {data.total_commission}</Text>
                             </View>
                             <View style={{width:'30%', borderWidth:1, borderColor:'green', padding:5, borderRadius:10}}>
                                 <Text style={{textAlign:'center', fontSize:8, color:'green'}}>{data.payment.status_label}</Text>
@@ -153,9 +137,11 @@ function produk(props) {
                 </View>
                 )}
 
-                
-
             </ScrollView>
+
+            {loading &&
+                <Loading/>
+            }
 
             <BottomTab {...props}/>
 

@@ -6,12 +6,12 @@ import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
 import { Title, ActivityIndicator } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import {URL} from '../../utils/global'
+import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
 
 function produk(props) {
     const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const [color, setColor] = useState(false)
 
@@ -32,18 +32,27 @@ function produk(props) {
     const getProduct = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
+        let param =""
+
+        if(halaman==="Komisi Terbesar"){
+            param = "order_by=price_commission&order_direction=desc"
+        }else{
+            param = ""
+        }
+
+        console.log(urlProduk+"?"+param)
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
         }
 
-        fetch(urlProduk, {headers})
+        fetch(urlProduk+"?"+param, {headers})
             .then(response => response.json())
             .then(responseData => {
                 setProducts(responseData.data)
                 // setColor
-                console.log(responseData.data.brand)
+                // console.log(responseData.data)
                 setLoading(false)
             })
             .catch(e => console.log(e))
@@ -81,7 +90,7 @@ function produk(props) {
                     }
                     <View style={{width:'68%'}}>
                         <Title style={{fontSize:16, lineHeight:18}}>{product.name}</Title>
-                        <Text style={{fontSize:14}}>Mulai Dari Rp {product.price_basic}</Text>
+                        <Text style={{fontSize:14}}>Mulai Dari Rp {formatRupiah(product.price_basic)}</Text>
                         <Text style={{color:'#949494'}}>Stok {product.stock}</Text>
                         { products.variation_data != null ?
                         <View>
@@ -109,6 +118,7 @@ function produk(props) {
                 })}
 
             </ScrollView>
+
             {loading &&
                 <Loading/>
             }

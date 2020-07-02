@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, Text, StyleSheet, TouchableHighlight} from 'react-native'
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import { CommonActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -22,22 +22,22 @@ function bottomTab(props){
     
     return (
         <View style={[styles.shadow, {backgroundColor:'white', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}]}>
-            <TouchableHighlight onPress={gotoHome}>
+            <TouchableOpacity onPress={gotoHome}>
                 <View style={{alignItems:'center'}}>
                     <Icon name="home" size={30} color="#949494" />
                     <Text>Home</Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
             {/* <View style={{alignItems:'center'}}>
                 <Icon name="help-circle-outline" size={30} color="#949494" />
                 <Text>Bantuan Jualan</Text>
             </View> */}
-            <TouchableHighlight onPress={gotoPesanan}>
+            <TouchableOpacity onPress={gotoPesanan}>
                 <View style={{alignItems:'center'}}>
                     <Icon name="account" size={30} color="#949494" />
                     <Text>Pesanan Saya</Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
             {/* <View style={{alignItems:'center'}}>
                 <Icon name="account" size={30} color="#949494" />
                 <Text>Akun</Text>

@@ -6,7 +6,8 @@ import AsyncStorage from '@react-native-community/async-storage'
 import {Picker} from '@react-native-community/picker'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {URL} from '../../utils/global'
+import {URL, formatRupiah} from '../../utils/global'
+import Loading from '../../components/loading'
 
 import Appbar from '../../components/appbarHome';
 import produkDetail from '../produkDetail/produkDetail';
@@ -16,7 +17,7 @@ function Pesan(props) {
     const [dataDetail, setDataDetail] = useState([])
     const [productDetail, setProductDetail] = useState([])
     const [modal, setModal] = useState(false)
-
+    const [loading, setLoading] = useState(true)
     const [methodId, setMethodId] = useState(0)
     const [invoice, setInvoice] = useState("0")
     const [receiver_name, setReceiver_name] = useState("")
@@ -76,7 +77,7 @@ function Pesan(props) {
                 setReceiver_address(responseData.data.delivery.receiver_address)
                 setPhone(responseData.data.customer.phone)
                 setColor(JSON.parse(responseData.data.details[0].variation).color[0])
-                setQty(responseData.data.details.qty)
+                setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
                 setAmmount(responseData.data.payment.ammount)
                 setCommission(responseData.data.details[0].commission)
@@ -93,6 +94,7 @@ function Pesan(props) {
                     .then(response => response.json())
                     .then(responseData => {
                         // console.log(responseData.data.images[0].file_upload)
+                        setLoading(false)
                         setProductDetail(responseData.data, console.log(productDetail))
                         setProductName(responseData.data.name)
                         setProductImages(responseData.data.images[0].image_url)
@@ -138,9 +140,9 @@ function Pesan(props) {
                         <View>
                             <Text style={{fontSize:18}}>Alamat Pengiriman</Text>
                             <View style={{marginTop:height*0.02}}>
-                                <Text style={{fontSize:12}}>{receiver_name}</Text>
-                                <Text style={{fontSize:12}}>{receiver_address}</Text>
-                                <Text style={{fontSize:12}}>{phone}</Text>
+                                <Text style={{fontSize:16}}>{receiver_name}</Text>
+                                <Text style={{fontSize:14}}>{receiver_address}</Text>
+                                <Text style={{fontSize:16}}>{phone}</Text>
                             </View>
                         </View>
 
@@ -161,7 +163,7 @@ function Pesan(props) {
                                     <Text style={{fontSize:18}}>{productName}</Text>
                                     <View style={{flexDirection:'row', justifyContent:'space-between', width:'70%', alignItems:'center'}}>
                                         <View style={{width:'50%'}}>
-                                            <Text>Rp. 67.000</Text>
+                                            <Text>Rp. {formatRupiah(total_price)}</Text>
                                             {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
                                             <Text style={{fontSize:14, color:'gray'}}>Warna: {color}</Text>
                                         </View>
@@ -193,7 +195,7 @@ function Pesan(props) {
                                 <Text>Biaya Produk</Text>
                                 <Text style={{color:'gray', fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                             </View>
-                            <Text>Rp. {total_price}</Text>
+                            <Text>Rp. {formatRupiah(total_price)}</Text>
                         </View>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
@@ -201,7 +203,7 @@ function Pesan(props) {
                                 <Text>Tunai yang Dikumpulkan dari Pelanggan</Text>
                                 <Text style={{color:'gray', fontSize:12}}>(Termasuk Margin Anda)</Text>
                             </View>
-                            <Text>Rp. {ammount}</Text>
+                            <Text>Rp. {formatRupiah(ammount)}</Text>
                         </View>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
@@ -210,8 +212,8 @@ function Pesan(props) {
                                 <Text style={{color:'gray', fontSize:12}}>(Komisi + Tambahan Margin)</Text>
                             </View>
                             <View style={{alignItems:'flex-end'}}>
-                                <Text style={{fontSize:12}}>Rp. {commission} + Rp. {custom_commission}</Text>
-                                <Text>Rp. {(parseInt(commission)+parseInt(custom_commission)).toString()}</Text>
+                                <Text style={{fontSize:12}}>Rp. {formatRupiah(commission)} + Rp. {formatRupiah(custom_commission)}</Text>
+                                <Text>Rp. {formatRupiah(parseInt(commission)+parseInt(custom_commission)).toString()}</Text>
                             </View>
                         </View>
                     </View>
@@ -237,6 +239,10 @@ function Pesan(props) {
                     }
 
                 </ScrollView>
+
+                {loading &&
+                    <Loading/>
+                }
 
                 <View></View>
 

@@ -10,7 +10,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
-import {URL} from '../../utils/global'
+import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
 
 function Pesan(props) {
@@ -28,6 +28,10 @@ function Pesan(props) {
     const [totalPendapatan, setTotalPendapatan] = useState("0");
     const [totalBiaya, setTotalBiaya] = useState(totalHarga);
     
+    const [judul,setJudul] = useState("")
+    const [priceBasic,setPriceBasic] = useState("0")
+    const [priceCommission,setPriceCommission] = useState("0")
+
     const [totalKomisi, setTotalKomisi] = useState("0");
     // const [metode, setMetode] = useState(true); //True = Metode Bank
     const [qty, setQty] = useState(props.route.params.data.qty)
@@ -36,7 +40,7 @@ function Pesan(props) {
     const [idOrder, setIdOrder] = useState(0)
     const [photo, setPhoto] = useState(0)
     const [pesan, setPesan] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const metodeCOD = props.route.params.data.metodeCOD
     const id_produk = props.route.params.data.id_produk
@@ -54,9 +58,9 @@ function Pesan(props) {
     const { height, width } = Dimensions.get("window");
 
     useEffect(() => {
-        getProvinsi()
         getDetailProduct()
-    }, [])
+        getProvinsi()
+    },[])
 
     // Fungsi untuk get gambar dari gallery
     const handleChoosePhoto = async() => {
@@ -88,13 +92,14 @@ function Pesan(props) {
 
             let formdata = new FormData();
             formdata.append("proof_payment", image64)
-
+            setLoading(true)
             fetch(urlOrder+idOrder+"/pay-base", {method: 'POST', headers,
                 body:formdata
             })
             .then(response => response.json())
             .then(async(responseData) => {
-                console.log(responseData)
+                // console.log(responseData)
+                setLoading(false)
                 gotoPesanan()
             })
         });
@@ -112,9 +117,9 @@ function Pesan(props) {
 
     // Fungsi untuk mengganti Quantity
     const changeQty = (simbol) => {
-        let hargaProduk = parseInt(dataDetail.price_basic)
+        let hargaProduk = parseInt(priceBasic)
         let totalOngkirNow = parseInt(totalOngkir)
-        let komisiDasar = parseInt(dataDetail.price_commission)
+        let komisiDasar = parseInt(priceCommission)
         let tmargin = parseInt(margin)
 
         if(simbol === "+"){
@@ -148,6 +153,12 @@ function Pesan(props) {
                 await setDataDetail(responseData.data)
                 setTotalPendapatan(responseData.data.price_commission*qty)
                 setTotalKomisi(responseData.data.price_commission*qty)
+                setJudul(responseData.data.name)
+                setPriceBasic(responseData.data.price_basic)
+                setPriceCommission(responseData.data.price_commission)
+                if(provinces.length>0){
+                    setLoading(false)
+                }
             })
     }
     
@@ -176,12 +187,18 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProvinces(responseData.rajaongkir.results)
+                if(price_basic!=0){
+                    setLoading(false)
+                }
+                // console.log(responseData.rajaongkir.results)
             })
     }
 
     // Fungsi untuk get data kota
     const getKota = async(id_prov) => {
+        setLoading(true)
         setProvinsi(id_prov)
+        console.log(id_prov)
 
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -195,6 +212,8 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setCities(responseData.rajaongkir.results)
+                
+                setLoading(false)
                 // console.log(responseData.rajaongkir.results)
                 // console.log(responseData.rajaongkir.results)
             })
@@ -238,7 +257,7 @@ function Pesan(props) {
                 "products": [
                     {
                         "product_id": id_produk,
-                        "product_name": dataDetail.name,
+                        "product_name": judul,
                         "product_qty": qty,
                         "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
                         "product_note": "",
@@ -273,7 +292,7 @@ function Pesan(props) {
             })
             .then(response => response.json())
             .then(async(responseData) => {
-                console.log(responseData.data.id)
+                // console.log(responseData.data.id)
                 setIdOrder(responseData.data.id)
                 setPesan(true)
                 setLoading(false)
@@ -287,252 +306,251 @@ function Pesan(props) {
     return (
         <View style={{backgroundColor:'white', flex:1}}>
             <Appbar params={props}/>
+            {dataDetail!=null &&
 
             <ScrollView>
+                
+                    <View style={{backgroundColor:'#F8F8F8', padding:10}}>
+                        <Text style={{fontSize:18}}>Metode Pembayaran</Text>
+                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                            {!metodeCOD ?
+                                <View>
+                                    <Text style={{fontWeight:'bold', fontSize:18}}>Transfer Bank</Text>
+                                    <Text>DePlaza</Text>
+                                    <Text>BCA / 20202033</Text>
+                                </View>
+                            :
+                                <Text style={{fontWeight:'bold', fontSize:18}}>COD</Text>
+                            }
+                            {metodeCOD &&
+                                <TouchableOpacity style={{backgroundColor:'#E6E6E6', padding:10}} onPress={ubahPembayaran}>
+                                    <Text>Ubah Metode Pembayaran</Text>
+                                </TouchableOpacity>
+                            }
+                        </View>
+                    </View>
 
-                <View style={{backgroundColor:'#F8F8F8', padding:10}}>
-                    <Text style={{fontSize:18}}>Metode Pembayaran</Text>
-                    <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                        {!metodeCOD ?
+                    <View style={{padding:10}}>
+
+                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
                             <View>
-                                <Text style={{fontWeight:'bold', fontSize:18}}>Transfer Bank</Text>
-                                <Text>DePlaza</Text>
-                                <Text>BCA / 20202033</Text>
+                                <Text>Biaya Produk</Text>
+                                <Text style={{color:'gray', fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                             </View>
-                        :
-                            <Text style={{fontWeight:'bold', fontSize:18}}>COD</Text>
-                        }
-                        {metodeCOD &&
-                            <TouchableOpacity style={{backgroundColor:'#E6E6E6', padding:10}} onPress={ubahPembayaran}>
-                                <Text>Ubah Metode Pembayaran</Text>
-                            </TouchableOpacity>
-                        }
-                    </View>
-                </View>
-
-                <View style={{padding:10}}>
-
-                    <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
-                        <View>
-                            <Text>Biaya Produk</Text>
-                            <Text style={{color:'gray', fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
+                            <Text>Rp. {(totalBiaya.toString())}</Text>
                         </View>
-                        <Text>Rp. {totalBiaya.toString()}</Text>
+
+                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                            <View>
+                                <Text>Tambahan Margin Jika Ada</Text>
+                                <Text style={{color:'gray', fontSize:12}}>*Boleh Tidak Diisi</Text>
+                            </View>
+                            <View style={{flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}}>
+                                <Text>Rp. </Text>
+                                <View style={{backgroundColor:'#d5d5d5', width:'35%'}}>
+                                    <InputNormal
+                                        style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
+                                        value={margin}
+                                        onChangeText={(text) => changeMargin(text)}
+                                        disabled={pesan ? true : false}
+                                        keyboardType = 'numeric'
+                                    />
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
+                            <View>
+                                <Text>Total Pesanan</Text>
+                                <Text style={{color:'gray', fontSize:12}}>(Tunai yang Dikumpulkan dari Pelanggan)</Text>
+                            </View>
+                            <Text>Rp. {formatRupiah(totalKeseluruhan)}</Text>
+                        </View>
+
+                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
+                            <View>
+                                <Text>Saldo yang Anda Terima</Text>
+                                <Text style={{color:'gray', fontSize:12}}>(Komisi + Tambahan Margin)</Text>
+                            </View>
+                            <View style={{alignItems:'flex-end'}}>
+                                <Text style={{fontSize:12}}>Rp. {formatRupiah(totalKomisi)} + Rp. {formatRupiah(margin)}</Text>
+                                <Text>Rp. {formatRupiah(totalPendapatan)}</Text>
+                            </View>
+                        </View>
+
                     </View>
 
-                    <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                        <View>
-                            <Text>Tambahan Margin Jika Ada</Text>
-                            <Text style={{color:'gray', fontSize:12}}>*Boleh Tidak Diisi</Text>
-                        </View>
-                        <View style={{flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}}>
-                            <Text>Rp. </Text>
-                            <View style={{backgroundColor:'#d5d5d5', width:'35%'}}>
-                                <InputNormal
-                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
-                                    value={margin}
-                                    onChangeText={(text) => changeMargin(text)}
+                    <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
+                        
+                    {(!metodeCOD && pesan) &&
+                        <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}
+                            >
+                                <Icon name="cloud-upload" size={32} color="#fff"/>
+                                <Text style={{fontSize:20, textAlign:'center', color:'white', marginLeft:width*0.04}}>
+                                    Upload Bukti Transfer
+                                </Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    }
+
+                    {photo != 0 && (
+                        <Image
+                            source={{ uri: photo.path }}
+                            style={{ width: width*0.8, height: height*0.3, alignSelf:'center', marginTop:height*0.02 }}
+                        />
+                    )}
+
+                    <View style={{backgroundColor:'#F8F8F8', padding:10, marginVertical:height*0.02}}>
+                        <Text style={{fontSize:18}}>Alamat Pengiriman</Text>
+                    </View>
+
+                    <View style={{padding:10, marginBottom:height*0.02}}>
+
+                            <TextInput
+                                label='Nama Lengkap'
+                                value={fullname}
+                                mode = "outlined"
+                                onChangeText={(val)=> setFullname(val)}
+                                style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10}}
+                                disabled={pesan ? true : false}
+                                
+                            />             
+
+                            <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', flexDirection:'row', marginTop:height*0.005}}>
+                                <View style={{height:57, width:'25%', marginTop:7, borderRadius: 5, borderColor: 'grey', borderWidth: 1, borderRadius:10}}>
+
+                                    <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', flex:1}}>
+                                        <Image
+                                            source={require(indonesia)}
+                                            style={{ width: 40, height: 40, alignSelf: 'center'}}
+                                            resizeMode='cover'
+                                            width={40}
+                                            height={40} />
+                                        <Text style={{fontSize:14}}> +62</Text>
+                                    </View>
+                                
+                                </View>
+
+                                <TextInput
+                                    label='No. Telepon'
+                                    value={phone}
+                                    onChangeText={(val)=> setPhone(val)}
+                                    mode="outlined"
+                                    style={{width:'70%', backgroundColor:'white', borderRadius:10}}
                                     disabled={pesan ? true : false}
-                                    keyboardType = 'numeric'
                                 />
                             </View>
-                        </View>
-                    </View>
 
-                    <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
-                        <View>
-                            <Text>Total Pesanan</Text>
-                            <Text style={{color:'gray', fontSize:12}}>(Tunai yang Dikumpulkan dari Pelanggan)</Text>
-                        </View>
-                        <Text>Rp. {totalKeseluruhan}</Text>
-                    </View>
-
-                    <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
-                        <View>
-                            <Text>Saldo yang Anda Terima</Text>
-                            <Text style={{color:'gray', fontSize:12}}>(Komisi + Tambahan Margin)</Text>
-                        </View>
-                        <View style={{alignItems:'flex-end'}}>
-                            <Text style={{fontSize:12}}>Rp. {totalKomisi} + Rp. {margin}</Text>
-                            <Text>Rp. {totalPendapatan}</Text>
-                        </View>
-                    </View>
-
-                </View>
-
-                <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
-                    
-                {(!metodeCOD && pesan) &&
-                    <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
-                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                            style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}
-                        >
-                            <Icon name="cloud-upload" size={32} color="#fff"/>
-                            <Text style={{fontSize:20, textAlign:'center', color:'white', marginLeft:width*0.04}}>
-                                Upload Bukti Transfer
-                            </Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-                }
-
-                {photo != 0 && (
-                    <Image
-                        source={{ uri: photo.path }}
-                        style={{ width: width*0.8, height: height*0.3, alignSelf:'center', marginTop:height*0.02 }}
-                    />
-                )}
-
-                <View style={{backgroundColor:'#F8F8F8', padding:10, marginVertical:height*0.02}}>
-                    <Text style={{fontSize:18}}>Alamat Pengiriman</Text>
-                </View>
-
-                <View style={{padding:10, marginBottom:height*0.02}}>
-
-                        <TextInput
-                            label='Nama Lengkap'
-                            value={fullname}
-                            mode = "outlined"
-                            onChangeText={(val)=> setFullname(val)}
-                            style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10}}
-                            disabled={pesan ? true : false}
-                            
-                        />             
-
-                        <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', flexDirection:'row', marginTop:height*0.005}}>
-                            <View style={{height:57, width:'25%', marginTop:7, borderRadius: 5, borderColor: 'grey', borderWidth: 1, borderRadius:10}}>
-
-                                <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', flex:1}}>
-                                    <Image
-                                        source={require(indonesia)}
-                                        style={{ width: 40, height: 40, alignSelf: 'center'}}
-                                        resizeMode='cover'
-                                        width={40}
-                                        height={40} />
-                                    <Text style={{fontSize:14}}> +62</Text>
+                            <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', alignItems:'center', marginTop:height*0.01}}>
+                                
+                                <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'100%', marginBottom:height*0.01, borderRadius:10, height:height*0.055}}>
+                                    <Picker
+                                        enabled={pesan ? false : true}
+                                        selectedValue={provinsi}
+                                        onValueChange={(itemValue, itemIndex) => getKota(itemValue)}
+                                        style={{justifyContent:'center', alignItems:'center'}}
+                                    >   
+                                            <Picker.Item label={"Pilih Provinsi"} value={"kosong"} />
+                                        {provinces.map((prov,i) => (
+                                            <Picker.Item key={i} label={prov.province} value={prov.province_id} />
+                                        ))}
+                                    </Picker>
                                 </View>
-                            
+
+                                <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'100%', borderRadius:10, marginBottom:height*0.01, height:height*0.055}}>
+                                    <Picker
+                                        enabled={pesan ? false : true}
+                                        selectedValue={kota}
+                                        onValueChange={(itemValue, itemIndex) => setKota(itemValue)}
+                                    >
+                                            <Picker.Item label={"Pilih Kota"} value={"kosong"} />
+                                        {cities.map((city,i) => (
+                                            <Picker.Item key={i} label={city.city_name} value={city.city_id} />
+                                        ))}
+                                    </Picker>
+                                </View>
+
+                                {/* <View style={{borderWidth:1, borderColor:'gray', paddingTop:height*0.003, width:'100%', borderRadius:10 , height:height*0.055}}> */}
+                                    <TextInput
+                                        label='Kode Pos'
+                                        disabled={pesan ? true : false}
+                                        mode="outlined"
+                                        value={pos}
+                                        keyboardType="numeric"
+                                        onChangeText={(val)=> setPos(val)}
+                                        style={{width:'100%', backgroundColor:'white', marginBottom:height*0.01, borderRadius:10}}
+                                    />
+                                {/* </View> */}
                             </View>
 
                             <TextInput
-                                label='No. Telepon'
-                                value={phone}
-                                onChangeText={(val)=> setPhone(val)}
-                                mode="outlined"
-                                style={{width:'70%', backgroundColor:'white', borderRadius:10}}
                                 disabled={pesan ? true : false}
-                            />
-                        </View>
+                                label='Alamat Lengkap'
+                                value={alamat}
+                                mode = "outlined"
+                                onChangeText={(val)=> setAlamat(val)}
+                                style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginTop:height*0.005}}
+                                multiline={true}
+                                numberOfLines={4}
+                            />  
+                    </View>
 
-                        <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', alignItems:'center', marginTop:height*0.01}}>
-                            
-                            <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'100%', marginBottom:height*0.01, borderRadius:10, height:height*0.055}}>
-                                <Picker
-                                    enabled={pesan ? false : true}
-                                    selectedValue={provinsi}
-                                    onValueChange={(itemValue, itemIndex) => getKota(itemValue)}
-                                    style={{justifyContent:'center', alignItems:'center'}}
-                                >   
-                                        <Picker.Item label={"Pilih Provinsi"} value={"kosong"} />
-                                    {provinces.map((prov,i) => (
-                                        <Picker.Item key={i} label={prov.province} value={prov.province_id} />
-                                    ))}
-                                </Picker>
-                            </View>
+                    <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
-                            <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'100%', borderRadius:10, marginBottom:height*0.01, height:height*0.055}}>
-                                <Picker
-                                    enabled={pesan ? false : true}
-                                    selectedValue={kota}
-                                    onValueChange={(itemValue, itemIndex) => setKota(itemValue)}
-                                >
-                                        <Picker.Item label={"Pilih Kota"} value={"kosong"} />
-                                    {cities.map((city,i) => (
-                                        <Picker.Item key={i} label={city.city_name} value={city.city_id} />
-                                    ))}
-                                </Picker>
-                            </View>
-
-                            {/* <View style={{borderWidth:1, borderColor:'gray', paddingTop:height*0.003, width:'100%', borderRadius:10 , height:height*0.055}}> */}
-                                <TextInput
-                                    label='Kode Pos'
-                                    disabled={pesan ? true : false}
-                                    mode="outlined"
-                                    value={pos}
-                                    keyboardType="numeric"
-                                    onChangeText={(val)=> setPos(val)}
-                                    style={{width:'100%', backgroundColor:'white', marginBottom:height*0.01, borderRadius:10}}
+                    <View style={{padding:10}}>
+                        <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'flex-start'}}>
+                            <View style={{width:'30%'}}>
+                                <Image
+                                    source={{uri : imageDetail}}
+                                    style={{width:'100%', height:height*0.2 , resizeMode:'cover'}}
                                 />
-                            {/* </View> */}
-                        </View>
-
-                        <TextInput
-                            disabled={pesan ? true : false}
-                            label='Alamat Lengkap'
-                            value={alamat}
-                            mode = "outlined"
-                            onChangeText={(val)=> setAlamat(val)}
-                            style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginTop:height*0.005}}
-                            multiline={true}
-                            numberOfLines={4}
-                        />  
-                </View>
-
-                <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
-
-                <View style={{padding:10}}>
-                    <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'flex-start'}}>
-                        <View style={{width:'30%'}}>
-                            <Image
-                                source={{uri : imageDetail}}
-                                style={{width:'100%', height:height*0.2 , resizeMode:'cover'}}
-                            />
-                        </View>
-                        <View style={{width:'60%'}}>
-                            <Text style={{fontSize:18}}>{dataDetail.name}</Text>
-                            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                                <View style={{width:'50%'}}>
-                                    
-                                    <Text>Rp. {dataDetail.price_basic}</Text>
-                                    {variation!=null || variation!=[] &&
-                                        <View>
-                                            <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text>
-                                            <Text style={{fontSize:14, color:'gray'}}>Warna: {variation.color}</Text>
-                                        </View>
-                                    }
-                                </View>
-                                <View style={{width:'50%', justifyContent:'space-between', alignItems:'center'}}>
-                                    <Text style={{fontSize:14, color:'gray', marginBottom:height*0.01}}>Jumlah: </Text>
-                                    <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'60%'}}>
-                                        <TouchableOpacity onPress={() => changeQty("-")}>
-                                            <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
-                                                <Text style={{fontSize:12}}>-</Text>
+                            </View>
+                            <View style={{width:'60%'}}>
+                                <Text style={{fontSize:18}}>{judul}</Text>
+                                <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                                    <View style={{width:'50%'}}>
+                                        
+                                        <Text>Rp. {formatRupiah(priceBasic)}</Text>
+                                        {variation!=null || variation!=[] &&
+                                            <View>
+                                                <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text>
+                                                <Text style={{fontSize:14, color:'gray'}}>Warna: {variation.color}</Text>
                                             </View>
-                                        </TouchableOpacity>
-                                        <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'40%'}}>
-                                            <InputNormal
-                                                style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:14}}
-                                                value={qty.toString()}
-                                                disabled
-                                                editable={false}
-                                            />
-                                        </View>
-                                        <TouchableOpacity onPress={() => changeQty("+")}>
-                                            <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
-                                                <Text style={{fontSize:12}}>+</Text>
+                                        }
+                                    </View>
+                                    <View style={{width:'50%', justifyContent:'space-between', alignItems:'center'}}>
+                                        <Text style={{fontSize:14, color:'gray', marginBottom:height*0.01}}>Jumlah: </Text>
+                                        <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'60%'}}>
+                                            <TouchableOpacity onPress={() => changeQty("-")}>
+                                                <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
+                                                    <Text style={{fontSize:12}}>-</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                            <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'40%'}}>
+                                                <InputNormal
+                                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:14}}
+                                                    value={qty.toString()}
+                                                    disabled
+                                                    editable={false}
+                                                />
                                             </View>
-                                        </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => changeQty("+")}>
+                                                <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
+                                                    <Text style={{fontSize:12}}>+</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </View>
                             </View>
+                            
                         </View>
-                        
                     </View>
-                </View>
-
-                
 
             </ScrollView>
-
+            }
             {loading &&
                 <Loading/>
             }

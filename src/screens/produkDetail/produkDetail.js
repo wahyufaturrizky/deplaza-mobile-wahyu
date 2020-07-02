@@ -5,8 +5,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { CommonActions } from '@react-navigation/native';
 import {SliderBox} from 'react-native-image-slider-box'
 import HTML from 'react-native-render-html';
-import {URL} from '../../utils/global'
+import {URL, formatRupiah} from '../../utils/global'
 import RNFetchBlob from 'rn-fetch-blob';
+import Loading from '../../components/loading'
 
 import Select2 from 'react-native-select-two';
 
@@ -21,6 +22,7 @@ function produkDetail(props) {
     const [dataDetail, setDataDetail] = useState([])
     const [dataColor, setDataColor] = useState([])
     const [dataGambar, setDataGambar] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const [copy, setCopy] = useState(false)
     const [qty, setQty] = useState(1)
@@ -44,12 +46,15 @@ function produkDetail(props) {
     const [totalOngkir, setTotalOngkir] = useState(0)
     const [totalHarga, setTotalHarga] = useState(0)
     const [metodeCOD, setmetodeCOD] = useState(false) //false kalo untuk bank 
+    const [likeProduk, setLikeProduk] = useState(0)
+    // const likeProduk = true
 
-    const likeProduk = true
     const urlProdukDetail = URL+'v1/product/'
     const urlKota = URL+"v1/shipment/cities"
     const urlKecamatan = URL+"v1/shipment/subdistrict/city/"
     const urlOngkir = URL+"v1/shipment/cost"
+    const urlWishlist = URL+"v1/wishlist"
+    
 
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
@@ -58,10 +63,11 @@ function produkDetail(props) {
     useEffect(() => {
         getDetailProduct()
         getKota()
+        CekTandai()
     }, [])
     
     const copyToClipboard = async() => {
-        const copyText = `Harga : Rp. ${dataDetail.price_basic} \n Deskripsi : \n ${dataDetail.description}`
+        const copyText = `Harga : Rp. ${formatRupiah(dataDetail.price_basic)} \n Deskripsi : \n ${dataDetail.description}`
 
         const regex = /(<([^>]+)>)/ig;
         const result = copyText.replace(regex, ''); 
@@ -70,6 +76,34 @@ function produkDetail(props) {
         setCopy(true)
     }
 
+    const CekTandai = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlWishlist, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                // setWishlist(responseData.data)
+                // console.log(responseData.data[1].product_id)
+                let res = responseData.data
+                let row = 0
+                res.map((data,i) => {
+                    console.log(data.product_id)
+                    if(data.product_id == id){
+                        row++
+                    }
+                })
+                setLikeProduk(row)
+                // setColor
+            })
+            .catch(e => console.log(e))
+    }
+ 
     const changeQty = (simbol) => {
         let hargaProduk = parseInt(dataDetail.price_basic)
         let totalOngkirNow = parseInt(totalOngkir)
@@ -107,6 +141,10 @@ function produkDetail(props) {
         props.navigation.navigate("Pesan", {title:"Pesan & Kirim", data: {id_produk : id, variation:{color:[selectColor],size:[selectSize]}, qty, metodeCOD, totalHarga, totalOngkir, imageDetail:dataGambar[0]}})
     }
 
+    const gotoWishlist = () => {
+        props.navigation.navigate("Wishlist", {title:"Pesanan Saya"})
+    }
+
     const getDetailProduct = async() => {
         setDataGambar([])
         const value = await AsyncStorage.getItem('data');
@@ -120,6 +158,8 @@ function produkDetail(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setDataDetail(responseData.data)
+                setLoading(false)
+                
                 console.log(responseData.data)
                 setTotalKomisi(responseData.data.price_commission)
 
@@ -128,10 +168,11 @@ function produkDetail(props) {
                     setSize(responseData.data.variation_data.size)
                     setColor(responseData.data.variation_data.color)
                 }
-                // console.log(responseData.data.variation_data.color)
+                // console.log(responseData.data.variation_data)
                 
                 let responseImage = responseData.data.images
                 responseImage.map((data,i) => {
+                    console.log(data.image_url)
                     setDataGambar([...dataGambar, data.image_url])
                 })
                 // for(let i=0; i<=(responseData.data.images.length)-1; i++){
@@ -243,6 +284,7 @@ function produkDetail(props) {
     }
 
     const _selectKota = async(data_kota) => {
+        setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
@@ -251,9 +293,10 @@ function produkDetail(props) {
             'Access-Control-Allow-Origin': '*',
         }
 
-        console.log(dataDetail.cod_city_id)     
+        // console.log(dataDetail.cod_city_id)     
         let cod_city =  dataDetail.cod_city_id
         let cek_code_city = cod_city.indexOf(data_kota);
+
         if(cek_code_city >= 0) {
             setmetodeCOD(true)
         }else{
@@ -272,12 +315,43 @@ function produkDetail(props) {
         .then(response => response.json())
         .then(async(responseData) => {
             let tipe= await responseData.rajaongkir.results[0].costs
+            setLoading(false)
             tipe.map((type) => {
                 if(type.service === "REG"){
                     setTotalOngkir(type.cost[0].value, setTotalHarga(dataDetail.price_basic+type.cost[0].value))
                 }
             })
         })
+    }
+
+    const postWishlist = async(id) => {
+        setLoading(true)
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        const id_user = data.id
+        // console.log(id,id_user)
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type' : 'application/json'
+        }
+
+        fetch(urlWishlist, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                product_id:id,
+                user_id:id_user,
+            })
+        })
+    
+        .then((response) => response.json())
+        .then( async(responseData) => {
+                setLoading(false)
+                goToHome()
+                // console.log(responseData)
+        })
+        .done();
     }
     
 
@@ -340,11 +414,11 @@ function produkDetail(props) {
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
                             <View>
-                                <Text style={{fontSize:24}}>Rp. {totalHarga}</Text>
+                                <Text style={{fontSize:24}}>Rp. {formatRupiah(totalHarga)}</Text>
                                 <Text style={{fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                             </View>
                                 <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, paddingHorizontal:20, justifyContent:'center'}}>
-                                <Text style={{fontSize:14}}>Komisi Rp. {totalKomisi}</Text>
+                                <Text style={{fontSize:14}}>Komisi Rp. {formatRupiah(totalKomisi)}</Text>
                             </View>
                         </View>
 
@@ -455,6 +529,10 @@ function produkDetail(props) {
                     
                 </ScrollView>
 
+                {loading &&
+                    <Loading/>
+                }
+
                 <Snackbar
                     visible={copy}
                     onDismiss={_onDismissSnackBar}
@@ -463,8 +541,8 @@ function produkDetail(props) {
                     Deskripsi Berhasil di Salin
                 </Snackbar>
 
-                {!likeProduk ?
-                    <TouchableOpacity  onPress={goToHome}>
+                {likeProduk<1 ?
+                    <TouchableOpacity  onPress={() => postWishlist(dataDetail.id)}>
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                             style={{padding:15, flexDirection:"row", justifyContent:'center', alignItems:'center'}}
                         >
@@ -479,14 +557,14 @@ function produkDetail(props) {
                         <TouchableOpacity style={{ width:'50%', height:height*0.06}} onPress={checkPermission}>
                             <View style={{flexDirection:'row', padding:height*0.01, justifyContent:'space-around', alignItems:'center'}}>
                                 <Icon name="cloud-download" size={height*0.04} color="#07A9F0"/>
-                                <Text style={{fontSize:height*0.02, color:'#07A9F0'}}>Tawarkan Produk</Text>
+                                <Text style={{fontSize:height*0.015, color:'#07A9F0'}}>Tawarkan Produk</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity style={{width:'50%', height:height*0.06}} onPress={gotoPesan}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{flexDirection:'row', padding:height*0.01,  justifyContent:'space-around', alignItems:'center'}}>
                                     <Icon name="send" size={height*0.04} color="#fff"/>
-                                    <Text style={{fontSize:height*0.02, color:'#fff'}}>Pesan {"&"} Kirim</Text>
+                                    <Text style={{fontSize:height*0.015, color:'#fff'}}>Pesan {"&"} Kirim</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>

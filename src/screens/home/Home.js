@@ -52,7 +52,7 @@ function Home(props) {
             <Appbar params={props}/>
             
             <View style={{backgroundColor:'blue'}}>
-                {video &&
+                {/* {video &&
                     <YouTube
                         ref={_youTubeRef}
                         apiKey = {YOUR_API_KEY}
@@ -60,31 +60,13 @@ function Home(props) {
                         play
                         style={{ alignSelf: 'stretch', height: height*0.3 }}
                     />
-                } 
-                {/* <Video
-                    source={{uri : 'https://gitlab.com/new-deplaza/deplaza-mobile/-/raw/master/src/assets/video/babastudio.mp4'}}
-                    style={{ alignSelf:'stretch', height:height*0.25 }}
-                    paused={false}
-                /> */}
-
-                {/* <YoutubePlayer
-                    ref={playerRef}
-                    height={300}
-                    width={400}
-                    videoId={"Z99WQ9EEP-s"}
-                    play={true}
-                    onChangeState={event => console.log(event)}
-                    onReady={() => console.log("ready")}
-                    onError={e => console.log(e)}
-                    onPlaybackQualityChange={q => console.log(q)}
-                    volume={50}
-                    playbackRate={1}
-                    forceAndroidAutoplay={true}
-                    playerParams={{
-                        cc_lang_pref: "us",
-                        showClosedCaptions: true
-                    }}
-                /> */}
+                }  */}
+                <Image
+                    source={require('../../assets/images/banner-home.png')}
+                    style={{width:width*1, height:height*0.3, alignSelf: 'stretch',}}
+                    width={width*1}
+                    height={height*0.3}
+                />
             </View>
 
             <View style={{width:'80%',marginTop:height*0.08, alignSelf:'center', flex:1}}>

@@ -1,18 +1,25 @@
-import React,{useEffect} from 'react';
+import React,{useEffect, useState} from 'react';
 import { View, Image, Dimensions, ImageBackground, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { Avatar, Button,Text, Card, Title, Paragraph } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient'
+import {URL} from '../../utils/global'
 
 
 import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
+import Loading from '../../components/loading'
 
 const { height, width } = Dimensions.get("window");
 
 function jualanAnda(props) {
+    const [wishlist,setWishlist] = useState(0)
+    const [loading, setLoading] = useState(true)
+
     const { height, width } = Dimensions.get("window");
     const haveProduk = true
+    const urlWishlist = URL+"v1/wishlist"
 
     useEffect(() => {
         getListWishlist()
@@ -23,8 +30,28 @@ function jualanAnda(props) {
         props.navigation.navigate('Produk',{title})      
     }
 
-    const getListWishlist = () => {
-        console.log("get")
+    const gotoWishlist = () => {
+        props.navigation.navigate('Wishlist',{title:"Produk Saya"})      
+    }
+
+    const getListWishlist = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlWishlist, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                setLoading(false)
+                let totalData = responseData.data.length
+                console.log(totalData)
+                setWishlist(totalData)
+            })
+            .catch(e => console.log(e))
     }
     
 
@@ -32,7 +59,7 @@ function jualanAnda(props) {
         <View style={{flex:1, backgroundColor:'white'}}>
             <Appbar params={props} haveProduk={haveProduk}/>
             
-            {!haveProduk ?
+            {wishlist<1 ?
                 <Image
                     source={require('../../assets/images/banner-home.png')}
                     style={{width:width*1, height:height*0.3}}
@@ -78,8 +105,8 @@ function jualanAnda(props) {
                     </Card>
                 </TouchableOpacity>
 
-                {haveProduk &&
-                    <TouchableOpacity onPress={() => listProduk('Produk Saya')} style={{marginTop:height*0.01}}>
+                {wishlist>0 &&
+                    <TouchableOpacity onPress={gotoWishlist} style={{marginTop:height*0.01}}>
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                             style={{padding:5, flexDirection:"row", borderRadius:10, justifyContent:'center', alignItems:'center'}}
                         >
@@ -92,26 +119,29 @@ function jualanAnda(props) {
                 }
 
                 <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
-                    <TouchableOpacity onPress={() => listProduk('Komisi Terbesar')} style={{width:'30%'}}>
-                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/komisi-terbesar.png')} style={{ justifyContent:'flex-end', padding:10, height:height*0.2, }}>
-                            <Text style={{color:'white'}}>Komisi Terbesar</Text>
-                            <Text style={{color:'white'}}>500 Rb</Text>
+                    <TouchableOpacity onPress={() => listProduk('Komisi Terbesar')} style={{width:'32%'}}>
+                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/komisi-terbesar.png')} resizeMode="stretch" style={{ justifyContent:'flex-end', padding:10, height:height*0.2, }}>
+                            <Text style={{color:'white', marginBottom:height*0.01}}>Komisi Terbesar</Text>
+                            {/* <Text style={{color:'white'}}>500 Rb</Text> */}
                         </ImageBackground>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => listProduk('Produk Disukai')} style={{width:'30%'}}>
-                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/produk-disukai.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
-                            <Text style={{color:'white'}}>Produk Disukai</Text>
-                            <Text style={{color:'white'}}>123 Produk</Text>
+                    <TouchableOpacity onPress={() => listProduk('Produk Disukai')} style={{width:'32%'}}>
+                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/produk-disukai.png')} resizeMode="stretch" style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
+                            <Text style={{color:'white', marginBottom:height*0.01}}>Produk Disukai</Text>
+                            {/* <Text style={{color:'white'}}>123 Produk</Text> */}
                         </ImageBackground>
                     </TouchableOpacity>
-                    <TouchableOpacity imageStyle={{borderRadius:20}} onPress={() => listProduk('Produk Lain')} style={{width:'30%'}}>
-                        <ImageBackground source={require('../../assets/images/produk-lain.png')} style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
-                            <Text style={{color:'white'}}>Produk Lain</Text>
-                            <Text style={{color:'white'}}>123 Produk</Text>
+                    <TouchableOpacity imageStyle={{borderRadius:20}} onPress={() => listProduk('Produk Lain')} style={{width:'32%'}}>
+                        <ImageBackground source={require('../../assets/images/produk-lain.png')} resizeMode="stretch" style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
+                            <Text style={{color:'white', marginBottom:height*0.01}}>Produk Lain</Text>
+                            {/* <Text style={{color:'white'}}>123 Produk</Text> */}
                         </ImageBackground>
                     </TouchableOpacity>
                 </View>
             </View>
+            {loading &&
+                <Loading/>
+            }
 
             <BottomTab {...props}/>
 
