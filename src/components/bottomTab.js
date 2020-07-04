@@ -11,6 +11,12 @@ function bottomTab(props){
         props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
     }
 
+    const gotoBantuan = () => {
+        console.log(props)
+        props.navigation.navigate("Bantuan", {title:"Bantuan Jualan"})
+    }
+
+
     const gotoHome = () => {
         props.navigation.dispatch(CommonActions.reset({
             index: 0,
@@ -28,20 +34,24 @@ function bottomTab(props){
                     <Text>Home</Text>
                 </View>
             </TouchableOpacity>
-            {/* <View style={{alignItems:'center'}}>
-                <Icon name="help-circle-outline" size={30} color="#949494" />
-                <Text>Bantuan Jualan</Text>
-            </View> */}
-            <TouchableOpacity onPress={gotoPesanan}>
+            <TouchableOpacity onPress={gotoBantuan}>
+                <View style={{alignItems:'center'}}>
+                    <Icon name="help-circle-outline" size={30} color="#949494" />
+                    <Text>Bantuan Jualan</Text>
+                </View>
+            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={gotoPesanan}>
                 <View style={{alignItems:'center'}}>
                     <Icon name="account" size={30} color="#949494" />
                     <Text>Pesanan Saya</Text>
                 </View>
+            </TouchableOpacity> */}
+            <TouchableOpacity>
+                <View style={{alignItems:'center'}}>
+                    <Icon name="account" size={30} color="#949494" />
+                    <Text>Akun</Text>
+                </View>
             </TouchableOpacity>
-            {/* <View style={{alignItems:'center'}}>
-                <Icon name="account" size={30} color="#949494" />
-                <Text>Akun</Text>
-            </View> */}
         </View>
     );
 }

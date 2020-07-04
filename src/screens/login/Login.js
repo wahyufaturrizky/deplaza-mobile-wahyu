@@ -55,8 +55,9 @@ function Login(props) {
 
     }
 
-    const SignIn = () => {
+    const SignIn = async() => {
         setLoading(true)
+
         fetch(urlLogin, {
             method: 'POST',
             headers: {
@@ -84,6 +85,8 @@ function Login(props) {
             }
         })
         .done();
+        // await AsyncStorage.setItem('data', JSON.stringify(data));
+        // goToHome()
     }
 
     //Pergi ke Hal Home, Indexnya di reset
@@ -99,7 +102,8 @@ function Login(props) {
                 fullname,
                 phone,
                 password,
-                email
+                email,
+                username:email
             })
         })
     

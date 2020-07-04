@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -10,8 +10,12 @@ import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
 
 function produk(props) {
+    
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
+    const [page, setPage] = useState(1)
+    const [load, setLoad] = useState(false)
+    const [any, setAny] = useState(true)
 
     const [color, setColor] = useState(false)
 
@@ -19,6 +23,7 @@ function produk(props) {
 
     const { height, width } = Dimensions.get("window");
     const urlProduk = URL+"v1/product" 
+    const scrollRef = useRef(); 
 
     useEffect(() => {
         getProduct()
@@ -35,25 +40,82 @@ function produk(props) {
         let param =""
 
         if(halaman==="Komisi Terbesar"){
-            param = "order_by=price_commission&order_direction=desc"
+            param = "&order_by=price_commission&order_direction=desc"
+        }else if(props.route.params.idKategori != null){
+            param = "&category="+props.route.params.idKategori
         }else{
             param = ""
         }
 
-        console.log(urlProduk+"?"+param)
+        console.log(urlProduk+"?limit=10&offset="+page+""+param)
+        // console.log(props.route.params.idKategori)
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
         }
 
-        fetch(urlProduk+"?"+param, {headers})
+        fetch(urlProduk+"?limit=10&offset="+page+""+param, {headers})
             .then(response => response.json())
-            .then(responseData => {
-                setProducts(responseData.data)
+            .then(async(responseData) => {
+                await setProducts(responseData.data)
                 // setColor
-                // console.log(responseData.data)
+                console.log(products.data)
+                setPage(2)
+                setLoad(true)
                 setLoading(false)
+            })
+            .catch(e => console.log(e))
+    }
+
+    const loadMore = async(hal) => {
+        setLoading(true)
+        setLoad(false)
+
+        // scrollRef.current?.scrollTo({
+        //     y: 0,
+        //     animated: true,
+        // });
+        
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let pageNow = hal
+        let param =""
+
+        let off = 10*pageNow
+
+        if(halaman==="Komisi Terbesar"){
+            param = "&order_by=price_commission&order_direction=desc"
+        }else if(props.route.params.idKategori != null){
+            param = "&category="+props.route.params.idKategori
+        }else{
+            param = ""
+        }
+
+        console.log(urlProduk+"?limit=10&offset="+off+""+param)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlProduk+"?limit=10&offset="+off+""+param, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+
+                await setProducts(products.concat(responseData.data))
+
+                // await setProducts([...products, responseData.data])
+                // setColor
+                console.log(products)
+                setPage(pageNow++)
+                setLoading(false)
+                setLoad(true)
+                if(responseData.data.length == 0){
+                    setAny(false)
+                }
+                
             })
             .catch(e => console.log(e))
     }
@@ -65,57 +127,42 @@ function produk(props) {
 
             <ScrollView style={{flex:1, marginTop:10}}>
                 
-                {products.map((product, index) => {
-                    // let variation = JSON.parse(products[0].variation)[0]
-                    // let slug = variation.split('[').pop();
-                    // let slug2= slug.substr(0, slug.indexOf(']')); 
-                    // let color = slug2.replace(/[']+/g, '');
-                    // let colorArray = color.split(',');
-
+                {
+                products.map((product, index) => {
+                    
                 return (
                 
-                <View key={product.id} style={{flexDirection:'row', marginVertical:10, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
-                    {products[index].images[0] != null ? 
+                <View key={product.id} style={{flexDirection:'row', marginVertical:10, height:height*0.15, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
+                   
                         <Image
                             // source={require('../../assets/images/ex-produk.png')}
-                            source={{uri : products[index].images[0].image_url}}
+                            source={{uri : product.images[0].image_url}}
                             style={{height:'100%', width:'30%', borderRadius:10}}
                         />
-                    :
-                        <Image
-                            // source={require('../../assets/images/ex-produk.png')}
-                            source={{uri : "https://dev-rest-api.deplaza.id/public/images/product/product-1593039951.png"}}
-                            style={{height:'100%', width:'30%', borderRadius:10}}
-                        />
-                    }
+                    
                     <View style={{width:'68%'}}>
                         <Title style={{fontSize:16, lineHeight:18}}>{product.name}</Title>
-                        <Text style={{fontSize:14}}>Mulai Dari Rp {formatRupiah(product.price_basic)}</Text>
+                        {/* <Text style={{fontSize:14}}>Mulai Dari Rp {formatRupiah(product.price_basic)}</Text> */}
                         <Text style={{color:'#949494'}}>Stok {product.stock}</Text>
-                        { products.variation_data != null ?
-                        <View>
-                            <Text style={{color:'#949494'}}>Varian Warna</Text>
-                            <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:10, paddingBottom:20}}>
-                                <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%'}}>
-                                {products[index].variation_data.color.map((color,i) => (
-                                    <View key={i} style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>{color}</Text></View>
-                                ))}
-                                </View>
-                                <TouchableOpacity style={{width:'38%'}}  onPress={() => detailProduk(product.id)}>
-                                    <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        : 
                             <TouchableOpacity style={{width:'38%', paddingVertical:10}}  onPress={() => detailProduk(product.id)}>
                                 <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
                             </TouchableOpacity>
-                        }
                     </View>
                 </View>
 
                 )
                 })}
+
+                {/* <TouchableOpacity style={{justifyContent:'center', alignItems:'center', width:'100%',}} onPress={loadMore}>
+                    <Text>Load More</Text>
+                </TouchableOpacity> */}
+                {any ?
+                    <TouchableOpacity style={{justifyContent:'center', alignItems:'center', width:'100%',}} onPress={() => loadMore(page+1)}>
+                        <Text>Produk Selanjutnya</Text>
+                    </TouchableOpacity>
+                :
+                    <Text style={{textAlign:'center'}}>Tidak Ada Produk lagi</Text>
+                }
 
             </ScrollView>
 

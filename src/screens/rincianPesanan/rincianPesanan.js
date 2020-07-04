@@ -37,6 +37,8 @@ function Pesan(props) {
     const urlRincianPesanan = URL+"/v1/orders/"
     const urlProdukDetail = URL+'v1/product/'
     
+    const statusPesanan = "Pesanan Diterima"
+    
     const id_order = props.route.params.id
     const { height, width } = Dimensions.get("window");
 
@@ -48,6 +50,9 @@ function Pesan(props) {
         setModal(!modal)
     }
 
+    const gotoKembali = () => {
+        props.navigation.navigate('Kembali',{title:"Kembalikan atau Tukar"})      
+    }
 
     const copyToClipboard = async() => {
         const copyText = dataDetail.invoice
@@ -182,6 +187,19 @@ function Pesan(props) {
                                         </LinearGradient>
                                     </TouchableOpacity>
                                 </View> */}
+
+                                {/* <View>
+                                    <TouchableOpacity style={{width:'90%', alignSelf:'center',}} onPress={gotoKembali}>
+                                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                            style={{padding:5, justifyContent:'center', alignItems:'center', borderRadius:10,}}
+                                        >
+                                            <Text style={{fontSize:20, textAlign:'center', color:'white'}}>
+                                                Tukar / Kembalikan
+                                            </Text>
+                                        </LinearGradient>
+                                    </TouchableOpacity>
+                                </View> */}
+
                             </View>
                             
                         </View>

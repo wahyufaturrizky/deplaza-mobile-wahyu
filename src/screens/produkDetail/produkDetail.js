@@ -107,14 +107,35 @@ function produkDetail(props) {
     const changeQty = (simbol) => {
         let hargaProduk = parseInt(dataDetail.price_basic)
         let totalOngkirNow = parseInt(totalOngkir)
+        let stock = parseInt(dataDetail.stock)
 
         if(simbol === "+"){
             let qtynow = qty+1
-            setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
+            if(qtynow>1){
+                if(qtynow>stock){
+                    alert("Maksimal Quantity adalah "+stock)
+                    setQty(stock)
+                }else{
+                    setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
+                }
+            }else{
+                alert("Minimal Quantity adalah 1")
+                setQty(1)
+            }
 
         }else if(simbol === "-"){
             let qtynow = qty-1
-            setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
+            if(qtynow>1){
+                if(qtynow>stock){
+                    alert("Maksimal Quantity adalah "+stock)
+                    setQty(stock)
+                }else{
+                    setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
+                }
+            }else{
+                alert("Minimal Quantity adalah 1")
+                setQty(1)
+            }
         }
     }
 
@@ -138,7 +159,11 @@ function produkDetail(props) {
     }
 
     const gotoPesan = () => { //{"color": ["red", "yellow"], "size": ["s", "m", "l", "xl"]}
-        props.navigation.navigate("Pesan", {title:"Pesan & Kirim", data: {id_produk : id, variation:{color:[selectColor],size:[selectSize]}, qty, metodeCOD, totalHarga, totalOngkir, imageDetail:dataGambar[0]}})
+        if(totalOngkir===0){
+            alert("Pilih Terlebih Kota atau Kecamatan Tujuan")
+        }else{
+            props.navigation.navigate("Pesan", {title:"Pesan & Kirim", data: {id_produk : id, variation:{color:[selectColor],size:[selectSize]}, qty, metodeCOD, totalHarga, totalOngkir, imageDetail:dataGambar[0]}})
+        }
     }
 
     const gotoWishlist = () => {

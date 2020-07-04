@@ -13,6 +13,13 @@ import Pesan from './src/screens/pesan/Pesan';
 import PesananSaya from './src/screens/pesananSaya/pesananSaya';
 import RincianPesanan from './src/screens/rincianPesanan/rincianPesanan';
 import Wishlist from './src/screens/wishlist/Wishlist';
+import Kembali from './src/screens/kembali/Kembali';
+import Bantuan from './src/screens/bantuan/Bantuan';
+import BantuanFoto from './src/screens/bantuan/bantuanFoto';
+import BantuanJudul from './src/screens/bantuan/bantuanJudul';
+import BantuanLokasi from './src/screens/bantuan/bantuanLokasi';
+import BantuanLain from './src/screens/bantuan/bantuanLain';
+import Kategori from './src/screens/produk/Kategori';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +36,13 @@ function StackNav(props) {
         <Stack.Screen name="PesananSaya" component={PesananSaya} />
         <Stack.Screen name="RincianPesanan" component={RincianPesanan} />
         <Stack.Screen name="Wishlist" component={Wishlist} />
+        <Stack.Screen name="Kembali" component={Kembali} />
+        <Stack.Screen name="Bantuan" component={Bantuan} />
+        <Stack.Screen name="BantuanFoto" component={BantuanFoto} />
+        <Stack.Screen name="BantuanJudul" component={BantuanJudul} />
+        <Stack.Screen name="BantuanLokasi" component={BantuanLokasi} />
+        <Stack.Screen name="BantuanLain" component={BantuanLain} />
+        <Stack.Screen name="Kategori" component={Kategori} />
       </Stack.Navigator>
     </NavigationContainer>
   );

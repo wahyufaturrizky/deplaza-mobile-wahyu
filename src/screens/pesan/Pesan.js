@@ -20,6 +20,7 @@ function Pesan(props) {
     const [dataDetail, setDataDetail] = useState([])
     const [phone, setPhone] = useState('')
     const [provinsi, setProvinsi] = useState("kosong");
+    const [kecamatan, setKecamatan] = useState("kosong");
     const [kota, setKota] = useState("kososng");
     const [pos, setPos] = useState("");
     const [alamat, setAlamat] = useState("");
@@ -31,12 +32,18 @@ function Pesan(props) {
     const [judul,setJudul] = useState("")
     const [priceBasic,setPriceBasic] = useState("0")
     const [priceCommission,setPriceCommission] = useState("0")
+    const [stock,setStock] = useState("0")
+
+    const [provinsiDetail, setProvinsiDetail] = useState({})
+    const [kotaDetail, setKotaDetail] = useState({})
+    const [kecamatanDetail, setKecamatanDetail] = useState({})
 
     const [totalKomisi, setTotalKomisi] = useState("0");
     // const [metode, setMetode] = useState(true); //True = Metode Bank
     const [qty, setQty] = useState(props.route.params.data.qty)
     const [provinces, setProvinces] = useState([])
     const [cities, setCities] = useState([])
+    const [subdistricts, setSubdistrict] = useState([])
     const [idOrder, setIdOrder] = useState(0)
     const [photo, setPhoto] = useState(0)
     const [pesan, setPesan] = useState(false)
@@ -52,9 +59,12 @@ function Pesan(props) {
     const urlProdukDetail = URL+'v1/product/'
     const urlProvinces = URL+'v1/shipment/provinces'
     const urlCities = URL+'v1/shipment/city/province/'
+    const urlKecamatan = URL+'v1/shipment/subdistrict/city/'
     const urlOrder = URL+'v1/orders/'
+    const urlProvincesDetail = URL+'v1/shipment/province/'
+    const urlKotaDetail = URL+'v1/shipment/city/'
+    const urlKecamatanDetail = URL+'v1/shipment/subdistrict/'
     
-
     const { height, width } = Dimensions.get("window");
 
     useEffect(() => {
@@ -124,14 +134,34 @@ function Pesan(props) {
 
         if(simbol === "+"){
             let qtynow = parseInt(qty)+1
-            setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+tmargin), setTotalKomisi(komisiDasar*qtynow))
-            setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow)
-            setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+            if(qtynow>1){
+                if(qtynow>stock){
+                    alert("Maksimal Quantity adalah "+stock)
+                    setQty(stock)
+                }else{
+                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                    setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow)
+                    setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+                }
+            }else{
+                alert("Minimal Quantity adalah 1")
+                setQty(1)
+            }
         }else if(simbol === "-"){
             let qtynow = parseInt(qty)-1
-            setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+tmargin), setTotalKomisi(komisiDasar*qtynow))
-            setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow)
-            setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+            if(qtynow>1){
+                if(qtynow>stock){
+                    alert("Maksimal Quantity adalah "+stock)
+                    setQty(stock)
+                }else{
+                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                    setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow)
+                    setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+                }
+            }else{
+                alert("Minimal Quantity adalah 1")
+                setQty(1)
+            }
         }
     }
 
@@ -156,6 +186,7 @@ function Pesan(props) {
                 setJudul(responseData.data.name)
                 setPriceBasic(responseData.data.price_basic)
                 setPriceCommission(responseData.data.price_commission)
+                setStock(responseData.data.stock)
                 if(provinces.length>0){
                     setLoading(false)
                 }
@@ -187,9 +218,9 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProvinces(responseData.rajaongkir.results)
-                if(price_basic!=0){
+                // if(priceBasic>0){
                     setLoading(false)
-                }
+                // }
                 // console.log(responseData.rajaongkir.results)
             })
     }
@@ -212,11 +243,54 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setCities(responseData.rajaongkir.results)
-                
-                setLoading(false)
-                // console.log(responseData.rajaongkir.results)
-                // console.log(responseData.rajaongkir.results)
+
+                fetch(urlProvincesDetail+id_prov, {headers})
+                    .then(response => response.json())
+                    .then(async(responseData) => {
+                        await setProvinsiDetail(responseData.rajaongkir.results)
+                        
+                        setLoading(false)
+                    })
             })
+    }
+
+    // Fungsi untuk get data kota
+    const getKecamatan = async(id_kota) => {
+        setLoading(true)
+        setKota(id_kota)
+        console.log(id_kota)
+
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlKecamatan+id_kota, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                await setSubdistrict(responseData.rajaongkir.results)
+                
+                fetch(urlKotaDetail+id_kota, {headers})
+                    .then(response => response.json())
+                    .then(async(responseData) => {
+                        await setKotaDetail(responseData.rajaongkir.results)
+                        
+                        setLoading(false)
+                    })
+            })
+    }
+
+    const _setKecamatan = (id_kec) => {
+        fetch(urlKecamatanDetail+id_kec, {headers})
+        .then(response => response.json())
+        .then(async(responseData) => {
+            await setKecamatanDetail(responseData.rajaongkir.results)
+            
+            setLoading(false)
+        })
     }
 
     // Fungsi untuk get mengorder
@@ -277,7 +351,7 @@ function Pesan(props) {
                     "delivery_reciver_name": fullname,
                     "delivery_reciver_city": kota,
                     "delivery_reciver_post": pos,
-                    "delivery_reciver_address": alamat
+                    "delivery_reciver_address": alamat+" Kec."+kecamatan+", Kota "+kotaDetail.city_name+", Provinsi "+provinsiDetail.province
                 },
                 "shipping": {
                     "courier_id" : 1, //kurir dari raja ongkir (JNE)
@@ -296,7 +370,7 @@ function Pesan(props) {
                 setIdOrder(responseData.data.id)
                 setPesan(true)
                 setLoading(false)
-                alert("Silahkan Upload Bukti Pembayaran di Tombol Upload Bukti Transfer")
+                alert("Silahkan Upload Bukti Pembayaran di Tombol Upload Bukti Transfer (JIKA SUDAH ADA)")
                 //    gotoPesanan()
             })
         }
@@ -463,11 +537,24 @@ function Pesan(props) {
                                     <Picker
                                         enabled={pesan ? false : true}
                                         selectedValue={kota}
-                                        onValueChange={(itemValue, itemIndex) => setKota(itemValue)}
+                                        onValueChange={(itemValue, itemIndex) => getKecamatan(itemValue)}
                                     >
                                             <Picker.Item label={"Pilih Kota"} value={"kosong"} />
                                         {cities.map((city,i) => (
                                             <Picker.Item key={i} label={city.city_name} value={city.city_id} />
+                                        ))}
+                                    </Picker>
+                                </View>
+
+                                <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'100%', borderRadius:10, marginBottom:height*0.01, height:height*0.055}}>
+                                    <Picker
+                                        enabled={pesan ? false : true}
+                                        selectedValue={kecamatan}
+                                        onValueChange={(itemValue, itemIndex) => setKecamatan(itemValue)}
+                                    >
+                                            <Picker.Item label={"Pilih Kecamatan"} value={"kosong"} />
+                                        {subdistricts.map((camat,i) => (
+                                            <Picker.Item key={i} label={camat.subdistrict_name} value={camat.subdistrict_name} />
                                         ))}
                                     </Picker>
                                 </View>
@@ -562,6 +649,18 @@ function Pesan(props) {
                     >
                         <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
                             Masukkan Pesanan
+                        </Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            }
+
+            {pesan &&
+                <TouchableOpacity onPress={gotoPesanan}>
+                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                        style={{padding:15, justifyContent:'center', alignItems:'center'}}
+                    >
+                        <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
+                            Lanjutkan
                         </Text>
                     </LinearGradient>
                 </TouchableOpacity>

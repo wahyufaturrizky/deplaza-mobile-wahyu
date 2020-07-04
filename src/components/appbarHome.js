@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Appbar } from 'react-native-paper';
 import { Image, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function appbarHome(props) {
     const [haveProduk, setHaveProduk] = useState(false)
@@ -8,11 +9,17 @@ function appbarHome(props) {
     const logoHorizontal = '../assets/images/logo-horizontal.png'
     const title = props.params.route.params.title
 
+    // console.log(props)
+
     useEffect(() => {
-        if(props.haveProduk !== null){
+        if(props.wishlist > 0){
             setHaveProduk(true)
         }
     },[])
+
+    const gotoPesanan = () => {
+        props.params.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
+    }
 
 
     return (
@@ -44,15 +51,17 @@ function appbarHome(props) {
          
 
             {title!=="Home" && 
-                (title==="Jualan Anda" && haveProduk ?
+                ((title==="Jualan Anda" && haveProduk) ?
                     <View style={{flexDirection:'row'}}>
-                        <Appbar.Action size={30} icon="cart"/>
+                        <TouchableOpacity onPress={gotoPesanan}>
+                            <Appbar.Action size={30} icon="cart"/>
+                        </TouchableOpacity>
                         <Appbar.Action size={30} icon="bell-ring-outline"/>
                     </View>
                 :
                     <View style={{flexDirection:'row'}}>
                         <Appbar.Action size={30} icon="magnify"/>
-                        <Appbar.Action size={30} icon="heart"/>
+                        {/* <Appbar.Action size={30} icon="heart"/> */}
                     </View>
                 )
             }
