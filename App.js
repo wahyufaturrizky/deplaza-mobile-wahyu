@@ -20,6 +20,9 @@ import BantuanJudul from './src/screens/bantuan/bantuanJudul';
 import BantuanLokasi from './src/screens/bantuan/bantuanLokasi';
 import BantuanLain from './src/screens/bantuan/bantuanLain';
 import Kategori from './src/screens/produk/Kategori';
+import Akun from './src/screens/akun/Akun';
+import EditAkun from './src/screens/akun/editAkun';
+import RincianRekening from './src/screens/akun/rincianRekening';
 
 const Stack = createStackNavigator();
 
@@ -43,6 +46,8 @@ function StackNav(props) {
         <Stack.Screen name="BantuanLokasi" component={BantuanLokasi} />
         <Stack.Screen name="BantuanLain" component={BantuanLain} />
         <Stack.Screen name="Kategori" component={Kategori} />
+        <Stack.Screen name="Akun" component={Akun} />
+        <Stack.Screen name="RincianRekening" component={RincianRekening} />
       </Stack.Navigator>
     </NavigationContainer>
   );

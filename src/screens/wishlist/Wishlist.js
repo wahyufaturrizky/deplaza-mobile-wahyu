@@ -43,8 +43,8 @@ function wishlist(props) {
     }
 
     //Pergi ke Hal List Produk
-    const detailProduk = (id) => {
-        props.navigation.navigate('ProdukDetail',{id, title:'Lihat Produk'})      
+    const detailProduk = (id, name) => {
+        props.navigation.navigate('ProdukDetail',{id, title:name})      
     }
 
     return (
@@ -67,28 +67,12 @@ function wishlist(props) {
                         />
                     
                     <View style={{width:'68%'}}>
-                        <Title style={{fontSize:16, lineHeight:18}}>{data.product.name}</Title>
+                        <Title style={{fontSize:14, lineHeight:18}}>{data.product.name}</Title>
                         <Text style={{fontSize:14}}>Mulai Dari Rp. {formatRupiah(data.product.price_basic)}</Text>
-                        <Text style={{color:'#949494'}}>Stok {data.product.stock}</Text>
-                        {/* { data.product.variation_data != null ?
-                        <View>
-                            <Text style={{color:'#949494'}}>Varian Warna</Text>
-                            <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:10, paddingBottom:20}}>
-                                <View style={{flexDirection:'row', justifyContent:'space-around', width:'50%'}}>
-                                {data.variation_data.color.map((color,i) => (
-                                    <View key={i} style={{backgroundColor:'white', borderWidth:1, borderColor:'gray', padding:5, marginBottom:height*0.005, borderRadius:5}}><Text>{color}</Text></View>
-                                ))}
-                                </View>
-                                <TouchableOpacity style={{width:'38%'}}  onPress={() => detailProduk(product.id)}>
-                                    <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        :  */}
-                            <TouchableOpacity style={{width:'38%', paddingVertical:10}}  onPress={() => detailProduk(data.product.id)}>
-                                <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
-                            </TouchableOpacity>
-                        {/* } */}
+                        <Text style={{color:'#949494', fontSize:10}}>Stok {data.product.stock}</Text>
+                        <TouchableOpacity style={{alignItems:'flex-end', justifyContent:'flex-end', flex:1, paddingVertical:10}}  onPress={() => detailProduk(data.product.id, data.product.name)}>
+                            <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 

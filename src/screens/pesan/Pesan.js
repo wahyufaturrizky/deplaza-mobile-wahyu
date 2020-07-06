@@ -21,7 +21,7 @@ function Pesan(props) {
     const [phone, setPhone] = useState('')
     const [provinsi, setProvinsi] = useState("kosong");
     const [kecamatan, setKecamatan] = useState("kosong");
-    const [kota, setKota] = useState("kososng");
+    const [kota, setKota] = useState("kosong");
     const [pos, setPos] = useState("");
     const [alamat, setAlamat] = useState("");
     const [margin, setMargin] = useState("0");

@@ -30,8 +30,8 @@ function produk(props) {
     },[])
 
     //Pergi ke Hal List Produk
-    const detailProduk = (id) => {
-        props.navigation.navigate('ProdukDetail',{id, title:'Lihat Produk'})      
+    const detailProduk = (id,name) => {
+        props.navigation.navigate('ProdukDetail',{id, title:name})      
     }
 
     const getProduct = async() => {
@@ -132,7 +132,7 @@ function produk(props) {
                     
                 return (
                 
-                <View key={product.id} style={{flexDirection:'row', marginVertical:10, height:height*0.15, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
+                <View key={product.id} style={{flexDirection:'row', marginVertical:10, height:height*0.18, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
                    
                         <Image
                             // source={require('../../assets/images/ex-produk.png')}
@@ -141,12 +141,12 @@ function produk(props) {
                         />
                     
                     <View style={{width:'68%'}}>
-                        <Title style={{fontSize:16, lineHeight:18}}>{product.name}</Title>
-                        {/* <Text style={{fontSize:14}}>Mulai Dari Rp {formatRupiah(product.price_basic)}</Text> */}
-                        <Text style={{color:'#949494'}}>Stok {product.stock}</Text>
-                            <TouchableOpacity style={{width:'38%', paddingVertical:10}}  onPress={() => detailProduk(product.id)}>
-                                <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
-                            </TouchableOpacity>
+                        <Title style={{fontSize:14, lineHeight:18}}>{product.name}</Title>
+                        <Text style={{fontSize:14, marginBottom:height*0.01}}>Mulai Dari Rp {formatRupiah(product.price_basic)}</Text>
+                        <Text style={{color:'#949494', fontSize:10}}>Stok {product.stock}</Text>
+                        <TouchableOpacity style={{alignItems:'flex-end', justifyContent:'flex-end', flex:1, paddingVertical:10}}  onPress={() => detailProduk(product.id, product.name)}>
+                            <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 

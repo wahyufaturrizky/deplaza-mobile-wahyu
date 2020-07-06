@@ -4,15 +4,13 @@ import { CommonActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function bottomTab(props){
-
+    const title = props.route.params.title
     //Pergi menuju halaman pesanan
-    const gotoPesanan = () => {
-        console.log(props)
-        props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
+    const gotoAkun = () => {
+        props.navigation.navigate("Akun", {title:"Akun Saya"})
     }
 
     const gotoBantuan = () => {
-        console.log(props)
         props.navigation.navigate("Bantuan", {title:"Bantuan Jualan"})
     }
 
@@ -27,16 +25,16 @@ function bottomTab(props){
     }
     
     return (
-        <View style={[styles.shadow, {backgroundColor:'white', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}]}>
+        <View style={[styles.shadow, {backgroundColor:'#FDFEFF', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}]}>
             <TouchableOpacity onPress={gotoHome}>
                 <View style={{alignItems:'center'}}>
-                    <Icon name="home" size={30} color="#949494" />
+                    <Icon name="home" size={30} color={title=="Jualan Anda" ? "#07A9F0" :"#949494"} />
                     <Text>Home</Text>
                 </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={gotoBantuan}>
                 <View style={{alignItems:'center'}}>
-                    <Icon name="help-circle-outline" size={30} color="#949494" />
+                    <Icon name="help-circle-outline" size={30} color={title=="Bantuan Jualan" ? "#07A9F0" :"#949494"} />
                     <Text>Bantuan Jualan</Text>
                 </View>
             </TouchableOpacity>
@@ -46,7 +44,7 @@ function bottomTab(props){
                     <Text>Pesanan Saya</Text>
                 </View>
             </TouchableOpacity> */}
-            <TouchableOpacity>
+            <TouchableOpacity onPress={gotoAkun}>
                 <View style={{alignItems:'center'}}>
                     <Icon name="account" size={30} color="#949494" />
                     <Text>Akun</Text>
@@ -63,11 +61,11 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         shadowOffset: {
             width: 0,
-            height: 1,
+            height: 6,
         },
-        shadowColor: '#000000',
-        shadowOpacity: 1.0,
-        elevation: 4,
-        marginTop:5
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        
+        elevation: 12,
     }
 })

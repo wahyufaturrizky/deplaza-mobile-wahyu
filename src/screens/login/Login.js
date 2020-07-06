@@ -56,23 +56,28 @@ function Login(props) {
     }
 
     const SignIn = async() => {
-        setLoading(true)
+        let formdata = new FormData();
+        formdata.append("username", email)
+        formdata.append("password", password)
 
-        fetch(urlLogin, {
+        let requestOptions = {
             method: 'POST',
+            body: formdata,
+            redirect: 'follow',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username:email,
-                password
-            })
-        })
+                'Accept': '*/*',
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+
+        setLoading(true)
+        alert(email+password)
+        fetch(urlLogin, requestOptions)
+
     
         .then((response) => response.json())
         .then( async(responseData) => {
-            // console.log(responseData)
+            console.log(responseData)
             setLoading(false)
             if(responseData.data=="Password incorrect"){
                 alert("Password Anda Salah")
@@ -91,22 +96,26 @@ function Login(props) {
 
     //Pergi ke Hal Home, Indexnya di reset
     const SignUp = () => {  
+        let formdata = new FormData();
+        formdata.append("fullname", fullname)
+        formdata.append("phone", phone)
+        formdata.append("password", password)
+        formdata.append("email", email)
+        formdata.append("username", email)
+
         setLoading(true)
-        fetch(urlRegister, {
+
+        let requestOptions = {
             method: 'POST',
+            body: formdata,
+            redirect: 'follow',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                fullname,
-                phone,
-                password,
-                email,
-                username:email
-            })
-        })
-    
+                'Accept': '*/*',
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+
+        fetch(urlRegister, requestOptions)
         .then((response) => response.json())
         .then( async(responseData) => {
                 setLoading(false)
@@ -149,6 +158,9 @@ function Login(props) {
                                 value={fullname}
                                 mode = "outlined"
                                 onChangeText={(val)=> setFullname(val)}
+                                selectionColor={"#07A9F0"}
+                                underlineColor={"#07A9F0"}
+                                underlineColorAndroid={"#07A9F0"}
                                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginBottom:height*0.01}} 
                             />
                         }
@@ -159,6 +171,9 @@ function Login(props) {
                             mode = "outlined"
                             keyboardType="email-address"
                             onChangeText={(val)=> setEmail(val)}
+                            selectionColor={"#07A9F0"}
+                            underlineColor={"#07A9F0"}
+                            underlineColorAndroid={"#07A9F0"}
                             style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginBottom:height*0.01}} 
                         />    
 
@@ -184,6 +199,9 @@ function Login(props) {
                                     onChangeText={(val)=> setPhone(val)}
                                     mode="outlined"
                                     keyboardType="numeric"
+                                    selectionColor={"#07A9F0"}
+                                    underlineColor={"#07A9F0"}
+                                    underlineColorAndroid={"#07A9F0"}
                                     style={{width:'70%',  backgroundColor:'white'}}
                                 />
                                 
@@ -195,6 +213,9 @@ function Login(props) {
                             value={password}
                             mode = "outlined"
                             secureTextEntry={true}
+                            selectionColor={"#07A9F0"}
+                            underlineColor={"#07A9F0"}
+                            underlineColorAndroid={"#07A9F0"}
                             onChangeText={(val)=> setPassword(val)}
                             style={{width:'90%', alignSelf:'center',  backgroundColor:'white'}} 
                         />   

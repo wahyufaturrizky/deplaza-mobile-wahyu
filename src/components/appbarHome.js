@@ -1,13 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import { Appbar } from 'react-native-paper';
-import { Image, View } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function appbarHome(props) {
     const [haveProduk, setHaveProduk] = useState(false)
 
     const logoHorizontal = '../assets/images/logo-horizontal.png'
-    const title = props.params.route.params.title
+    let title =""
+
+    if(props.params.route!=null){
+        title = props.params.route.params.title
+    }
+
+    // console.log(props.params.route.params)
 
     // console.log(props)
 
@@ -23,7 +29,7 @@ function appbarHome(props) {
 
 
     return (
-        <Appbar.Header style={{backgroundColor:'transparent', height:70}}>
+        <Appbar.Header style={[styles.shadow,{backgroundColor:'white', height:70}]}>
 
             { (title!=="Home" && title!=="Jualan Anda" && title!=="Pesanan Saya") &&
                 <Appbar.BackAction onPress={() => {props.params.navigation.goBack()}} />
@@ -39,7 +45,7 @@ function appbarHome(props) {
             }
 
             { (title!=="Home" && title!=="Jualan Anda") ?
-                <Appbar.Content title={title}/>
+                <Appbar.Content titleStyle={{fontSize:14}} title={title}/>
             :
                 <Appbar.Content/>
             }
@@ -71,3 +77,17 @@ function appbarHome(props) {
 }
 
 export default appbarHome;
+
+const styles=StyleSheet.create({
+    shadow : {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+    }
+})

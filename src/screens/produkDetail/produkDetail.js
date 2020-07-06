@@ -394,9 +394,9 @@ function produkDetail(props) {
                             source={{uri : dataDetail.images[0].file_upload}}
                             style={{width:'100%', height:height*0.5 , resizeMode:'cover'}}
                         /> */}
-
-                        <SliderBox images={dataGambar} style={{width:'90%', height:height*0.5 , resizeMode:'cover'}}/>
-
+                        <View style={{width:'100%',height:height*0.5, backgroundColor:'blue'}}>
+                            <SliderBox images={dataGambar} style={{width:'100%', height:null,  resizeMode: 'contain',}}/>
+                        </View>
                         <Title>{dataDetail.name}</Title>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
