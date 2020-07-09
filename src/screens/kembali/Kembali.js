@@ -1,23 +1,107 @@
-import React from 'react';
+import React,{useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { RadioButton, TextInput, Checkbox, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
+import {URL, formatRupiah} from '../../utils/global'
+import Loading from '../../components/loading'
 
 function Kembali(props) {
-    const [checked, setChecked] = React.useState('first');
-    const [check, setCheck] = React.useState(false);
-    const [alasan, setAlasan] = React.useState("");
-    const [alasanDetail, setAlasanDetail] = React.useState("");
-    const [qty, setQty] = React.useState("0");
+    const [checked, setChecked] = useState('first');
+    const [check, setCheck] = useState(false);
+    const [alasan, setAlasan] = useState("");
+    const [alasanDetail, setAlasanDetail] = useState("");
+    const [qty, setQty] = useState("0");
 
+    const [copy, setCopy] = useState(false)
+    const [dataDetail, setDataDetail] = useState([])
+    const [productDetail, setProductDetail] = useState([])
+    const [modal, setModal] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [methodId, setMethodId] = useState(0)
+    const [invoice, setInvoice] = useState("0")
+    const [receiver_name, setReceiver_name] = useState("")
+    const [receiver_address, setReceiver_address] = useState("")
+    const [phone, setPhone] = useState("")
+    const [color, setColor] = useState("")
+    const [total_price, setTotal_price] = useState(0)
+    const [ammount, setAmmount] = useState(0)
+    const [commission, setCommission] = useState(0)
+    const [custom_commission, setCustom_commission] = useState(0)
+    const [buktiBayar, setBuktiBayar] = useState(0)
+    const [lengthBukti, setLengthBukti] = useState(0)
+    const [trackingId, setTrackingId] = useState("")
+    const [photo, setPhoto] = useState(0)
 
+    const [productImages, setProductImages] = useState("https://via.placeholder.com/150")
+    const [productName, setProductName] = useState("0")
+
+    const urlRincianPesanan = URL+"/v1/orders/"
+    const urlProdukDetail = URL+'v1/product/'
+    const urlOrder = URL+'v1/orders/'
+
+    const id_order = props.route.params.id
     const { height, width } = Dimensions.get("window");
 
+    useEffect(() => {
+        getRincianPesanan()
+    }, [])
+
+    const getRincianPesanan = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlRincianPesanan+id_order, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                console.log(id_order)
+
+                setDataDetail(responseData.data)
+
+                setMethodId(responseData.data.payment.method_id)
+                setTrackingId(responseData.data.delivery.tracking_id)
+                setInvoice(responseData.data.invoice)
+                setReceiver_name(responseData.data.delivery.receiver_name)
+                setReceiver_address(responseData.data.delivery.receiver_address)
+                setPhone(responseData.data.customer.phone)
+                setColor(JSON.parse(responseData.data.details[0].variation).color[0])
+                setQty(responseData.data.details[0].qty)
+                setTotal_price(responseData.data.total_price)
+                setAmmount(responseData.data.payment.ammount)
+                setCommission(responseData.data.details[0].commission)
+                setCustom_commission(responseData.data.details[0].custom_commission)
+                
+                setLengthBukti(responseData.data.payment.metadata_decode.length)
+                
+                if(responseData.data.payment.metadata_decode.length>0){
+                    setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
+                }
+
+                let id_produk = responseData.data.details[0].product_id
+                // console.log(responseData.data.details[0].product_id)
+
+                fetch(urlProdukDetail+id_produk, {headers})
+                    .then(response => response.json())
+                    .then(responseData => {
+                        // console.log(responseData.data.images[0].file_upload)
+                        setLoading(false)
+                        setProductDetail(responseData.data)
+                        setProductName(responseData.data.name)
+                        setProductImages(responseData.data.images[0].image_url)
+                })
+                
+            })
+
+    }
 
     const changeQty = (simbol) => {
         // let hargaProduk = parseInt(dataDetail.price_basic)
@@ -82,14 +166,14 @@ function Kembali(props) {
 
                         <View style={{flexDirection:'row', width:'90%', alignSelf:'center', marginVertical:height*0.01, justifyContent:'space-between', alignItems:'center'}}>
                             <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray', justifyContent:'center', alignItems:'center'}}>
-                                <Icon name="cloud-upload" size={32} color="gray"/>
+                                <Icon name="image" size={32} color="gray"/>
                                 <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
                                     Tambahkan Gambar
                                 </Text>
                             </View>
 
                             <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray', justifyContent:'center', alignItems:'center'}}>
-                                <Icon name="cloud-upload" size={32} color="gray"/>
+                                <Icon name="video" size={32} color="gray"/>
                                 <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
                                     Tambahkan Video 
                                 </Text>
@@ -138,9 +222,9 @@ function Kembali(props) {
                         <Title>Alamat Pengiriman</Title>
 
                         <View style={{marginTop:height*0.02}}>
-                            <Text style={{fontSize:16}}>Nama</Text>
-                            <Text style={{fontSize:14}}>Alamat</Text>
-                            <Text style={{fontSize:16}}>081234123</Text>
+                            <Text style={{fontSize:16}}>{receiver_name}</Text>
+                            <Text style={{fontSize:14}}>{receiver_address}</Text>
+                            <Text style={{fontSize:16}}>{phone}</Text>
                         </View>
                     </View>
                 </View>
@@ -158,6 +242,10 @@ function Kembali(props) {
                 </View>
 
             </ScrollView>
+
+            {loading &&
+                <Loading/>
+            }
 
             <TouchableOpacity>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}

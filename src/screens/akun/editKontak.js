@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions, Picker } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage'
+import {Picker} from '@react-native-community/picker'
 
 import Loading from '../../components/loading'
 
 import {URL, formatRupiah} from '../../utils/global'
 
 function editKontak(props) {
-    const [fullname,setFullName] = useState("")
-    const [phone,setPhone] = useState("")
+    const [fullname,setFullName] = useState(props.fullname)
+    const [phone,setPhone] = useState(props.phone)
     const [alamat,setAlamat] = useState("")
-    const [email,setEmail] = useState("")
+    const [email,setEmail] = useState(props.email)
     const [pos,setPos] = useState("")
 
     const [provinces, setProvinces] = useState([])
@@ -37,6 +38,9 @@ function editKontak(props) {
     const urlProvincesDetail = URL+'v1/shipment/province/'
     const urlKotaDetail = URL+'v1/shipment/city/'
 
+    // let data = props.data
+    console.log(props)
+
     useEffect(() => {
         getProvinsi()
     },[])
@@ -58,7 +62,7 @@ function editKontak(props) {
                 // if(priceBasic>0){
                     setLoading(false)
                 // }
-                console.log(responseData.rajaongkir.results)
+                // console.log(responseData.rajaongkir.results)
             })
     }
 
@@ -122,7 +126,7 @@ function editKontak(props) {
     
     return (
     <View>
-        <View style={{padding:15}}>
+        <View style={{padding:15, backgroundColor:'#F8F8F8', marginTop:height*0.01}}>
             <TextInput
                 label='Nama Lengkap'
                 value={fullname}

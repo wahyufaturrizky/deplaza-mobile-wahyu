@@ -69,7 +69,7 @@ function wishlist(props) {
                     <View style={{width:'68%'}}>
                         <Title style={{fontSize:14, lineHeight:18}}>{data.product.name}</Title>
                         <Text style={{fontSize:14}}>Mulai Dari Rp. {formatRupiah(data.product.price_basic)}</Text>
-                        <Text style={{color:'#949494', fontSize:10}}>Stok {data.product.stock}</Text>
+                        <Text style={{color:'#949494', fontSize:12}}>Stok {data.product.stock}</Text>
                         <TouchableOpacity style={{alignItems:'flex-end', justifyContent:'flex-end', flex:1, paddingVertical:10}}  onPress={() => detailProduk(data.product.id, data.product.name)}>
                             <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
                         </TouchableOpacity>

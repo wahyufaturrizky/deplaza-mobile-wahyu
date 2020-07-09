@@ -7,7 +7,7 @@ function bottomTab(props){
     const title = props.route.params.title
     //Pergi menuju halaman pesanan
     const gotoAkun = () => {
-        props.navigation.navigate("Akun", {title:"Akun Saya"})
+        props.navigation.navigate("Akun", {title:"Akun Saya", ...props})
     }
 
     const gotoBantuan = () => {
@@ -46,7 +46,7 @@ function bottomTab(props){
             </TouchableOpacity> */}
             <TouchableOpacity onPress={gotoAkun}>
                 <View style={{alignItems:'center'}}>
-                    <Icon name="account" size={30} color="#949494" />
+                    <Icon name="account" size={30} color={title=="Akun Saya" ? "#07A9F0" :"#949494"} />
                     <Text>Akun</Text>
                 </View>
             </TouchableOpacity>

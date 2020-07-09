@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Dimensions, Image, ScrollView } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { TextInput, RadioButton } from 'react-native-paper';
 import {Picker} from '@react-native-community/picker'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -39,7 +39,7 @@ function Pesan(props) {
     const [kecamatanDetail, setKecamatanDetail] = useState({})
 
     const [totalKomisi, setTotalKomisi] = useState("0");
-    // const [metode, setMetode] = useState(true); //True = Metode Bank
+    const [metode, setMetode] = useState(true); //True = Metode Bank
     const [qty, setQty] = useState(props.route.params.data.qty)
     const [provinces, setProvinces] = useState([])
     const [cities, setCities] = useState([])
@@ -117,7 +117,15 @@ function Pesan(props) {
       }
 
     const ubahPembayaran = () => {
-        setMetode(!metodeCOD)
+        // setMetode(!metodeCOD)
+    }
+
+    const metodeTrue = () => {
+        setMetode(true)
+    }
+
+    const metodeFalse = () => {
+        setMetode(false)
     }
 
     // Fungsi menuju ke halaman pesanan
@@ -386,8 +394,37 @@ function Pesan(props) {
                 
                     <View style={{backgroundColor:'#F8F8F8', padding:10}}>
                         <Text style={{fontSize:18}}>Metode Pembayaran</Text>
-                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                            {!metodeCOD ?
+                        <View style={{}}>
+
+                            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:height*0.01}}>
+                                <View style={{flexDirection:'row', alignItems:'center'}}>
+                                    <Icon name={"card-text"} size={24}/>
+                                    <Text style={{fontSize:20}}> Transfer Bank</Text>
+                                </View>
+                                
+                                <RadioButton
+                                    value="Transfer"
+                                    status={ metode ? 'checked' : 'unchecked' }
+                                    onPress={() => metodeTrue()}
+                                />
+                                
+                            </View>
+                            {metodeCOD &&
+                            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                                <View style={{flexDirection:'row', alignItems:'center'}}>
+                                    <Icon name={"cash"} size={24}/>
+                                    <Text style={{fontSize:20}}> Bayar di Tempat</Text>
+                                </View>
+
+                                <RadioButton
+                                    value="COD"
+                                    status={ !metode ? 'checked' : 'unchecked' }
+                                    onPress={() => metodeFalse()}
+                                />
+                            </View>
+                            }
+
+                            {/* {!metodeCOD ?
                                 <View>
                                     <Text style={{fontWeight:'bold', fontSize:18}}>Transfer Bank</Text>
                                     <Text>DePlaza</Text>
@@ -400,7 +437,7 @@ function Pesan(props) {
                                 <TouchableOpacity style={{backgroundColor:'#E6E6E6', padding:10}} onPress={ubahPembayaran}>
                                     <Text>Ubah Metode Pembayaran</Text>
                                 </TouchableOpacity>
-                            }
+                            } */}
                         </View>
                     </View>
 
@@ -456,7 +493,7 @@ function Pesan(props) {
 
                     <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                         
-                    {(!metodeCOD && pesan) &&
+                    {(!metodeCOD && metode && pesan) &&
                         <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}

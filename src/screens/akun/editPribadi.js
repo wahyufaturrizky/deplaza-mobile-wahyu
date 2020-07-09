@@ -6,20 +6,20 @@ import DatePicker from 'react-native-datepicker'
 
 function editKontak(props) {
     const [fullname,setFullName] = useState("")
-    const [tanggal,setTanggal] = useState("15-05-2020")
+    const [tanggal,setTanggal] = useState("")
     const [jenisKelamin,setjenisKelamin] = useState("kosong")
     const [pendidikan,setPendidikan] = useState("")
 
 
     const { height, width } = Dimensions.get("window");
     return (
-    <View style={{padding:15}}>
+    <View style={{padding:15, flex:1, backgroundColor:'#F8F8F8', marginTop:height*0.02}}>
 
         <DatePicker
             style={{width:'90%', alignSelf:'center', backgroundColor:'white', marginBottom:height*0.02}}
             date={tanggal}
             mode="date"
-            placeholder="select date"
+            placeholder="Tanggal lahir"
             format="DD-MM-YYYY"
             maxDate="31-08-2020"
             confirmBtnText="Confirm"
@@ -36,7 +36,7 @@ function editKontak(props) {
             },
             // ... You can check the source to find the other keys.
             }}
-            onDateChange={(date) => {setTanggal(data)}}
+            onDateChange={(date) => {setTanggal(date)}}
         />
 
         <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'90%', alignSelf:'center', marginBottom:height*0.01, borderRadius:10, height:height*0.055}}>

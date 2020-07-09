@@ -1,24 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TextInput, HelperText} from 'react-native-paper'
+import AsyncStorage from '@react-native-community/async-storage'
 import LinearGradient from 'react-native-linear-gradient'
+import {Picker} from '@react-native-community/picker'
 
 import Appbar from '../../components/appbarHome'
+import Loading from '../../components/loading'
 
+import {URL, formatRupiah} from '../../utils/global'
 function rincianRekening(props) {
     const [noRek,setNoRek] = useState("")
     const [konfnoRek,setKonfNoRek] = useState("")
     const [namaRekening,setNamaRekening] = useState("")
-    const [bank,setBank] = useState("")
+    const [bank,setBank] = useState("kosong")
+    const [loading,setLoading] = useState(true)
+    const [allBank, setAllBank] = useState([])
 
     const { height, width } = Dimensions.get("window");
+    const urlBank = URL+'v1/bank'
+    const urlRekening = URL+'v1/account'
+    
+
+    useEffect(() => {
+        getListBank()
+    },[])
+
+    const getListBank = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlBank, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                setAllBank(responseData.data)
+                setLoading(false)
+            })
+    }
+
+    const postRekening = async() => {
+        
+        const value = await AsyncStorage.getItem('data');
+        // console.log(value)
+        const data = JSON.parse(value)
+        const id_user = data.id
+        if(noRek!=konfnoRek){
+            alert("Nomor Rekening Tidak Sama")
+        }else{
+            setLoading(true)
+            var formdata = new FormData();
+            formdata.append("bank_id", bank);
+            formdata.append("number", noRek);
+            formdata.append("name", namaRekening);
+            formdata.append("branch", "branch");
+
+            let headers = {
+                Authorization: `Bearer ${data.token}`,
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type' : 'multipart/form-data'
+            }
+
+            fetch(urlRekening, {
+                method: 'POST',
+                headers,
+                body: formdata
+            })
+            .then((response) => response.json())
+            .then( async(responseData) => {
+                    setLoading(false)
+                    alert("Data Sudah Di Update")
+                    console.log(responseData)
+            })
+            .done();
+        }
+    }
+
+    
+
     return (
         <View style={{backgroundColor:'white', flex:1}}>
             <Appbar params={props} />
 
             <View style={{justifyContent:"center", alignItems:'center', backgroundColor:'#9FB4BE', padding:20, marginBottom:height*0.02}}>
-                <Icon name="cloud-upload" size={32} color="gray"/>
+                <Icon name="image" size={32} color="gray"/>
                 <Text style={{color:'white'}}>Tambahkan Foto Buku Tabungan/Cek</Text>
             </View>
 
@@ -72,21 +142,26 @@ function rincianRekening(props) {
 
             <View style={{width:'90%', alignSelf:'center', marginBottom:height*0.01}}>
                 <Text>Nama Bank</Text>
-                <TextInput
-                    value={bank}
-                    onChangeText={text => setBank(text)}
-                    style={{backgroundColor:'white'}}
-                    underlineColor={"#07A9F0"}
-                    underlineColorAndroid={"#07A9F0"}
-                    selectionColor={"#07A9F0"}
-                    keyboardType={"numeric"}
-                />
+                <Picker
+                    selectedValue={bank}
+                    onValueChange={(itemValue, itemIndex) => setBank(itemValue)}
+                    style={{borderBottomColor:'#07A9F0', borderBottomWidth:1}}
+                >
+                        <Picker.Item label={"Pilih Bank"} value={"kosong"} />
+                    {allBank.map((data,i) => (
+                        <Picker.Item key={i} label={data.name} value={data.id} />
+                    ))}
+                </Picker>
                 <HelperText style={{color:'#93DCFC', paddingLeft:0}}>
                    Wajib Isi
                 </HelperText>
             </View>
 
-            <TouchableOpacity>
+            {loading &&
+                <Loading />
+            }
+
+            <TouchableOpacity onPress={postRekening}>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                     style={{padding:20, borderRadius:10, width:'90%', marginBottom:height*0.02, alignSelf:'center', flexDirection:"row", justifyContent:'center', alignItems:'center'}}
                 >

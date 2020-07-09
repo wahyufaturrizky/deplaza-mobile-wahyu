@@ -71,7 +71,7 @@ function Login(props) {
         };
 
         setLoading(true)
-        alert(email+password)
+        // alert(email+password)
         fetch(urlLogin, requestOptions)
 
     

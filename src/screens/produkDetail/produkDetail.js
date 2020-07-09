@@ -53,6 +53,7 @@ function produkDetail(props) {
     const urlKota = URL+"v1/shipment/cities"
     const urlKecamatan = URL+"v1/shipment/subdistrict/city/"
     const urlOngkir = URL+"v1/shipment/cost"
+    const urlWishlistMe = URL+"v1/wishlist/me"
     const urlWishlist = URL+"v1/wishlist"
     
 
@@ -85,7 +86,7 @@ function produkDetail(props) {
             'Access-Control-Allow-Origin': '*',
         }
 
-        fetch(urlWishlist, {headers})
+        fetch(urlWishlistMe, {headers})
             .then(response => response.json())
             .then(responseData => {
                 // setWishlist(responseData.data)
@@ -93,11 +94,12 @@ function produkDetail(props) {
                 let res = responseData.data
                 let row = 0
                 res.map((data,i) => {
-                    console.log(data.product_id)
+                    console.log(data.product_id+" id ="+id)
                     if(data.product_id == id){
                         row++
                     }
                 })
+                // console.log(row)
                 setLikeProduk(row)
                 // setColor
             })
@@ -185,7 +187,7 @@ function produkDetail(props) {
                 await setDataDetail(responseData.data)
                 setLoading(false)
                 
-                console.log(responseData.data)
+                // console.log(responseData.data)
                 setTotalKomisi(responseData.data.price_commission)
 
                 setColor("")
@@ -197,7 +199,7 @@ function produkDetail(props) {
                 
                 let responseImage = responseData.data.images
                 responseImage.map((data,i) => {
-                    console.log(data.image_url)
+                    // console.log(data.image_url)
                     setDataGambar([...dataGambar, data.image_url])
                 })
                 // for(let i=0; i<=(responseData.data.images.length)-1; i++){
@@ -352,29 +354,32 @@ function produkDetail(props) {
     const postWishlist = async(id) => {
         setLoading(true)
         const value = await AsyncStorage.getItem('data');
+        // console.log(value)
         const data = JSON.parse(value)
         const id_user = data.id
-        // console.log(id,id_user)
+        console.log(id,id_user)
+
+        var formdata = new FormData();
+        formdata.append("product_id", id);
+        formdata.append("user_id", id_user);
+
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
-            'Content-Type' : 'application/json'
+            'Content-Type' : 'multipart/form-data'
         }
 
         fetch(urlWishlist, {
             method: 'POST',
             headers,
-            body: JSON.stringify({
-                product_id:id,
-                user_id:id_user,
-            })
+            body: formdata
         })
     
         .then((response) => response.json())
         .then( async(responseData) => {
                 setLoading(false)
                 goToHome()
-                // console.log(responseData)
+                console.log(responseData)
         })
         .done();
     }
@@ -394,15 +399,15 @@ function produkDetail(props) {
                             source={{uri : dataDetail.images[0].file_upload}}
                             style={{width:'100%', height:height*0.5 , resizeMode:'cover'}}
                         /> */}
-                        <View style={{width:'100%',height:height*0.5, backgroundColor:'blue'}}>
-                            <SliderBox images={dataGambar} style={{width:'100%', height:null,  resizeMode: 'contain',}}/>
-                        </View>
+                        {/* <View style={{width:'100%',height:height*0.5, backgroundColor:'blue'}}> */}
+                            <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
+                        {/* </View> */}
                         <Title>{dataDetail.name}</Title>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
                             <Select2
                                 isSelectSingle
-                                style={{ borderRadius: 5, width:'60%' }}
+                                style={{ borderRadius: 5, width:'64%' }}
                                 colorTheme={'blue'}
                                 popupTitle='Pilih Kota dan kecamatan'
                                 title='Pilih Kota dan Kecamatan'
@@ -419,7 +424,7 @@ function produkDetail(props) {
                                 searchPlaceHolderText="Ketik Nama Kota Atau Kecamatan"
                             />
 
-                            <TouchableOpacity style={{width:'30%'}}>
+                            <TouchableOpacity style={{width:'34%'}}>
                                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                     style={{padding:10, borderRadius:10}}
                                 >
@@ -431,8 +436,8 @@ function produkDetail(props) {
                         </View>
 
                         {!metodeCOD &&
-                            <View style={{padding:10, width:'100%', backgroundColor:'#93DCFC', flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}>
-                                <Icon name="help-circle-outline" size={20} color="#949494" />
+                            <View style={{padding:10, width:'100%', backgroundColor:'#E0F5FE', flexDirection:'row', flexWrap:'wrap', alignItems:'center'}}>
+                                <Icon name="alert" size={20} color="#07A9F0" />
                                 <Text> Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
                             </View> 
                         }
@@ -442,8 +447,8 @@ function produkDetail(props) {
                                 <Text style={{fontSize:24}}>Rp. {formatRupiah(totalHarga)}</Text>
                                 <Text style={{fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
                             </View>
-                                <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, paddingHorizontal:20, justifyContent:'center'}}>
-                                <Text style={{fontSize:14}}>Komisi Rp. {formatRupiah(totalKomisi)}</Text>
+                                <View style={{backgroundColor:'#D5D5D5', height:height*0.03, paddingHorizontal:5, justifyContent:'center'}}>
+                                <Text style={{fontSize:12}}>Komisi Rp. {formatRupiah(totalKomisi)}</Text>
                             </View>
                         </View>
 
@@ -588,7 +593,7 @@ function produkDetail(props) {
                         <TouchableOpacity style={{width:'50%', height:height*0.06}} onPress={gotoPesan}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{flexDirection:'row', padding:height*0.01,  justifyContent:'space-around', alignItems:'center'}}>
-                                    <Icon name="send" size={height*0.04} color="#fff"/>
+                                    <Image source={require('../../assets/images/inbox.png')} style={{width:width*0.08, height:width*0.08}} />
                                     <Text style={{fontSize:height*0.015, color:'#fff'}}>Pesan {"&"} Kirim</Text>
                             </LinearGradient>
                         </TouchableOpacity>

@@ -39,50 +39,23 @@ function appbarHome(props) {
     const { height, width } = Dimensions.get("window");
 
     return (
-        <Appbar.Header style={[styles.shadow,{backgroundColor:(wishlist>0) ? 'transparent' :'white', width:'100%', height:(wishlist>0) ? 70 :70, position:(wishlist>0) ? 'absolute' : 'relative', top:0}]}>
+        <Appbar.Header style={[styles.shadow,{backgroundColor:'transparent', width:'100%', height:70, position:'absolute', top:0}]}>
 
-            { (title!=="Home" && title!=="Jualan Anda" && title!=="Pesanan Saya") &&
-                <Appbar.BackAction onPress={() => {props.params.navigation.goBack()}} />
-            }
-
-            { (title==="Home" || title==="Jualan Anda") &&
                 <Image 
                     source={require(logoHorizontal)}
                     style={{width:170, height:45}}
                     width={180}
                     height={45}
                 />
-            }
 
-            { (title!=="Home" && title!=="Jualan Anda") ?
-                <Appbar.Content titleStyle={{fontSize:14}} title={title}/>
-            :
                 <Appbar.Content/>
-            }
 
-            {title==="Home" &&
-                <Appbar.Action size={30} icon="bell-ring-outline"/>
-            }
-
-         
-
-            {title!=="Home" && 
-                ((title==="Jualan Anda" && haveProduk) ?
-                    <View style={{flexDirection:'row'}}>
-                        <TouchableOpacity onPress={gotoPesanan}>
-                            <Appbar.Action size={30} icon="cart" color={(haveProduk) ? 'white' :'black'}/>
-                        </TouchableOpacity>
-                        <Appbar.Action size={30} icon="bell-ring-outline" color={(haveProduk) ? 'white' :'black'}/>
-                    </View>
-                :
-                    <View style={{flexDirection:'row'}}>
-                        <Appbar.Action size={30} icon="magnify"/>
-                        <TouchableOpacity onPress={gotoWishlist}>
-                            <Appbar.Action size={30} icon="heart"/>
-                        </TouchableOpacity>
-                    </View>
-                )
-            }
+                <View style={{flexDirection:'row'}}>
+                    <TouchableOpacity onPress={gotoPesanan}>
+                        <Appbar.Action size={30} icon="cart" color={'white'}/>
+                    </TouchableOpacity>
+                    <Appbar.Action size={30} icon="bell-ring-outline" color={'white'}/>
+                </View>
 
         </Appbar.Header>
     );

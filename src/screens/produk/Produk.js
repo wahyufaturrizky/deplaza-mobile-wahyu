@@ -43,9 +43,13 @@ function produk(props) {
             param = "&order_by=price_commission&order_direction=desc"
         }else if(props.route.params.idKategori != null){
             param = "&category="+props.route.params.idKategori
+        }else if(halaman==="Paling Disukai"){
+            param = "&order_by=wishlist_qty&order_direction=desc"
         }else{
             param = ""
         }
+
+       
 
         console.log(urlProduk+"?limit=10&offset="+page+""+param)
         // console.log(props.route.params.idKategori)
@@ -143,7 +147,7 @@ function produk(props) {
                     <View style={{width:'68%'}}>
                         <Title style={{fontSize:14, lineHeight:18}}>{product.name}</Title>
                         <Text style={{fontSize:14, marginBottom:height*0.01}}>Mulai Dari Rp {formatRupiah(product.price_basic)}</Text>
-                        <Text style={{color:'#949494', fontSize:10}}>Stok {product.stock}</Text>
+                        <Text style={{color:'#949494', fontSize:12}}>Stok {product.stock}</Text>
                         <TouchableOpacity style={{alignItems:'flex-end', justifyContent:'flex-end', flex:1, paddingVertical:10}}  onPress={() => detailProduk(product.id, product.name)}>
                             <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>
                         </TouchableOpacity>
