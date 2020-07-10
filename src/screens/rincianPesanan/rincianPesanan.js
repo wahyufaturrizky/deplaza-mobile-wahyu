@@ -35,6 +35,8 @@ function Pesan(props) {
     const [trackingId, setTrackingId] = useState("")
     const [photo, setPhoto] = useState(0)
 
+    const [variation,setVariation] = useState([])
+
     const [productImages, setProductImages] = useState("https://via.placeholder.com/150")
     const [productName, setProductName] = useState("0")
 
@@ -61,6 +63,10 @@ function Pesan(props) {
 
     const gotoLacak = () => {
         props.navigation.navigate('Lacak',{title:"Lacak", id:id_order})      
+    }
+
+    const gotoPesanan = () => {
+        props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})      
     }
 
     const copyToClipboard = async() => {
@@ -106,7 +112,12 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 console.log(responseData)
+                // console.log(responseData.data.payment.metadata_decode[0].bukti_bayar)
+                // setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
                 setLoading(false)
+                setLengthBukti(1)
+                gotoPesanan()
+                alert("Bukti Transfer Berhasil Terupload")
                 // gotoPesanan()
             })
         });
@@ -116,6 +127,8 @@ function Pesan(props) {
     const getRincianPesanan = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
+        console.log(id_order)
+
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
@@ -124,27 +137,28 @@ function Pesan(props) {
         fetch(urlRincianPesanan+id_order, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
-                console.log(id_order)
+                console.log(JSON.parse(responseData.data.details[0].variation))
 
-                setDataDetail(responseData.data)
-
+                setDataDetail(responseData.data.details[0])
+                setVariation(JSON.parse(responseData.data.details[0].variation))
                 setMethodId(responseData.data.payment.method_id)
                 setTrackingId(responseData.data.delivery.tracking_id)
                 setInvoice(responseData.data.invoice)
                 setReceiver_name(responseData.data.delivery.receiver_name)
                 setReceiver_address(responseData.data.delivery.receiver_address)
                 setPhone(responseData.data.customer.phone)
-                setColor(JSON.parse(responseData.data.details[0].variation).color[0])
+                // setColor(JSON.parse(responseData.data.details[0].variation).color[0])
                 setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
                 setAmmount(responseData.data.payment.ammount)
                 setCommission(responseData.data.details[0].commission)
                 setCustom_commission(responseData.data.details[0].custom_commission)
                 
-                setLengthBukti(responseData.data.payment.metadata_decode.length)
                 
                 if(responseData.data.payment.metadata_decode.length>0){
                     setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
+                    setLengthBukti(responseData.data.payment.metadata_decode.length)
+
                 }
 
                 let id_produk = responseData.data.details[0].product_id
@@ -236,22 +250,19 @@ function Pesan(props) {
                                 <View>
                                     <Text style={{fontSize:18}}>{productName}</Text>
                                     <Text>Rp. {formatRupiah(total_price)}</Text>
-                                    <View style={{flexDirection:'row'}}>
+                                    <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                                         <View style={{flexDirection:'row', justifyContent:'space-between', width:'50%', alignItems:'center'}}>
-                                            {color !="" &&
-                                                <View style={{width:'50%'}}>
-                                                    {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
-                                                    {color !="" &&
-                                                        <Text style={{fontSize:14, color:'gray'}}>Warna: {color}</Text>
-                                                    }
-                                                </View>
-                                            }
-                                            <Text style={{fontSize:14, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
+                                            <View style={{width:'60%'}}>
+                                                {variation.map((val,i) => (
+                                                        <Text style={{fontSize:12, color:'gray'}}>{Object.keys(val)[0]} : {val[Object.keys(val)[0]]}</Text>
+                                                ))}
+                                            </View>
+                                            <Text style={{fontSize:12, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
                                         </View>
 
-                                        <TouchableOpacity style={{width:'50%', alignSelf:'center',}} onPress={gotoLacak}>
+                                        <TouchableOpacity style={{width:'40%', alignSelf:'flex-end',}} onPress={gotoLacak}>
                                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                                style={{padding:5, justifyContent:'center', alignItems:'center', padding:10, borderRadius:10,}}
+                                                style={{padding:5, justifyContent:'center', alignItems:'center', padding:8, borderRadius:10,}}
                                             >
                                                 <Text style={{fontSize:14, textAlign:'center', color:'white'}}>
                                                     LACAK
@@ -276,7 +287,7 @@ function Pesan(props) {
                                 <View>
                                     <TouchableOpacity style={{width:'90%', alignSelf:'center',}} onPress={gotoKembali}>
                                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                            style={{padding:5, justifyContent:'center', alignItems:'center', padding:15, borderRadius:10,}}
+                                            style={{padding:5, justifyContent:'center', alignItems:'center', padding:8, borderRadius:10,}}
                                         >
                                             <Text style={{fontSize:16, textAlign:'center', color:'white'}}>
                                                 Tukar / Kembalikan

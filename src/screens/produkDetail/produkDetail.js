@@ -29,6 +29,7 @@ function produkDetail(props) {
 
     const [color, setColor] = useState([])
     const [size, setSize] = useState([])
+    const [selectVariasi, setSelectVariasi]= useState([])
 
     const [pressSize, setPressSize] = useState(false)
     const [pressColor, setPressColor] = useState(-1)
@@ -37,6 +38,8 @@ function produkDetail(props) {
     const [selectColor, setSelectColor] = useState("")
     const [selectSize, setSelectSize] = useState("")
     const [totalKomisi, setTotalKomisi] = useState("0")
+
+    const [varian, setVarian] = useState([])
 
     const [kota, setKota] = useState([
         { id: 1, name: 'Pilih Kota' }
@@ -47,6 +50,7 @@ function produkDetail(props) {
     const [totalHarga, setTotalHarga] = useState(0)
     const [metodeCOD, setmetodeCOD] = useState(false) //false kalo untuk bank 
     const [likeProduk, setLikeProduk] = useState(0)
+    const [pilihKota, setPilihKota] = useState(false)
     // const likeProduk = true
 
     const urlProdukDetail = URL+'v1/product/'
@@ -59,7 +63,7 @@ function produkDetail(props) {
 
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
-    
+    let tvarian = 0
 
     useEffect(() => {
         getDetailProduct()
@@ -94,7 +98,7 @@ function produkDetail(props) {
                 let res = responseData.data
                 let row = 0
                 res.map((data,i) => {
-                    console.log(data.product_id+" id ="+id)
+                    // console.log(data.product_id+" id ="+id)
                     if(data.product_id == id){
                         row++
                     }
@@ -160,11 +164,15 @@ function produkDetail(props) {
         }));  
     }
 
+    const gotoRincianProduk = () => {
+        props.navigation.navigate('Produk',{title:"Paling Disukai"})   
+    }
+
     const gotoPesan = () => { //{"color": ["red", "yellow"], "size": ["s", "m", "l", "xl"]}
         if(totalOngkir===0){
             alert("Pilih Terlebih Kota atau Kecamatan Tujuan")
         }else{
-            props.navigation.navigate("Pesan", {title:"Pesan & Kirim", data: {id_produk : id, variation:{color:[selectColor],size:[selectSize]}, qty, metodeCOD, totalHarga, totalOngkir, imageDetail:dataGambar[0]}})
+            props.navigation.navigate("Pesan", {title:"Pesan & Kirim", data: {id_produk : id, variation:selectVariasi, qty, metodeCOD, totalHarga, totalOngkir, imageDetail:dataGambar[0]}})
         }
     }
 
@@ -191,11 +199,12 @@ function produkDetail(props) {
                 setTotalKomisi(responseData.data.price_commission)
 
                 setColor("")
-                if(responseData.data.variation_data!=null){
-                    setSize(responseData.data.variation_data.size)
-                    setColor(responseData.data.variation_data.color)
-                }
-                // console.log(responseData.data.variation_data)
+                // if(responseData.data.variation_data!=null){
+                    // setSize(responseData.data.variation_data.size)
+                    // setColor(responseData.data.variation_data.color)
+                // }
+                setVarian(responseData.data.variation_data)
+                // console.log(responseData.data.variation_data[0].Warna[0])
                 
                 let responseImage = responseData.data.images
                 responseImage.map((data,i) => {
@@ -345,6 +354,7 @@ function produkDetail(props) {
             setLoading(false)
             tipe.map((type) => {
                 if(type.service === "REG"){
+                    setPilihKota(true)
                     setTotalOngkir(type.cost[0].value, setTotalHarga(dataDetail.price_basic+type.cost[0].value))
                 }
             })
@@ -357,7 +367,7 @@ function produkDetail(props) {
         // console.log(value)
         const data = JSON.parse(value)
         const id_user = data.id
-        console.log(id,id_user)
+        // console.log(id,id_user)
 
         var formdata = new FormData();
         formdata.append("product_id", id);
@@ -378,8 +388,9 @@ function produkDetail(props) {
         .then((response) => response.json())
         .then( async(responseData) => {
                 setLoading(false)
-                goToHome()
-                console.log(responseData)
+                // goToHome()
+                gotoRincianProduk()
+                // console.log(responseData)
         })
         .done();
     }
@@ -388,6 +399,20 @@ function produkDetail(props) {
     const _onDismissSnackBar = () => setCopy(false)
 
     const clickSize = () => setPressSize(!pressSize)
+
+    const addVariasi = (variant, value) => {
+        let data = [{[variant]:value}]
+        let allVariasi = selectVariasi
+
+        allVariasi.forEach(function(v){ 
+            delete v[variant] 
+        });
+
+        let filtered = allVariasi.filter(value => JSON.stringify(value) !== '{}');
+
+        setSelectVariasi(filtered.concat(data))
+        
+    }
 
     return (
         <View style={{backgroundColor:'white', flex:1}}>
@@ -409,8 +434,8 @@ function produkDetail(props) {
                                 isSelectSingle
                                 style={{ borderRadius: 5, width:'64%' }}
                                 colorTheme={'blue'}
-                                popupTitle='Pilih Kota dan kecamatan'
-                                title='Pilih Kota dan Kecamatan'
+                                popupTitle='Pilih Kota'
+                                title='Pilih Kota'
                                 data={kota}
                                 onSelect={data => {
                                     setSelectKota(data)
@@ -421,7 +446,7 @@ function produkDetail(props) {
                                 }}
                                 cancelButtonText="Batal"
                                 selectButtonText="Pilih"
-                                searchPlaceHolderText="Ketik Nama Kota Atau Kecamatan"
+                                searchPlaceHolderText="Ketik Nama Kota"
                             />
 
                             <TouchableOpacity style={{width:'34%'}}>
@@ -435,22 +460,24 @@ function produkDetail(props) {
                             </TouchableOpacity>
                         </View>
 
-                        {!metodeCOD &&
+                        {(!metodeCOD && pilihKota) &&
                             <View style={{padding:10, width:'100%', backgroundColor:'#E0F5FE', flexDirection:'row', flexWrap:'wrap', alignItems:'center'}}>
                                 <Icon name="alert" size={20} color="#07A9F0" />
                                 <Text> Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
                             </View> 
                         }
 
-                        <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
-                            <View>
-                                <Text style={{fontSize:24}}>Rp. {formatRupiah(totalHarga)}</Text>
-                                <Text style={{fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
+                        {pilihKota &&
+                            <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
+                                <View>
+                                    <Text style={{fontSize:24}}>Rp. {formatRupiah(totalHarga)}</Text>
+                                    <Text style={{fontSize:12}}>*Harga Sudah Termasuk Ongkir</Text>
+                                </View>
+                                    <View style={{backgroundColor:'#D5D5D5', height:height*0.03, paddingHorizontal:5, justifyContent:'center'}}>
+                                    <Text style={{fontSize:12}}>Komisi Rp. {formatRupiah(totalKomisi)}</Text>
+                                </View>
                             </View>
-                                <View style={{backgroundColor:'#D5D5D5', height:height*0.03, paddingHorizontal:5, justifyContent:'center'}}>
-                                <Text style={{fontSize:12}}>Komisi Rp. {formatRupiah(totalKomisi)}</Text>
-                            </View>
-                        </View>
+                        }
 
                         <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, width:'30%', paddingHorizontal:20, marginTop:height*0.01, alignItems:'center', justifyContent:'center'}}>
                             <Text style={{fontSize:14}}>Stok {dataDetail.stock}</Text>
@@ -490,6 +517,42 @@ function produkDetail(props) {
                             <Title>Pilih Variasi dan Jumlah</Title>
                         </View>
                     </View>
+
+                    {varian.map((data,i) => {
+                        let tvariant = Object.keys(data)[0]
+                        
+                        return(
+                        
+                        <View key={i}>
+                            <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
+                            
+                            <View style={{width:'90%', alignSelf:'center', padding:10}}>
+                                <Title style={{marginBottom:height*0.01}}>{tvariant}</Title>
+                                <View style={{flexDirection:'row', alignItems:'center', flexWrap:'wrap',  width:'50%'}}>
+                                { data[tvariant].map((val,j) => {
+                                    // console.log(selectVariasi)
+                                    // console.log({[tvariant]:val})
+
+                                    let found = false;
+
+                                    for(let k = 0; k < selectVariasi.length; k++) {
+                                        if (selectVariasi[k][tvariant] == val) {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    return(
+                                        <TouchableOpacity onPress={() => addVariasi(tvariant,val)}>
+                                            <View style={{backgroundColor:'white', borderWidth:1, borderColor: (found) ? 'red' : 'gray', padding:5, marginBottom:height*0.005, marginRight:5, borderRadius:5}}><Text>{val}</Text></View>
+                                        </TouchableOpacity>
+                                )
+                                })}
+                                </View>
+
+                            </View>
+                        </View>
+                        )
+                    })}
 
                     
                     {/* { (dataDetail.variation_data.size != null && dataDetail.variation.length.size > 0) &&

@@ -125,14 +125,15 @@ function editKontak(props) {
     }
     
     return (
-    <View>
-        <View style={{padding:15, backgroundColor:'#F8F8F8', marginTop:height*0.01}}>
+    <View style={{flex:1}}>
+        <View style={{padding:15, backgroundColor:'#F8F8F8', marginTop:height*0.01, flex:1}}>
             <TextInput
                 label='Nama Lengkap'
                 value={fullname}
                 mode = "outlined"
                 onChangeText={(val)=> setFullName(val)}
                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10, marginBottom:height*0.01}}
+                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
             /> 
 
             <TextInput
@@ -141,6 +142,7 @@ function editKontak(props) {
                 mode = "outlined"
                 onChangeText={(val)=> setPhone(val)}
                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10, marginBottom:height*0.01}}
+                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
             />
 
             <TextInput
@@ -149,6 +151,7 @@ function editKontak(props) {
                 mode = "outlined"
                 onChangeText={(val)=> setEmail(val)}
                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10, marginBottom:height*0.01}}
+                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
             />
 
             <TextInput
@@ -158,6 +161,7 @@ function editKontak(props) {
                 mode = "outlined"
                 onChangeText={(val)=> setAlamat(val)}
                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10, marginBottom:height*0.01}}
+                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
             />
 
             <View style={{borderWidth:1, borderColor:'gray', justifyContent:'center', width:'90%', alignSelf:'center', marginBottom:height*0.01, borderRadius:10, height:height*0.055}}>
@@ -191,6 +195,7 @@ function editKontak(props) {
                 mode = "outlined"
                 onChangeText={(val)=> setPos(val)}
                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10, marginBottom:height*0.01}}
+                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
             />
 
 

@@ -174,6 +174,7 @@ function Login(props) {
                             selectionColor={"#07A9F0"}
                             underlineColor={"#07A9F0"}
                             underlineColorAndroid={"#07A9F0"}
+                            theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                             style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginBottom:height*0.01}} 
                         />    
 
@@ -202,6 +203,7 @@ function Login(props) {
                                     selectionColor={"#07A9F0"}
                                     underlineColor={"#07A9F0"}
                                     underlineColorAndroid={"#07A9F0"}
+                                    theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                                     style={{width:'70%',  backgroundColor:'white'}}
                                 />
                                 
@@ -217,6 +219,7 @@ function Login(props) {
                             underlineColor={"#07A9F0"}
                             underlineColorAndroid={"#07A9F0"}
                             onChangeText={(val)=> setPassword(val)}
+                            theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                             style={{width:'90%', alignSelf:'center',  backgroundColor:'white'}} 
                         />   
 

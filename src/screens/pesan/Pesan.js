@@ -15,6 +15,7 @@ import Loading from '../../components/loading'
 
 function Pesan(props) {
     const totalHarga = props.route.params.data.totalHarga
+    // console.log(props.route.params.data.variation)
 
     const [fullname, setFullname] = useState('')
     const [dataDetail, setDataDetail] = useState([])
@@ -28,6 +29,8 @@ function Pesan(props) {
     const [totalKeseluruhan, setTotalKeseluruhan] = useState(totalHarga);
     const [totalPendapatan, setTotalPendapatan] = useState("0");
     const [totalBiaya, setTotalBiaya] = useState(totalHarga);
+
+    const [variation, setVariation] = useState(props.route.params.data.variation)
     
     const [judul,setJudul] = useState("")
     const [priceBasic,setPriceBasic] = useState("0")
@@ -51,7 +54,7 @@ function Pesan(props) {
 
     const metodeCOD = props.route.params.data.metodeCOD
     const id_produk = props.route.params.data.id_produk
-    const variation = props.route.params.data.variation
+    // const variation = props.route.params.data.variation
     const totalOngkir = props.route.params.data.totalOngkir
     const imageDetail = props.route.params.data.imageDetail
 
@@ -526,7 +529,7 @@ function Pesan(props) {
                                 onChangeText={(val)=> setFullname(val)}
                                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10}}
                                 disabled={pesan ? true : false}
-                                
+                                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                             />             
 
                             <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', flexDirection:'row', marginTop:height*0.005}}>
@@ -551,6 +554,7 @@ function Pesan(props) {
                                     mode="outlined"
                                     style={{width:'70%', backgroundColor:'white', borderRadius:10}}
                                     disabled={pesan ? true : false}
+                                    theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                                 />
                             </View>
 
@@ -605,6 +609,7 @@ function Pesan(props) {
                                         keyboardType="numeric"
                                         onChangeText={(val)=> setPos(val)}
                                         style={{width:'100%', backgroundColor:'white', marginBottom:height*0.01, borderRadius:10}}
+                                        theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                                     />
                                 {/* </View> */}
                             </View>
@@ -618,6 +623,7 @@ function Pesan(props) {
                                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginTop:height*0.005}}
                                 multiline={true}
                                 numberOfLines={4}
+                                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                             />  
                     </View>
 
@@ -637,12 +643,11 @@ function Pesan(props) {
                                     <View style={{width:'50%'}}>
                                         
                                         <Text>Rp. {formatRupiah(priceBasic)}</Text>
-                                        {variation!=null || variation!=[] &&
-                                            <View>
-                                                <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text>
-                                                <Text style={{fontSize:14, color:'gray'}}>Warna: {variation.color}</Text>
-                                            </View>
-                                        }
+                                        <View>
+                                            {variation.map((val,i) => (
+                                                    <Text key={i} style={{fontSize:14, color:'gray'}}>{Object.keys(val)[0]}: {val[Object.keys(val)[0]]}</Text>
+                                            ))}
+                                        </View>
                                     </View>
                                     <View style={{width:'50%', justifyContent:'space-between', alignItems:'center'}}>
                                         <Text style={{fontSize:14, color:'gray', marginBottom:height*0.01}}>Jumlah: </Text>

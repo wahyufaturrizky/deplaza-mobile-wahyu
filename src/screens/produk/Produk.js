@@ -2,20 +2,22 @@ import React, {useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
 
-import Appbar from '../../components/appbarHome'
+// import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
-import { Title, ActivityIndicator } from 'react-native-paper';
+import { Title, ActivityIndicator, Appbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
+import InputNormal from '../../components/inputNormal';
 
 function produk(props) {
     
     const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [page, setPage] = useState(1)
     const [load, setLoad] = useState(false)
     const [any, setAny] = useState(true)
+    const [search, setSearch] = useState(false)
 
     const [color, setColor] = useState(false)
 
@@ -24,6 +26,7 @@ function produk(props) {
     const { height, width } = Dimensions.get("window");
     const urlProduk = URL+"v1/product" 
     const scrollRef = useRef(); 
+    const searchRef = useRef();
 
     useEffect(() => {
         getProduct()
@@ -34,7 +37,12 @@ function produk(props) {
         props.navigation.navigate('ProdukDetail',{id, title:name})      
     }
 
+    const gotoWishlist = () => {
+        props.params.navigation.navigate("Wishlist", {title:"Produk Saya"})
+    }
+
     const getProduct = async() => {
+        setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
         let param =""
@@ -59,13 +67,13 @@ function produk(props) {
             'Access-Control-Allow-Origin': '*',
         }
 
-        fetch(urlProduk+"?limit=10&offset="+page+""+param, {headers})
+        fetch(urlProduk+"?limit=10&offset=0"+param, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProducts(responseData.data)
                 // setColor
                 console.log(products.data)
-                setPage(2)
+                setPage(1)
                 setLoad(true)
                 setLoading(false)
             })
@@ -124,10 +132,95 @@ function produk(props) {
             .catch(e => console.log(e))
     }
 
+    const OpenSearchTrigger = async() => {
+        setSearch(true)
+    }
+
+    const CloseSearchTrigger = async() => {
+        setSearch(false)
+        getProduct()
+    }
+
+    const searchProduk = async(search) => {
+        setLoading(true)
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        let param =""
+
+        if(halaman==="Komisi Terbesar"){
+            param += "&order_by=price_commission&order_direction=desc"
+        }else if(props.route.params.idKategori != null){
+            param += "&category="+props.route.params.idKategori
+        }else if(halaman==="Paling Disukai"){
+            param += "&order_by=wishlist_qty&order_direction=desc"
+        }else{
+            param += ""
+        }
+
+        param +="&keyword="+search
+
+        console.log(urlProduk+"?limit=10&offset=0"+param)
+        // console.log(props.route.params.idKategori)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlProduk+"?limit=10&offset="+page+""+param, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                await setProducts(responseData.data)
+                // setColor
+                console.log(products.data)
+                setPage(2)
+                setLoad(true)
+                setLoading(false)
+            })
+            .catch(e => console.log(e))
+    }
+
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             
-            <Appbar params={props}/>
+            {/* <Appbar params={props}/> */}
+
+            <Appbar.Header style={[styles.shadow,{backgroundColor:'white', width:'100%', height: 70}]}>
+
+                    <Appbar.BackAction onPress={() => {props.navigation.goBack()}} />
+
+                   
+
+                    {search ?
+                        <View style={{borderBottomColor:'gray', borderBottomWidth:1, width:width*0.4}}>
+                            <InputNormal
+                                placeholder="Cari Produk"
+                                onChangeText={(val) => searchProduk(val)}
+                                
+                            />
+                        </View>
+                    :
+                        <Text>{halaman}</Text>
+                    }
+
+                    <Appbar.Content/>
+
+                    <View style={{flexDirection:'row'}}>
+                        {search ?
+                            <TouchableOpacity onPress={CloseSearchTrigger}>
+                                <Appbar.Action size={30} icon="close"/>
+                            </TouchableOpacity>
+                        :
+                            <TouchableOpacity onPress={OpenSearchTrigger}>
+                                <Appbar.Action size={30} icon="magnify"/>
+                            </TouchableOpacity>
+                        }
+                        <TouchableOpacity onPress={gotoWishlist}>
+                            <Appbar.Action size={30} icon="heart"/>
+                        </TouchableOpacity>
+                    </View>
+
+            </Appbar.Header>
 
             <ScrollView style={{flex:1, marginTop:10}}>
                 
@@ -181,3 +274,17 @@ function produk(props) {
 }
 
 export default produk;
+
+const styles=StyleSheet.create({
+    shadow : {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+    }
+})
