@@ -29,7 +29,11 @@ function produk(props) {
     const searchRef = useRef();
 
     useEffect(() => {
-        getProduct()
+        if(halaman=="Cari Produk"){
+            searchProduk(props.route.params.search)
+        }else{
+            getProduct()
+        }
     },[])
 
     //Pergi ke Hal List Produk

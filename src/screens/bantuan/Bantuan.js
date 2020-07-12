@@ -30,6 +30,10 @@ function Bantuan(props) {
         props.navigation.navigate('BantuanLain',{title:"Bantuan Lain"})      
     }
 
+    const gotoBantuanFaq = () => {
+        props.navigation.navigate('BantuanFaq',{title:"Bantuan FAQ"})      
+    }
+
     const { height, width } = Dimensions.get("window");
     return (
        <View style={{flex:1}}>
@@ -47,20 +51,16 @@ function Bantuan(props) {
                         </ImageBackground>
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    {/* <TouchableOpacity>
                         <ImageBackground source={require('../../assets/images/bantuJualan2.png')} style={{justifyContent:'flex-end', padding:10, alignItems:'center', marginVertical:height*0.005, height:height*0.2}}>
-                            {/* <View style={{width:'90%', alignSelf:'center'}}> */}
                                 <Text style={{color:'white', marginVertical:5, fontSize:18}}>Akademi Jualan Online</Text>
                                 <Text style={{color:'white', marginBottom:height*0.01, fontSize:18}}>(Tersedia Tutorial Video)</Text>
-                            {/* </View> */}
                         </ImageBackground>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={gotoBantuanFaq}>
                         <ImageBackground source={require('../../assets/images/bantuJualan3.png')} style={{justifyContent:'center', padding:10, alignItems:'center', marginVertical:height*0.005, height:height*0.2}}>
-                            {/* <View style={{width:'90%', alignSelf:'center'}}> */}
-                                <Text style={{color:'white', fontSize:26}}>FAQ</Text>
-                            {/* </View> */}
+                                <Text style={{color:'white', fontSize:22}}>FAQ</Text>
                         </ImageBackground>
                     </TouchableOpacity>
                 </View>
@@ -74,15 +74,15 @@ function Bantuan(props) {
                         />
                         {subBantu === 0 &&
                             <View style={{alignItems:'center', width:'90%', alignSelf:'center'}}>
-                                <Text style={{fontSize:26, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Apakah Produk Anda Belum Laku ?</Text>
+                                <Text style={{fontSize:22, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Apakah Produk Anda Belum Laku ?</Text>
                                 <TouchableOpacity onPress={() => changeSubBantu(1)} style={{justifyContent:'center', alignItems:'center', borderRadius:100, backgroundColor:'#0956C6', width:width*0.3, height:width*0.3}}>
-                                    <Text style={{fontSize:26, fontWeight:'bold', color:"white"}}>YA</Text>
+                                    <Text style={{fontSize:22, fontWeight:'bold', color:"white"}}>YA</Text>
                                 </TouchableOpacity>
                             </View>
                         }
                         {subBantu === 1 &&
                             <View style={{alignItems:'center', width:'90%', alignSelf:'center'}}>
-                                <Text style={{fontSize:26, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Dimana Anda Menjual Produk Anda ?</Text>
+                                <Text style={{fontSize:22, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Dimana Anda Menjual Produk Anda ?</Text>
                                 <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                                     <TouchableOpacity onPress={() => changeSubBantu(2)} style={{justifyContent:'center', alignItems:'center', borderRadius:100, backgroundColor:'#2196F3', width:width*0.2, height:width*0.2}}>
                                         <Image
@@ -124,14 +124,14 @@ function Bantuan(props) {
                         }
                         {subBantu === 2 &&
                             <View style={{alignItems:'center', width:'90%', alignSelf:'center'}}>
-                                <Text style={{fontSize:26, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Sudahkah Anda Memposting Minimal 5 Kali Perhari ?</Text>
+                                <Text style={{fontSize:22, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Sudahkah Anda Memposting Minimal 5 Kali Perhari ?</Text>
                                 <View style={{justifyContent:'space-between', alignItems:'center', flexDirection:'row', width:'100%'}}>
                                     <TouchableOpacity onPress={() => setSubBantu(3)} style={{justifyContent:'center', alignItems:'center', borderRadius:100, backgroundColor:'#0956C6', width:width*0.3, height:width*0.3}}>
-                                        <Text style={{fontSize:26, fontWeight:'bold', color:"white"}}>Sudah</Text>
+                                        <Text style={{fontSize:22, fontWeight:'bold', color:"white"}}>Sudah</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity onPress={() => setSubBantu(3)} style={{justifyContent:'center', alignItems:'center', borderRadius:100, backgroundColor:'#D5D5D5', width:width*0.3, height:width*0.3}}>
-                                        <Text style={{fontSize:26, fontWeight:'bold', color:"black"}}>Belum</Text>
+                                        <Text style={{fontSize:22, fontWeight:'bold', color:"black"}}>Belum</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -147,7 +147,7 @@ function Bantuan(props) {
                             style={{width:width*0.2, height:width*0.2, resizeMode:'stretch', marginBottom:height*0.02}}
                         />
                         <View style={{alignItems:'center', width:'90%', alignSelf:'center'}}>
-                            <Text style={{fontSize:26, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Mungkin Masalah Anda Disini</Text>  
+                            <Text style={{fontSize:22, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Mungkin Masalah Anda Disini</Text>  
                         </View>
 
                         <View style={{marginBottom:height*0.01}}>

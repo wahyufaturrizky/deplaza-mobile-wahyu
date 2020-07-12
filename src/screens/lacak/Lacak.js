@@ -10,6 +10,7 @@ import AppBarHome from '../../components/appbarHome'
 import Loading from '../../components/loading'
 
 import {URL, formatRupiah} from '../../utils/global'
+import { ScrollView } from 'react-native-gesture-handler';
 
 function Lacak(props) {
     const [copy, setCopy] = useState(false)
@@ -66,7 +67,7 @@ function Lacak(props) {
                 setReceiver_name(responseData.data.delivery.receiver_name)
                 setReceiver_address(responseData.data.delivery.receiver_address)
                 setPhone(responseData.data.customer.phone)
-                setColor(JSON.parse(responseData.data.details[0].variation).color[0])
+                // setColor(JSON.parse(responseData.data.details[0].variation).color[0])
                 setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
                 setAmmount(responseData.data.payment.ammount)
@@ -113,93 +114,96 @@ function Lacak(props) {
        <View style={{backgroundColor:'white', flex:1}}>
            <AppBarHome params={props}/>
 
-           <View style={{padding:20, backgroundColor:'#f8f8f8', marginBottom:height*0.02}}>
-               <Text style={{fontSize:16}}>Linimasa</Text>
-           </View>
 
-           {logs.map((data,i) => (
-           <View key={i} style={{flexDirection:'row',  width:'90%', alignSelf:'center'}}>
-               
-               <View style={{alignItems:'center', marginRight:width*0.03}}>
-                   <Image 
-                    source={require('../../assets/images/EllipseNo.png')}
-                    style={{width:width*0.05, height:width*0.05}}                    
-                   />
-                   <Image 
-                    source={require('../../assets/images/Line.png')}
-                    style={{width:width*0.005, height:height*0.1}}                    
-                   />
-               </View>
-               
-               <View>
-                   <Text>{moment(data.created_at).format("D MMMM YYYY, h:mm A")}</Text>
-                   <Text>{data.description}</Text>
-               </View>
-           </View>
-           ))}
+            <ScrollView>
+            <View style={{padding:20, backgroundColor:'#f8f8f8', marginBottom:height*0.02}}>
+                <Text style={{fontSize:16}}>Linimasa</Text>
+            </View>
 
-           
-
-           <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
-
-           <View style={{padding:20, marginTop:height*0.01}}>
-               <Text style={{marginBottom:height*0.01, fontSize:16}}>Metode Pembayaran</Text>
-               <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end'}}>
-                   <View>
-                        <Text style={{fontWeight:'bold', fontSize:18}}>{methodId != 1 ? "TRANSFER" : "COD"}</Text>
-                        <Text>Kurir : JNE</Text>
-                       
-                        <Text>No. Resi :
-                        {trackingId != "" ?
-                            <Text>{trackingId}</Text>
-                        :
-                            <Text style={{color:'red'}}> Resi Belum di Input</Text>
-                        }
-                        </Text>
-                    </View>
-                    {trackingId != "" &&
-                        <TouchableOpacity style={{backgroundColor:'#E6E6E6', width:'30%', padding:10, flexDirection:'row', justifyContent:'center', alignItems:'center'}} onPress={copyToClipboard}>
-                            <Icon name="content-copy" size={16} color={"#07A9F0"}/>
-                            <Text style={{color:'#07A9F0'}}> No. Resi</Text>
-                        </TouchableOpacity>
-                    }
+            {logs.map((data,i) => (
+            <View key={i} style={{flexDirection:'row',  width:'90%', alignSelf:'center'}}>
+                
+                <View style={{alignItems:'center', marginRight:width*0.03}}>
+                    <Image 
+                        source={require('../../assets/images/EllipseNo.png')}
+                        style={{width:width*0.05, height:width*0.05}}                    
+                    />
+                    <Image 
+                        source={require('../../assets/images/Line.png')}
+                        style={{width:width*0.005, height:height*0.1}}                    
+                    />
                 </View>
-           </View>
-
-           <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
-
-           <View style={{padding:20, marginTop:height*0.01}}>
-                <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'flex-start', height:height*0.2}}>
-                    <View style={{width:'30%'}}>
-                        <Image
-                            source={{uri:productImages}}
-                            style={{width:'100%', height:height*0.2 , resizeMode:'cover', borderRadius:10}}
-                        />
-                    </View>
-
-                    <View style={{width:'60%', justifyContent:'space-between', height:'100%', flexDirection:'column'}}>
-                        <View>
-                            <Text style={{fontSize:18}}>{productName}</Text>
-                            <Text>Rp. {formatRupiah(total_price)}</Text>
-                            <View style={{flexDirection:'row'}}>
-                                <View style={{flexDirection:'row', justifyContent:'space-between', width:'50%', alignItems:'center'}}>
-                                    {color !="" &&
-                                        <View style={{width:'50%'}}>
-                                            {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
-                                            {color !="" &&
-                                                <Text style={{fontSize:14, color:'gray'}}>Warna: {color}</Text>
-                                            }
-                                        </View>
-                                    }
-                                    <Text style={{fontSize:14, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                    </View>
-                    
+                
+                <View>
+                    <Text>{moment(data.created_at).format("D MMMM YYYY, h:mm A")}</Text>
+                    <Text>{data.description}</Text>
                 </View>
             </View>
+            ))}
+
+            
+
+            <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
+
+            <View style={{padding:20, marginTop:height*0.01}}>
+                <Text style={{marginBottom:height*0.01, fontSize:16}}>Metode Pembayaran</Text>
+                <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end'}}>
+                    <View>
+                            <Text style={{fontWeight:'bold', fontSize:18}}>{methodId != 1 ? "TRANSFER" : "COD"}</Text>
+                            <Text>Kurir : JNE</Text>
+                        
+                            <Text>No. Resi :
+                            {trackingId != "" ?
+                                <Text>{trackingId}</Text>
+                            :
+                                <Text style={{color:'red'}}> Resi Belum di Input</Text>
+                            }
+                            </Text>
+                        </View>
+                        {trackingId != "" &&
+                            <TouchableOpacity style={{backgroundColor:'#E6E6E6', width:'30%', padding:10, flexDirection:'row', justifyContent:'center', alignItems:'center'}} onPress={copyToClipboard}>
+                                <Icon name="content-copy" size={16} color={"#07A9F0"}/>
+                                <Text style={{color:'#07A9F0'}}> No. Resi</Text>
+                            </TouchableOpacity>
+                        }
+                    </View>
+            </View>
+
+            <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
+
+            <View style={{padding:20, marginTop:height*0.01}}>
+                    <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'flex-start', height:height*0.2}}>
+                        <View style={{width:'30%'}}>
+                            <Image
+                                source={{uri:productImages}}
+                                style={{width:'100%', height:height*0.2 , resizeMode:'cover', borderRadius:10}}
+                            />
+                        </View>
+
+                        <View style={{width:'60%', justifyContent:'space-between', height:'100%', flexDirection:'column'}}>
+                            <View>
+                                <Text style={{fontSize:18}}>{productName}</Text>
+                                <Text>Rp. {formatRupiah(total_price)}</Text>
+                                <View style={{flexDirection:'row'}}>
+                                    <View style={{flexDirection:'row', justifyContent:'space-between', width:'50%', alignItems:'center'}}>
+                                        {color !="" &&
+                                            <View style={{width:'50%'}}>
+                                                {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
+                                                {color !="" &&
+                                                    <Text style={{fontSize:14, color:'gray'}}>Warna: {color}</Text>
+                                                }
+                                            </View>
+                                        }
+                                        <Text style={{fontSize:14, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
+                                    </View>
+                                </View>
+                            </View>
+
+                        </View>
+                        
+                    </View>
+                </View>
+            </ScrollView>
 
             {loading &&
                 <Loading />

@@ -17,6 +17,7 @@ const { height, width } = Dimensions.get("window");
 function jualanAnda(props) {
     const [wishlist,setWishlist] = useState(0)
     const [loading, setLoading] = useState(true)
+    const [search, setSearch] = useState("")
     // const [haveProduk, setHaveProduk] = useState(true)
  
     const { height, width } = Dimensions.get("window");
@@ -63,6 +64,10 @@ function jualanAnda(props) {
             })
             .catch(e => console.log(e))
     }
+
+    const searchProduk = () => {
+        props.navigation.navigate('Produk',{title:"Cari Produk", search:search})      
+    }
     
 
     return (
@@ -76,18 +81,18 @@ function jualanAnda(props) {
             {wishlist<1 ?
                 <Image
                     source={require('../../assets/images/banner-home.png')}
-                    style={{width:width*1, height:height*0.25}}
+                    style={{width:width*1, height:height*0.3}}
                     width={width*1}
                     height={height*0.25}
                     resizeMode="stretch"
                 />
             :
                 <ImageBackground source={require('../../assets/images/banner-home2.png')} style={{justifyContent:'flex-start', height:height*0.2}}>
-                    <View style={{width:'90%', alignSelf:'center', marginTop:height*0.08}}>
+                    <View style={{width:'90%', alignSelf:'center', marginTop:height*0.09}}>
                         <Text style={{color:'white', marginVertical:5}}>Saldo Komisi dan Margin</Text>
                         <View style={{flexDirection:'row', marginVertical:5}}>
-                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}>Rp</Text>
-                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}>21.000 / 10 Produk</Text>
+                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}>Rp </Text>
+                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> 0 / 0 Produk</Text>
                         </View>
                     </View>
                 </ImageBackground>
@@ -101,8 +106,10 @@ function jualanAnda(props) {
                             style={{
                                 flex: 1, paddingTop: 10, paddingRight: 10, paddingBottom: 10, paddingLeft: 0, backgroundColor: '#fff', color: '#424242', height:50
                             }}
+                            onChangeText={(val) => setSearch(val)}
                             placeholder="Cari Produk"
                             underlineColorAndroid="transparent"
+                            onSubmitEditing={searchProduk}
                         />
                         <Icon style={{padding:10}} name="camera" size={30} color="#07A9F0"/>
                     </View>
@@ -140,12 +147,12 @@ function jualanAnda(props) {
 
                 <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:height*0.01}}>
                     { wishlist>0 &&
-                        <TouchableOpacity imageStyle={{borderRadius:20}} onPress={() => gotoPesanan()} style={{width:'32%'}}>
+                        <TouchableOpacity imageStyle={{borderRadius:10}} onPress={() => gotoPesanan()} style={{width:'32%'}}>
                             <ImageBackground source={require('../../assets/images/produk-lain.png')} resizeMode="stretch" style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
-                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>Pesanan Saya</Text>
+                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>Pesanan Saya</Text>
                                 <View style={{alignItems:'center', flexDirection:'row',  marginBottom:height*0.01, marginLeft:width*0.01}}>
                                     <Icon name="circle" size={width*0.01} color="#fff"/>
-                                    <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>123 produk</Text>
+                                    <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>123 produk</Text>
                                 </View>
                             </ImageBackground>
                         </TouchableOpacity>
@@ -165,45 +172,45 @@ function jualanAnda(props) {
 
                     { wishlist==0 &&
                     <TouchableOpacity onPress={() => listProduk('Komisi Terbesar')} style={{width:'32%'}}>
-                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/komisi-terbesar.png')} resizeMode="stretch" style={{ justifyContent:'flex-end', padding:10, height:height*0.2, }}>
-                            <Text style={{color:'white', fontSize:width*0.02, marginLeft:width*0.01}}>Komisi Terbesar</Text>
+                        <ImageBackground imageStyle={{borderRadius:10}} source={require('../../assets/images/komisi-terbesar.png')} resizeMode="stretch" style={{ justifyContent:'flex-end', padding:10, height:height*0.2, }}>
+                            <Text style={{color:'white', fontSize:width*0.03, marginLeft:width*0.01}}>Komisi Terbesar</Text>
                             <View style={{alignItems:'center', flexDirection:'row',  marginBottom:height*0.01, marginLeft:width*0.01}}>
                                 <Icon name="circle" size={width*0.01} color="#fff"/>
-                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>500 Rb</Text>
+                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>500 Rb</Text>
                             </View>
                         </ImageBackground>
                     </TouchableOpacity>
                     }
 
                     <TouchableOpacity onPress={() => listProduk('Paling Disukai')} style={{width:'32%'}}>
-                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/produk-disukai.png')} resizeMode="stretch" style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
-                            <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>Paling Disukai</Text>
+                        <ImageBackground imageStyle={{borderRadius:10}} source={require('../../assets/images/produk-disukai.png')} resizeMode="stretch" style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
+                            <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>Paling Disukai</Text>
                             <View style={{alignItems:'center', flexDirection:'row',  marginBottom:height*0.01, marginLeft:width*0.01}}>
                                 <Icon name="circle" size={width*0.01} color="#fff"/>
-                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>123 produk</Text>
+                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>123 produk</Text>
                             </View>
                         </ImageBackground>
                     </TouchableOpacity>
 
                     { wishlist>0 &&
                     <TouchableOpacity onPress={() => gotoKategori()} style={{width:'32%'}}>
-                        <ImageBackground imageStyle={{borderRadius:20}} source={require('../../assets/images/komisi-terbesar.png')} resizeMode="stretch" style={{ justifyContent:'flex-end', padding:10, height:height*0.2, }}>
-                            <Text style={{color:'white', fontSize:width*0.02, marginLeft:width*0.01}}>Produk Lain</Text>
+                        <ImageBackground imageStyle={{borderRadius:10}} source={require('../../assets/images/komisi-terbesar.png')} resizeMode="stretch" style={{ justifyContent:'flex-end', padding:10, height:height*0.2, }}>
+                            <Text style={{color:'white', fontSize:width*0.03, marginLeft:width*0.01}}>Produk Lain</Text>
                             <View style={{alignItems:'center', flexDirection:'row',  marginBottom:height*0.01, marginLeft:width*0.01}}>
                                 <Icon name="circle" size={width*0.01} color="#fff"/>
-                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>123 produk</Text>
+                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>123 produk</Text>
                             </View>
                         </ImageBackground>
                     </TouchableOpacity>
                     }
 
                     { wishlist==0 &&
-                        <TouchableOpacity imageStyle={{borderRadius:20}} onPress={() => gotoKategori()} style={{width:'32%'}}>
+                        <TouchableOpacity imageStyle={{borderRadius:10}} onPress={() => gotoKategori()} style={{width:'32%'}}>
                             <ImageBackground source={require('../../assets/images/produk-lain.png')} resizeMode="stretch" style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
-                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>Produk Lain</Text>
+                                <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>Produk Lain</Text>
                                 <View style={{alignItems:'center', flexDirection:'row',  marginBottom:height*0.01, marginLeft:width*0.01}}>
                                     <Icon name="circle" size={width*0.01} color="#fff"/>
-                                    <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>1 juta produk</Text>
+                                    <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.03}}>1 juta produk</Text>
                                 </View>
                             </ImageBackground>
                         </TouchableOpacity>

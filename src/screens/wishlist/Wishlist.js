@@ -57,18 +57,18 @@ function wishlist(props) {
                 {wishlist.map((data, index) => {
 
                 return (
-                
-                <View key={index} style={{flexDirection:'row', marginVertical:10, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
 
-                        <Image
-                            // source={require('../../assets/images/ex-produk.png')}
-                            source={{uri : data.product.images[0].image_url}}
-                            style={{height:height*0.15, width:'30%', borderRadius:10, resizeMode:'stretch'}}
-                        />
-                    
+                <View key={index} style={{flexDirection:'row', marginVertical:10, height:height*0.18, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
+                                
+                    <Image
+                        // source={require('../../assets/images/ex-produk.png')}
+                        source={{uri : data.product.images[0].image_url}}
+                        style={{height:'100%', width:'30%', borderRadius:10}}
+                    />
+
                     <View style={{width:'68%'}}>
                         <Title style={{fontSize:14, lineHeight:18}}>{data.product.name}</Title>
-                        <Text style={{fontSize:14}}>Mulai Dari Rp. {formatRupiah(data.product.price_basic)}</Text>
+                        <Text style={{fontSize:14, marginBottom:height*0.01}}>Mulai Dari Rp {formatRupiah(data.product.price_basic)}</Text>
                         <Text style={{color:'#949494', fontSize:12}}>Stok {data.product.stock}</Text>
                         <TouchableOpacity style={{alignItems:'flex-end', justifyContent:'flex-end', flex:1, paddingVertical:10}}  onPress={() => detailProduk(data.product.id, data.product.name)}>
                             <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>

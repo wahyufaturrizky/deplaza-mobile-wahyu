@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient'
 import AsyncStorage from '@react-native-community/async-storage'
+import ImagePicker from 'react-native-image-crop-picker';
 
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
@@ -12,11 +13,12 @@ import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
 
 function Kembali(props) {
-    const [checked, setChecked] = useState('first');
+    const [checked, setChecked] = useState('penukaran');
     const [check, setCheck] = useState(false);
     const [alasan, setAlasan] = useState("");
     const [alasanDetail, setAlasanDetail] = useState("");
     const [qty, setQty] = useState("0");
+    const [files, setFiles] = useState([]);
 
     const [copy, setCopy] = useState(false)
     const [dataDetail, setDataDetail] = useState([])
@@ -37,6 +39,9 @@ function Kembali(props) {
     const [lengthBukti, setLengthBukti] = useState(0)
     const [trackingId, setTrackingId] = useState("")
     const [photo, setPhoto] = useState(0)
+
+    const [video, setVideo] = useState([])
+    const [image, setImage] = useState([])
 
     const [productImages, setProductImages] = useState("https://via.placeholder.com/150")
     const [productName, setProductName] = useState("0")
@@ -73,7 +78,7 @@ function Kembali(props) {
                 setReceiver_name(responseData.data.delivery.receiver_name)
                 setReceiver_address(responseData.data.delivery.receiver_address)
                 setPhone(responseData.data.customer.phone)
-                setColor(JSON.parse(responseData.data.details[0].variation).color[0])
+                // setColor(JSON.parse(responseData.data.details[0].variation).color[0])
                 setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
                 setAmmount(responseData.data.payment.ammount)
@@ -118,6 +123,72 @@ function Kembali(props) {
         }
     }
 
+    const handleChoosePhoto = () => {
+        let date = new Date(); //To add the time suffix in filename
+        ImagePicker.openPicker({
+            multiple: true,
+            includeBase64:true,
+            width: 768,
+            height: 1080,
+            cropping: true
+        }).then(image => {
+            // console.log(image)
+            setImage(image)
+            // let image64 = `data:${image.mime};base64,${image.data}`;
+            // setFiles(image64)
+            // console.log(image)
+        });
+
+    }
+
+    const handleChooseVideo = () => {
+        let date = new Date(); //To add the time suffix in filename
+        ImagePicker.openPicker({
+            mediaType: "video",
+        }).then((video) => {
+            // console.log(video)
+            setVideo(video)
+            // let image64 = `data:${image.mime};base64,${image.data}`;
+            // setFiles(image64)
+            // console.log(image)
+        });
+
+    }
+
+    const postTukar = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        const options = {
+          noData: true,
+        }
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'multipart/form-data',
+        }
+
+        let formdata = new FormData();
+        formdata.append("reason_id", 1)
+        formdata.append("order_id", id_order)
+        formdata.append("description", checked+" : "+alasanDetail)
+        formdata.append("qty", qty)
+        formdata.append("address_id", 1)
+        formdata.append("files[]", files)
+
+        setLoading(true)
+        fetch(urlOrder+idOrder+"/pay-base", {method: 'POST', headers,
+            body:formdata
+        })
+        .then(response => response.json())
+        .then(async(responseData) => {
+            // console.log(responseData)
+            setLoading(false)
+            // gotoPesanan()
+        })
+    }
+
     return (
         <View style={{backgroundColor:'white', flex:1}}>
             <Appbar params={props}/>
@@ -127,7 +198,7 @@ function Kembali(props) {
                     <View style={{flexDirection:'row', alignItems:'center'}}>
                         <RadioButton
                             value="penukaran"
-                            status={ checked === 'first' ? 'checked' : 'unchecked' }
+                            status={ checked === 'penukaran' ? 'checked' : 'unchecked' }
                             onPress={() => setChecked('first')}
                         />
                         <Text> Penukaran</Text>
@@ -135,7 +206,7 @@ function Kembali(props) {
                     <View style={{flexDirection:'row', alignItems:'center'}}>
                         <RadioButton
                             value="pengembalian"
-                            status={ checked === 'second' ? 'checked' : 'unchecked' }
+                            status={ checked === 'pengembalian' ? 'checked' : 'unchecked' }
                             onPress={() => setChecked('second')}
                         />
                         <Text>Pengembalian</Text>
@@ -165,19 +236,36 @@ function Kembali(props) {
                         />  
 
                         <View style={{flexDirection:'row', width:'90%', alignSelf:'center', marginVertical:height*0.01, justifyContent:'space-between', alignItems:'center'}}>
-                            <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray', justifyContent:'center', alignItems:'center'}}>
-                                <Icon name="image" size={32} color="gray"/>
-                                <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
-                                    Tambahkan Gambar
-                                </Text>
-                            </View>
+                            
+                            {image.length < 1 ?
+                                <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray',}}>
+                                    <TouchableOpacity onPress={handleChoosePhoto} style={{justifyContent:'center', alignItems:'center'}}>
+                                        <Icon name="image" size={32} color="gray"/>
+                                        <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
+                                            Tambahkan Gambar
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            :
+                                <View>
+                                    <Text>Image Proses Upload</Text>
+                                </View>
+                            }
 
-                            <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray', justifyContent:'center', alignItems:'center'}}>
-                                <Icon name="video" size={32} color="gray"/>
-                                <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
-                                    Tambahkan Video 
-                                </Text>
-                            </View>
+                            {video.length < 1 ?
+                                <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray', justifyContent:'center', alignItems:'center'}}>
+                                    <TouchableOpacity onPress={handleChooseVideo} style={{justifyContent:'center', alignItems:'center'}}>
+                                        <Icon name="video" size={32} color="gray"/>
+                                        <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
+                                            Tambahkan Video 
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            :
+                                <View>
+                                    <Text>Video Proses Upload</Text>
+                                </View>
+                            }
                         </View>
 
                         <View style={{backgroundColor:'#F8F8F8', padding:10}}>

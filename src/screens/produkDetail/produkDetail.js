@@ -9,7 +9,9 @@ import {URL, formatRupiah} from '../../utils/global'
 import RNFetchBlob from 'rn-fetch-blob';
 import Loading from '../../components/loading'
 
-import Select2 from 'react-native-select-two';
+// import Select2 from 'react-native-select-two';
+
+import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { Title, TextInput, Snackbar  } from 'react-native-paper';
@@ -34,7 +36,7 @@ function produkDetail(props) {
     const [pressSize, setPressSize] = useState(false)
     const [pressColor, setPressColor] = useState(-1)
 
-    const [selectKota, setSelectKota] = useState(false)
+    const [selectKota, setSelectKota] = useState([])
     const [selectColor, setSelectColor] = useState("")
     const [selectSize, setSelectSize] = useState("")
     const [totalKomisi, setTotalKomisi] = useState("0")
@@ -42,7 +44,6 @@ function produkDetail(props) {
     const [varian, setVarian] = useState([])
 
     const [kota, setKota] = useState([
-        { id: 1, name: 'Pilih Kota' }
     ])
     const [allKota, setAllKota] = useState([])
     const [kecamatan, setKecamatan] = useState([])
@@ -181,7 +182,7 @@ function produkDetail(props) {
     }
 
     const getDetailProduct = async() => {
-        setDataGambar([])
+        // setDataGambar([])
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
         let headers = {
@@ -203,18 +204,32 @@ function produkDetail(props) {
                     // setSize(responseData.data.variation_data.size)
                     // setColor(responseData.data.variation_data.color)
                 // }
-                setVarian(responseData.data.variation_data)
+                if(responseData.data.variation_data!=null){
+                    setVarian(responseData.data.variation_data)
+                }
                 // console.log(responseData.data.variation_data[0].Warna[0])
                 
                 let responseImage = responseData.data.images
-                responseImage.map((data,i) => {
-                    // console.log(data.image_url)
-                    setDataGambar([...dataGambar, data.image_url])
+                let dataG = ""
+                let dataUrl = ""
+
+                // setDataGambar(responseImage)
+
+                // console.log(responseImage)
+                responseImage.map( async(data,i) => {
+                    dataG = dataGambar
+                    dataUrl = data.image_url
+                    console.log(dataG)
+                    dataG.push(dataUrl)
+                    // dataGambar.concat(data.image_URL)
+                    // setDataGambar(dataGambar.concat(responseImage.image_URL))
+
+                    await setDataGambar(dataG)
                 })
                 // for(let i=0; i<=(responseData.data.images.length)-1; i++){
                     // setDataGambar([...dataGambar, responseData.data.images[i].image_url])
                 // }
-
+                
                 
             })
 
@@ -313,13 +328,15 @@ function produkDetail(props) {
                 // setKota(responseData.rajaongkir.results)
                 const mapKota = responseData.rajaongkir.results
 
-                let data = mapKota.map( s => ({id:s.city_id, name:s.city_name}) );
+                let data = mapKota.map( s => ({id:s.city_id, name:s.type+" "+s.city_name}) );
                 setKota(data)
             })
             .catch(e => console.log(e))
     }
 
     const _selectKota = async(data_kota) => {
+        // alert("data",data_kota)
+        console.log(data_kota)
         setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -341,7 +358,7 @@ function produkDetail(props) {
 
         let formdata = new FormData();
         formdata.append("origin", dataDetail.city_id)
-        formdata.append("destination", parseInt(data_kota))
+        formdata.append("destination", parseInt(data_kota.id))
         formdata.append("weight", dataDetail.weight)
         formdata.append("courier", 'jne')
 
@@ -418,24 +435,26 @@ function produkDetail(props) {
         <View style={{backgroundColor:'white', flex:1}}>
                 <Appbar params={props}/>
             
-                <ScrollView >
-                    <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.02 ,flex:1}}>
+                <ScrollView keyboardShouldPersistTaps = 'always' >
+                    <View style={{width:'90%', alignSelf:'center', marginBottom:height*0.02 ,flex:1}}>
                         {/* <Image
                             source={{uri : dataDetail.images[0].file_upload}}
                             style={{width:'100%', height:height*0.5 , resizeMode:'cover'}}
                         /> */}
                         {/* <View style={{width:'100%',height:height*0.5, backgroundColor:'blue'}}> */}
+                        {console.log(dataGambar)}
                             <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
                         {/* </View> */}
-                        <Title>{dataDetail.name}</Title>
+                        <Text style={{fontSize:14}}>{dataDetail.name}</Text>
 
-                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
-                            <Select2
+                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start', marginVertical:height*0.01}}>
+                            {/* <Select2
                                 isSelectSingle
-                                style={{ borderRadius: 5, width:'64%' }}
+                                style={{ width:'64%', borderRadius:10}}
                                 colorTheme={'blue'}
                                 popupTitle='Pilih Kota'
                                 title='Pilih Kota'
+                                listEmptyTitle={"Kota Tidak di Temukan"}
                                 data={kota}
                                 onSelect={data => {
                                     setSelectKota(data)
@@ -447,11 +466,57 @@ function produkDetail(props) {
                                 cancelButtonText="Batal"
                                 selectButtonText="Pilih"
                                 searchPlaceHolderText="Ketik Nama Kota"
+                            /> */}
+
+                            <SearchableDropdown
+                                onItemSelect={(item) => {
+                                    const items = selectKota;
+                                    items.push(item)
+                                    setSelectKota(items)
+                                    _selectKota(item)
+                                }}
+                                containerStyle={{width:'60%', borderRadius:10}}
+                                onRemoveItem={(item, index) => {
+                                    const items = selectKota.filter((sitem) => sitem.id !== item.id);
+                                    setSelectKota(items)
+                                }}
+                                itemStyle={{
+                                    padding: 10,
+                                    marginTop: 2,
+                                    backgroundColor: '#ddd',
+                                    borderColor: '#bbb',
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                    width:'100%',
+                                }}
+                                itemTextStyle={{ color: '#222' }}
+                                itemsContainerStyle={{borderRadius:10 }}
+                                items={kota}
+                                defaultIndex={2}
+                                resetValue={false}
+                                textInputProps={
+                                {
+                                    placeholder: "Pilih Kota",
+                                    underlineColorAndroid: "transparent",
+                                    style: {
+                                        padding: 12,
+                                        borderWidth: 1,
+                                        borderColor: '#ccc',
+                                        borderRadius: 5,
+                                    },
+                                    // onTextChange: text => alert(text)
+                                }
+                                }
+                                    listProps={
+                                    {
+                                        nestedScrollEnabled: true,
+                                    }
+                                }
                             />
 
                             <TouchableOpacity style={{width:'34%'}}>
                                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                    style={{padding:10, borderRadius:10}}
+                                    style={{padding:15, borderRadius:10}}
                                 >
                                     <Text style={{textAlign:'center', color:'white'}}>
                                         Cek Harga
@@ -462,8 +527,8 @@ function produkDetail(props) {
 
                         {(!metodeCOD && pilihKota) &&
                             <View style={{padding:10, width:'100%', backgroundColor:'#E0F5FE', flexDirection:'row', flexWrap:'wrap', alignItems:'center'}}>
-                                <Icon name="alert" size={20} color="#07A9F0" />
-                                <Text> Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
+                                <Icon name="alert" size={14} color="#07A9F0" />
+                                <Text style={{fontSize:10}}> Metode Pembayaran COD tidak tersedia di lokasi ini</Text>
                             </View> 
                         }
 
@@ -480,12 +545,12 @@ function produkDetail(props) {
                         }
 
                         <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, width:'30%', paddingHorizontal:20, marginTop:height*0.01, alignItems:'center', justifyContent:'center'}}>
-                            <Text style={{fontSize:14}}>Stok {dataDetail.stock}</Text>
+                            <Text style={{fontSize:12}}>Stok {dataDetail.stock}</Text>
                         </View>
 
                         <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, width:'60%', flexDirection:'row', alignItems:'center', paddingHorizontal:20, marginTop:height*0.01, justifyContent:'flex-start'}}>
                             <Icon name="calendar" size={16} color="#000" />
-                            <Text style={{fontSize:14}}> Akan Dikirimkan 2 - 3 hari</Text>
+                            <Text style={{fontSize:12}}> Akan Dikirimkan 2 - 3 hari</Text>
                         </View>
 
                     </View>
@@ -520,7 +585,8 @@ function produkDetail(props) {
 
                     {varian.map((data,i) => {
                         let tvariant = Object.keys(data)[0]
-                        
+                        // console.log(tvariant)
+                        if(tvariant!=""){
                         return(
                         
                         <View key={i}>
@@ -552,6 +618,7 @@ function produkDetail(props) {
                             </View>
                         </View>
                         )
+                        }
                     })}
 
                     
@@ -599,20 +666,22 @@ function produkDetail(props) {
                         <Title>Jumlah</Title>
                         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'50%'}}>
                             <TouchableOpacity  onPress={() => changeQty("-")}>
-                                <View style={{height:height*0.045, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
+                                <View style={{height:height*0.065, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
                                     <Text style={{fontSize:20}}>-</Text>
                                 </View>
                             </TouchableOpacity>
-                            <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'20%'}}>
+
+                            <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'20%', height:height*0.065, justifyContent:'center', alignItems:'center'}}>
                                 <InputNormal
-                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:10}}
+                                    style={{borderColor:'rgb(18, 48, 92)', fontSize:10, color:'black', }}
                                     value={qty.toString()}
                                     disabled
                                     editable={false}
                                 />
                             </View>
+
                             <TouchableOpacity onPress={() => changeQty("+")}>
-                                <View style={{height:height*0.045, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
+                                <View style={{height:height*0.065, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
                                     <Text style={{fontSize:20}}>+</Text>
                                 </View>
                             </TouchableOpacity>
@@ -650,14 +719,15 @@ function produkDetail(props) {
                         <TouchableOpacity style={{ width:'50%', height:height*0.06}} onPress={checkPermission}>
                             <View style={{flexDirection:'row', padding:height*0.01, justifyContent:'space-around', alignItems:'center'}}>
                                 <Icon name="cloud-download" size={height*0.04} color="#07A9F0"/>
-                                <Text style={{fontSize:height*0.015, color:'#07A9F0'}}>Tawarkan Produk</Text>
+                                <Text style={{fontSize:width*0.03, color:'#07A9F0'}}>Simpan Gambar</Text>
                             </View>
                         </TouchableOpacity>
+
                         <TouchableOpacity style={{width:'50%', height:height*0.06}} onPress={gotoPesan}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                style={{flexDirection:'row', padding:height*0.01,  justifyContent:'space-around', alignItems:'center'}}>
+                                style={{flexDirection:'row', padding:height*0.01 ,  justifyContent:'space-around', alignItems:'center'}}>
                                     <Image source={require('../../assets/images/inbox.png')} style={{width:width*0.08, height:width*0.08}} />
-                                    <Text style={{fontSize:height*0.015, color:'#fff'}}>Pesan {"&"} Kirim</Text>
+                                    <Text style={{fontSize:width*0.03, color:'#fff'}}>Pesan {"&"} Kirim</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>

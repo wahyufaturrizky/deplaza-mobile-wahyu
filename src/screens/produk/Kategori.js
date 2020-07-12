@@ -47,7 +47,7 @@ function Kategori(props) {
     return (
        <View style={{flex:1}}>
            <Appbar params={props}/>
-           <View style={{backgroundColor:'white', padding:15, flexWrap:"wrap",  flex:1, alignItems:'center', flexDirection:'row'}}>
+           <View style={{backgroundColor:'white', padding:15, flexWrap:"wrap", justifyContent:'space-between',  flex:1, alignItems:'center', flexDirection:'row'}}>
                
                {kategori.map((data,i) => (
                 <View key={i} style={[styles.shadow,{width:'30%', height:height*0.2, marginVertical:height*0.01, borderRadius:10, padding:2, }]}>

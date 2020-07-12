@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { Appbar } from 'react-native-paper';
 import { Image, View, StyleSheet, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function appbarHome(props) {
     const [haveProduk, setHaveProduk] = useState(false)
@@ -29,6 +30,7 @@ function appbarHome(props) {
     },[])
 
     const gotoPesanan = () => {
+        alert("ok")
         props.params.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
     }
 
@@ -39,7 +41,7 @@ function appbarHome(props) {
     const { height, width } = Dimensions.get("window");
 
     return (
-        <Appbar.Header style={[styles.shadow,{backgroundColor:'transparent', width:'100%', height:70, position:'absolute', top:0}]}>
+        <Appbar.Header style={[styles.shadow,{backgroundColor:'transparent', width:'100%', height:70, zIndex: 1, position:'absolute', top:0}]}>
 
                 <Image 
                     source={require(logoHorizontal)}

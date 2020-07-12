@@ -24,6 +24,16 @@ import Akun from './src/screens/akun/Akun';
 import EditAkun from './src/screens/akun/editAkun';
 import RincianRekening from './src/screens/akun/rincianRekening';
 import Lacak from './src/screens/lacak/Lacak';
+import SaldoPenjual from './src/screens/tarik/saldoPenjual';
+import Penarikan from './src/screens/tarik/penarikan';
+import PembayaranSaya from './src/screens/akun/pembayaranSaya';
+import Notifikasi from './src/screens/akun/notifikasi';
+import BantuanFaq from './src/screens/bantuanFaq/bantuanFaq';
+import MulaiBerjualan from './src/screens/bantuanFaq/mulaiBerjualan';
+import CaraPembayaran from './src/screens/bantuanFaq/caraPembayaran';
+import LacakKomisi from './src/screens/bantuanFaq/lacakKomisi';
+import BagikanProduk from './src/screens/bantuanFaq/bagikanProduk';
+import ReturKembali from './src/screens/bantuanFaq/returKembali';
 
 const Stack = createStackNavigator();
 
@@ -51,6 +61,16 @@ function StackNav(props) {
         <Stack.Screen name="RincianRekening" component={RincianRekening} />
         <Stack.Screen name="EditAkun" component={EditAkun} />
         <Stack.Screen name="Lacak" component={Lacak} />
+        <Stack.Screen name="SaldoPenjual" component={SaldoPenjual} />
+        <Stack.Screen name="Penarikan" component={Penarikan} />
+        <Stack.Screen name="PembayaranSaya" component={PembayaranSaya} />
+        <Stack.Screen name="Notifikasi" component={Notifikasi} />
+        <Stack.Screen name="BantuanFaq" component={BantuanFaq} />
+        <Stack.Screen name="MulaiBerjualan" component={MulaiBerjualan} />
+        <Stack.Screen name="CaraPembayaran" component={CaraPembayaran} />
+        <Stack.Screen name="LacakKomisi" component={LacakKomisi} />
+        <Stack.Screen name="BagikanProduk" component={BagikanProduk} />
+        <Stack.Screen name="ReturKembali" component={ReturKembali} />
       </Stack.Navigator>
     </NavigationContainer>
   );

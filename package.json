@@ -34,6 +34,7 @@
     "react-native-render-html": "^4.2.0",
     "react-native-safe-area-context": "^3.0.5",
     "react-native-screens": "^2.8.0",
+    "react-native-searchable-dropdown": "^1.1.1",
     "react-native-select-two": "^1.1.0",
     "react-native-tab-view": "^2.14.4",
     "react-native-vector-icons": "^6.6.0",

@@ -205,9 +205,9 @@ function Pesan(props) {
                         <Text style={{fontSize:18}}>Metode Pembayaran</Text>
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                             <View style={{width:'70%',}}>
-                                <Text style={{fontWeight:'bold', fontSize:18}}>{methodId != 1 ? "TRANSFER" : "COD"} {invoice}</Text>
+                                <Text style={{fontWeight:'bold', fontSize:16}}>{methodId != 1 ? "TRANSFER" : "COD"} {invoice}</Text>
                                 {trackingId != "" ?
-                                    <Text>JNE JN534120N101</Text>
+                                    <Text>{trackingId}</Text>
                                 :
                                     <Text style={{color:'red'}}>Resi Belum di Input</Text>
                                 }
@@ -228,7 +228,7 @@ function Pesan(props) {
                         <View>
                             <Text style={{fontSize:18}}>Alamat Pengiriman</Text>
                             <View style={{marginTop:height*0.02}}>
-                                <Text style={{fontSize:16}}>{receiver_name}</Text>
+                                <Text style={{fontSize:14}}>{receiver_name}</Text>
                                 <Text style={{fontSize:14}}>{receiver_address}</Text>
                                 <Text style={{fontSize:16}}>{phone}</Text>
                             </View>
@@ -251,13 +251,19 @@ function Pesan(props) {
                                     <Text style={{fontSize:18}}>{productName}</Text>
                                     <Text>Rp. {formatRupiah(total_price)}</Text>
                                     <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                                        <View style={{flexDirection:'row', justifyContent:'space-between', width:'50%', alignItems:'center'}}>
-                                            <View style={{width:'60%'}}>
-                                                {variation.map((val,i) => (
+                                        <View style={{flexDirection:'row', width:'50%', alignItems:'center'}}>
+                                            {variation.length > 0 ?
+                                            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                                                <View style={{width:'60%'}}>
+                                                    {variation.map((val,i) => (
                                                         <Text style={{fontSize:12, color:'gray'}}>{Object.keys(val)[0]} : {val[Object.keys(val)[0]]}</Text>
-                                                ))}
+                                                    ))}
+                                                </View>
+                                                <Text style={{fontSize:12, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
                                             </View>
-                                            <Text style={{fontSize:12, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
+                                            :
+                                                <Text style={{fontSize:12, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
+                                            }
                                         </View>
 
                                         <TouchableOpacity style={{width:'40%', alignSelf:'flex-end',}} onPress={gotoLacak}>
@@ -284,6 +290,7 @@ function Pesan(props) {
                                     </TouchableOpacity>
                                 </View> */}
 
+                                {trackingId != "" &&
                                 <View>
                                     <TouchableOpacity style={{width:'90%', alignSelf:'center',}} onPress={gotoKembali}>
                                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
@@ -295,6 +302,7 @@ function Pesan(props) {
                                         </LinearGradient>
                                     </TouchableOpacity>
                                 </View>
+                                }
 
                             </View>
                             
@@ -359,28 +367,31 @@ function Pesan(props) {
                 }
 
                 <View></View>
+            {(methodId != 1) ?
 
-            {lengthBukti > 0 ?
-                <TouchableOpacity onPress={modalTrigger}>
-                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                        style={{padding:15, justifyContent:'center', alignItems:'center'}}
-                    >
-                        <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
-                            Bukti Transfer Bank
-                        </Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+                (lengthBukti > 0) ?
+                    <TouchableOpacity onPress={modalTrigger}>
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                            style={{padding:15, justifyContent:'center', alignItems:'center'}}
+                        >
+                            <Text style={{fontSize:18, textAlign:'center', color:'white', marginLeft:width*0.04}}>
+                                Bukti Transfer Bank
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                :
+                    <TouchableOpacity style={{width:'100%', alignSelf:'center'}} onPress={handleChoosePhoto}>
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                            style={{padding:15, justifyContent:'center', alignItems:'center', flexDirection:'row'}}
+                        >
+                            <Icon name="cloud-upload" size={32} color="#fff"/>
+                            <Text style={{fontSize:20, textAlign:'center', color:'white', marginLeft:width*0.04}}>
+                                Upload Bukti Transfer
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>     
             :
-                <TouchableOpacity style={{width:'100%', alignSelf:'center'}} onPress={handleChoosePhoto}>
-                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                        style={{padding:15, justifyContent:'center', alignItems:'center', flexDirection:'row'}}
-                    >
-                        <Icon name="cloud-upload" size={32} color="#fff"/>
-                        <Text style={{fontSize:20, textAlign:'center', color:'white', marginLeft:width*0.04}}>
-                            Upload Bukti Transfer
-                        </Text>
-                    </LinearGradient>
-                </TouchableOpacity>     
+                <View></View>
             }
         </View>
     );

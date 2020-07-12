@@ -50,8 +50,24 @@ function Akun(props) {
         props.navigation.navigate("EditAkun", {title:"Edit Akun", data:dataDetail})
     }
 
+    const gotoTarikDana = () => {
+        props.navigation.navigate("SaldoPenjual", {title:"Saldo Penjual"})
+    }
+
+    const gotoPembayaran = () => {
+        props.navigation.navigate("PembayaranSaya", {title:"Pembayaran Saya"})
+    }
+
     const gotoRincianRekening = () => {
         props.navigation.navigate("RincianRekening", {title:"Rincian Rekening Saya"})
+    }
+
+    const gotoWishlist = () => {
+        props.navigation.navigate('Wishlist',{title:"Produk Saya"})      
+    }
+
+    const gotoNotifikasi = () => {
+        props.navigation.navigate('Notifikasi',{title:"Notifikasi"})      
     }
 
     return (
@@ -84,35 +100,53 @@ function Akun(props) {
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
-                <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
-                    <Image
-                        source={require('../../assets/images/bill.png')}
-                        style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
-                    />
-                    <Text style={{fontSize:18}}>Pembayaran Saya</Text>
-                </View>
+                <TouchableOpacity onPress={gotoPembayaran}>
+                    <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
+                        <Image
+                            source={require('../../assets/images/bill.png')}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                        />
+                        <Text style={{fontSize:18}}>Pembayaran Saya</Text>
+                    </View>
+                </TouchableOpacity>
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
-                <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
-                    <Image
-                        source={require('../../assets/images/box.png')}
-                        style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
-                    />
-                    <Text style={{fontSize:18}}>Produk Saya</Text>
-                </View>
+                <TouchableOpacity onPress={gotoWishlist}>
+                    <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
+                        <Image
+                            source={require('../../assets/images/box.png')}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                        />
+                        <Text style={{fontSize:18}}>Produk Saya</Text>
+                    </View>
+                </TouchableOpacity>
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
-                <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
-                    <Image
-                        source={require('../../assets/images/megaphone.png')}
-                        style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
-                    />
-                    <Text style={{fontSize:18}}>Notifikasi</Text>
-                </View>
+                {/* <TouchableOpacity onPress={gotoNotifikasi}>
+                    <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
+                        <Image
+                            source={require('../../assets/images/megaphone.png')}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                        />
+                        <Text style={{fontSize:18}}>Notifikasi</Text>
+                    </View>
+                </TouchableOpacity> */}
 
-                <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
+                {/* <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View> */}
+
+                {/* <TouchableOpacity onPress={gotoTarikDana}>
+                    <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
+                        <Image
+                            source={require('../../assets/images/penarikan.png')}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                        />
+                        <Text style={{fontSize:18}}>Tarik Dana</Text>
+                    </View>
+                </TouchableOpacity>
+
+                <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View> */}
 
             </View>
 

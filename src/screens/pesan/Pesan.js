@@ -288,7 +288,7 @@ function Pesan(props) {
                     .then(response => response.json())
                     .then(async(responseData) => {
                         await setKotaDetail(responseData.rajaongkir.results)
-                        
+                        setPos(responseData.rajaongkir.results.postal_code)
                         setLoading(false)
                     })
             })
@@ -310,8 +310,13 @@ function Pesan(props) {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
         
+        
         let id_metode = 3
-        if(metodeCOD){
+        // if(metodeCOD){
+        //     id_metode=1
+        // }
+
+        if(!metode){
             id_metode=1
         }
 
@@ -377,11 +382,16 @@ function Pesan(props) {
             })
             .then(response => response.json())
             .then(async(responseData) => {
-                // console.log(responseData.data.id)
+                console.log(responseData)
                 setIdOrder(responseData.data.id)
                 setPesan(true)
                 setLoading(false)
-                alert("Silahkan Upload Bukti Pembayaran di Tombol Upload Bukti Transfer (JIKA SUDAH ADA)")
+                if(metode){
+                    alert("Silahkan Upload Bukti Pembayaran di Tombol Upload Bukti Transfer (JIKA SUDAH ADA)")
+                }else{
+                    alert("Pesanan Sudah Di Masukkan")
+                    gotoPesanan()
+                }
                 //    gotoPesanan()
             })
         }
@@ -582,7 +592,7 @@ function Pesan(props) {
                                     >
                                             <Picker.Item label={"Pilih Kota"} value={"kosong"} />
                                         {cities.map((city,i) => (
-                                            <Picker.Item key={i} label={city.city_name} value={city.city_id} />
+                                            <Picker.Item key={i} label={city.type+" "+city.city_name} value={city.city_id} />
                                         ))}
                                     </Picker>
                                 </View>
@@ -653,20 +663,20 @@ function Pesan(props) {
                                         <Text style={{fontSize:14, color:'gray', marginBottom:height*0.01}}>Jumlah: </Text>
                                         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'60%'}}>
                                             <TouchableOpacity onPress={() => changeQty("-")}>
-                                                <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
+                                                <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.065, justifyContent:'center', alignItems:'center'}}>
                                                     <Text style={{fontSize:12}}>-</Text>
                                                 </View>
                                             </TouchableOpacity>
                                             <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'40%'}}>
                                                 <InputNormal
-                                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:14}}
+                                                    style={{borderColor:'rgb(18, 48, 92)',height:height*0.065, fontSize:10, color:'black'}}
                                                     value={qty.toString()}
                                                     disabled
                                                     editable={false}
                                                 />
                                             </View>
                                             <TouchableOpacity onPress={() => changeQty("+")}>
-                                                <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.045, justifyContent:'center', alignItems:'center'}}>
+                                                <View style={{paddingHorizontal:15, backgroundColor:'#D5D5D5',height:height*0.065, justifyContent:'center', alignItems:'center'}}>
                                                     <Text style={{fontSize:12}}>+</Text>
                                                 </View>
                                             </TouchableOpacity>

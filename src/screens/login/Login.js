@@ -4,7 +4,8 @@ import {
     Text,
     Image,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    StyleSheet
 } from 'react-native'
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage'
@@ -23,6 +24,7 @@ function Login(props) {
     const [password, setPassword] = useState('')
     const [login, setLogin] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [modal, setModal] = useState(false)
     
     const logo = "../../assets/images/logo.png"
     const indonesia = "../../assets/images/indonesia.png"
@@ -53,6 +55,10 @@ function Login(props) {
         }
         console.log(value)
 
+    }
+
+    const forgotTrigger = () =>{
+        setModal(!modal)
     }
 
     const SignIn = async() => {
@@ -139,6 +145,11 @@ function Login(props) {
         setLogin(!login)
     }
 
+    const forgotSubmit = () => {
+        // setLogin(!login)
+        alert("tes")
+    }
+
     return (
             <View style={{ backgroundColor: 'white', flex: 1}}>
 
@@ -161,6 +172,7 @@ function Login(props) {
                                 selectionColor={"#07A9F0"}
                                 underlineColor={"#07A9F0"}
                                 underlineColorAndroid={"#07A9F0"}
+                                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
                                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginBottom:height*0.01}} 
                             />
                         }
@@ -180,7 +192,7 @@ function Login(props) {
 
                         {!login &&
                             <View style={{width:"90%", alignSelf:'center', justifyContent:'space-between', flexDirection:'row', marginBottom:height*0.01}}>
-                                <View style={{height:height*0.055, width:'25%', marginTop:7, borderRadius: 5, borderColor: 'grey', borderWidth: 1,}}>
+                                <View style={{height:55, width:'25%', marginTop:7, borderRadius: 5, borderColor: 'grey', borderWidth: 1,}}>
 
                                     <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', flex:1}}>
                                         <Image
@@ -230,7 +242,44 @@ function Login(props) {
                             </TouchableOpacity>
                         </View>
 
+                        {/* <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center', marginTop:height*0.01}}>
+                            <TouchableOpacity onPress={forgotTrigger}>
+                                <Text style={{color:'#07A9F0'}}> Lupa Password ?</Text>
+                            </TouchableOpacity>
+                        </View> */}
+
                     </View>
+                    { modal &&
+                    <View style={{position:'absolute', flex:1, zIndex:1, width:width, height:height, bottom:0, backgroundColor:'rgba(255,255,255,0.5)', justifyContent:'center', alignItems:'center'}}>
+                        <View style={[styles.shadow,{alignSelf:'center', alignItems:'center', width:width*0.8, height:height*0.2, backgroundColor:'rgba(255,255,255,1)', marginTop:height*0.5 }]}>
+                            <TouchableOpacity style={{alignSelf:'flex-end', marginRight:width*0.02}} onPress={forgotTrigger}>
+                                <Text style={{fontSize:20}}>X</Text>
+                            </TouchableOpacity>
+                            <TextInput
+                                label='Masukkan Email Recoveri'
+                                value={email}
+                                mode = "outlined"
+                                keyboardType="email-address"
+                                onChangeText={(val)=> setEmail(val)}
+                                selectionColor={"#07A9F0"}
+                                underlineColor={"#07A9F0"}
+                                underlineColorAndroid={"#07A9F0"}
+                                theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
+                                style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginBottom:height*0.01}} 
+                            />
+
+                            <TouchableOpacity onPress={forgotSubmit}>
+                                <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                    style={{padding:10}}
+                                >
+                                    <Text style={{fontSize:16, textAlign:'center', color:'white'}}>
+                                        Kirim
+                                    </Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    }
 
                     
                     </KeyboardAwareScrollView>
@@ -265,3 +314,28 @@ function Login(props) {
 }
 
 export default Login;
+
+const styles=StyleSheet.create({
+    shadow : {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+    },
+    shadowBlue : {
+        shadowColor: "#07A9F0",
+        shadowOffset: {
+            width: 0,
+            height: 11,
+        },
+        shadowOpacity: 0.55,
+        shadowRadius: 14.78,
+        
+        elevation: 22,
+    }
+})
