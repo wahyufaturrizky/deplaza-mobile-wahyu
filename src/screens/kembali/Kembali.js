@@ -199,7 +199,7 @@ function Kembali(props) {
                         <RadioButton
                             value="penukaran"
                             status={ checked === 'penukaran' ? 'checked' : 'unchecked' }
-                            onPress={() => setChecked('first')}
+                            onPress={() => setChecked('penukaran')}
                         />
                         <Text> Penukaran</Text>
                     </View>
@@ -207,7 +207,7 @@ function Kembali(props) {
                         <RadioButton
                             value="pengembalian"
                             status={ checked === 'pengembalian' ? 'checked' : 'unchecked' }
-                            onPress={() => setChecked('second')}
+                            onPress={() => setChecked('pengembalian')}
                         />
                         <Text>Pengembalian</Text>
                     </View>
@@ -238,7 +238,7 @@ function Kembali(props) {
                         <View style={{flexDirection:'row', width:'90%', alignSelf:'center', marginVertical:height*0.01, justifyContent:'space-between', alignItems:'center'}}>
                             
                             {image.length < 1 ?
-                                <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray',}}>
+                                <View style={{borderStyle:'dashed', padding:10, width:'100%', borderRadius:10, borderWidth:1, borderColor:'gray',}}>
                                     <TouchableOpacity onPress={handleChoosePhoto} style={{justifyContent:'center', alignItems:'center'}}>
                                         <Icon name="image" size={32} color="gray"/>
                                         <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
@@ -252,7 +252,7 @@ function Kembali(props) {
                                 </View>
                             }
 
-                            {video.length < 1 ?
+                            {/* {video.length < 1 ?
                                 <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray', justifyContent:'center', alignItems:'center'}}>
                                     <TouchableOpacity onPress={handleChooseVideo} style={{justifyContent:'center', alignItems:'center'}}>
                                         <Icon name="video" size={32} color="gray"/>
@@ -265,7 +265,7 @@ function Kembali(props) {
                                 <View>
                                     <Text>Video Proses Upload</Text>
                                 </View>
-                            }
+                            } */}
                         </View>
 
                         <View style={{backgroundColor:'#F8F8F8', padding:10}}>
@@ -335,7 +335,7 @@ function Kembali(props) {
                 <Loading/>
             }
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={postTukar}>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                     style={{padding:15, flexDirection:"row", justifyContent:'center', alignItems:'center'}}
                 >

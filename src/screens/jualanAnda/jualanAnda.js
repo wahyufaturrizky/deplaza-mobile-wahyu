@@ -18,14 +18,20 @@ function jualanAnda(props) {
     const [wishlist,setWishlist] = useState(0)
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState("")
+    const [saldo, setSaldo] = useState("0")
+    const [totalOrder, setTotalOrder] = useState("0")
     // const [haveProduk, setHaveProduk] = useState(true)
  
     const { height, width } = Dimensions.get("window");
     const haveProduk = true
     const urlWishlist = URL+"v1/wishlist/me" 
+    const urlSaldo = URL+"v1/saldo/my" 
+    const urlTotalOrder = URL+"v1/saldo/my-history" 
 
     useEffect(() => {
         getListWishlist()
+        getSaldo()
+        getTotalOrder()
     }, [])
 
     //Pergi ke Hal List Produk
@@ -45,6 +51,24 @@ function jualanAnda(props) {
         props.navigation.navigate('Wishlist',{title:"Produk Saya"})      
     }
 
+    const getSaldo = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlSaldo, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                setLoading(false)
+                setSaldo(responseData.data)
+            })
+            .catch(e => console.log(e))
+    }
+
     const getListWishlist = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -61,6 +85,30 @@ function jualanAnda(props) {
                 let totalData = responseData.data.length
                 console.log(totalData)
                 setWishlist(totalData)
+            })
+            .catch(e => console.log(e))
+    }
+
+    const getTotalOrder = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlTotalOrder, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                setLoading(false)
+                let order = responseData.data
+                let a = 0
+                order.map((data,i) => {
+                    a++
+                })
+                // console.log(totalData)
+                setTotalOrder(a)
             })
             .catch(e => console.log(e))
     }
@@ -92,7 +140,7 @@ function jualanAnda(props) {
                         <Text style={{color:'white', marginVertical:5}}>Saldo Komisi dan Margin</Text>
                         <View style={{flexDirection:'row', marginVertical:5}}>
                             <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}>Rp </Text>
-                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> 0 / 0 Produk</Text>
+                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> {saldo} / {totalOrder} Produk</Text>
                         </View>
                     </View>
                 </ImageBackground>

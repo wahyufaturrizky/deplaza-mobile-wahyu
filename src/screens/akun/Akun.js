@@ -136,7 +136,7 @@ function Akun(props) {
 
                 {/* <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View> */}
 
-                {/* <TouchableOpacity onPress={gotoTarikDana}>
+                <TouchableOpacity onPress={gotoTarikDana}>
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
                         <Image
                             source={require('../../assets/images/penarikan.png')}
@@ -146,7 +146,7 @@ function Akun(props) {
                     </View>
                 </TouchableOpacity>
 
-                <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View> */}
+                <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
             </View>
 

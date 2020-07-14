@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Image, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Image, ScrollView, StyleSheet } from 'react-native';
 import Clipboard from "@react-native-community/clipboard";
 import { TextInput, Snackbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage'
@@ -33,7 +33,11 @@ function Pesan(props) {
     const [buktiBayar, setBuktiBayar] = useState(0)
     const [lengthBukti, setLengthBukti] = useState(0)
     const [trackingId, setTrackingId] = useState("")
+    const [trackingName, setTrackingName] = useState("")
     const [photo, setPhoto] = useState(0)
+    const [label, setLabel] = useState("")
+    const [modalPesanan, setModalPesanan] = useState(false)
+    const [statusOrder, setStatusOrder] = useState("")
 
     const [variation,setVariation] = useState([])
 
@@ -43,8 +47,10 @@ function Pesan(props) {
     const urlRincianPesanan = URL+"/v1/orders/"
     const urlProdukDetail = URL+'v1/product/'
     const urlOrder = URL+'v1/orders/'
+    const urlCourir = URL+'v1/courier/'
+    const urlFinishOrder = URL+'v1/orders/'
     
-    const statusPesanan = "Pesanan Diterima"
+    // const statusPesanan = "Pesanan Diterima"
     
     const id_order = props.route.params.id
     const { height, width } = Dimensions.get("window");
@@ -55,6 +61,10 @@ function Pesan(props) {
 
     const modalTrigger = () => {
         setModal(!modal)
+    }
+
+    const modalPesananTrigger = () => {
+        setModalPesanan(!modalPesanan)
     }
 
     const gotoKembali = () => {
@@ -105,7 +115,8 @@ function Pesan(props) {
             let formdata = new FormData();
             formdata.append("proof_payment", image64)
             setLoading(true)
-            
+            console.log(id_order)
+            // console.log(image64)
             fetch(urlOrder+id_order+"/pay-base", {method: 'POST', headers,
                 body:formdata
             })
@@ -127,7 +138,6 @@ function Pesan(props) {
     const getRincianPesanan = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
-        console.log(id_order)
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
@@ -147,6 +157,9 @@ function Pesan(props) {
                 setReceiver_name(responseData.data.delivery.receiver_name)
                 setReceiver_address(responseData.data.delivery.receiver_address)
                 setPhone(responseData.data.customer.phone)
+
+                setLabel(responseData.data.payment.status_label)
+                setStatusOrder(responseData.data.status_label)
                 // setColor(JSON.parse(responseData.data.details[0].variation).color[0])
                 setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
@@ -158,8 +171,14 @@ function Pesan(props) {
                 if(responseData.data.payment.metadata_decode.length>0){
                     setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
                     setLengthBukti(responseData.data.payment.metadata_decode.length)
-
                 }
+
+                fetch(urlCourir+responseData.data.delivery.courier_id, {headers})
+                    .then(response => response.json())
+                    .then(responseData => {
+                        // console.log(responseData.data)
+                        setTrackingName(responseData.data.name)
+                    })
 
                 let id_produk = responseData.data.details[0].product_id
                 // console.log(responseData.data.details[0].product_id)
@@ -181,6 +200,43 @@ function Pesan(props) {
     // Fungsi yang jalan ketika snackbar menghilang
     const _onDismissSnackBar = () => setCopy(false)
 
+    const submitFinisOrder = async() => {
+        
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        console.log(data.token)
+        console.log(urlFinishOrder+id_order+"/done")
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+            'Content-Length' : 0
+        }
+        // console.log(urlFinishOrder+id_order+"/done")
+        // fetch(urlFinishOrder+id_order+"/done", {method: 'POST', headers, bodi : JSON.stringify([])})
+        //     .then(response => console.log(response))
+        //     .then(async(responseData) => {
+        //         console.log(responseData)
+        //         setLoading(false)
+        //         // setLengthBukti(1)
+        //         // gotoPesanan()
+        //         alert("Pesanan Selesai")
+        //         // gotoPesanan()
+        //     })
+
+        var requestOptions = {
+            headers,
+            method: 'POST',
+          }; 
+          
+          fetch(urlFinishOrder+id_order+"/done", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                setModalPesanan(false)
+                alert(result.message)
+            })
+            .catch(error => console.log('error', error));
+    }
 
     return (
         <View style={{backgroundColor:'white', flex:1}}>
@@ -188,26 +244,30 @@ function Pesan(props) {
             
                 <ScrollView>
                     
-                    {/* <View style={{backgroundColor:'#93DCFC', padding:10, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                        <Icon name="alert" size={20} color="#07A9F0"/>
-                        <Text> Pesanan Anda Tidak Dapat Dibatalkan</Text>
-                    </View> */}
+                    {(trackingId != "" && statusOrder != "Pesanan Selesai")  &&
+                        <View style={{backgroundColor:'#93DCFC', padding:10, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                            <Icon name="alert" size={20} color="#07A9F0"/>
+                            <Text> Pesanan Anda Tidak Dapat Dibatalkan</Text>
+                        </View>
+                    }
 
-                    {/* <View style={{backgroundColor:'#93DCFC', padding:15, justifyContent:'center', alignItems:'center'}}>
-                        <Image
-                            source={require('../../assets/images/Solid.png')}
-                            style={{width:width*0.1, height:width*0.1, resizeMode:'cover'}}
-                        />
-                        <Text style={{marginTop:height*0.01, fontSize:14}}>Pesanan Diterima!</Text>
-                    </View> */}
+                    {statusOrder == "Pesanan Selesai" &&
+                        <View style={{backgroundColor:'#93DCFC', padding:15, justifyContent:'center', alignItems:'center'}}>
+                            <Image
+                                source={require('../../assets/images/Solid.png')}
+                                style={{width:width*0.1, height:width*0.1, resizeMode:'cover'}}
+                            />
+                            <Text style={{marginTop:height*0.01, fontSize:14}}>Pesanan Diterima!</Text>
+                        </View>
+                    }
 
                     <View style={{backgroundColor:'#F8F8F8', padding:10}}>
                         <Text style={{fontSize:18}}>Metode Pembayaran</Text>
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                             <View style={{width:'70%',}}>
-                                <Text style={{fontWeight:'bold', fontSize:16}}>{methodId != 1 ? "TRANSFER" : "COD"} {invoice}</Text>
+                                <Text style={{fontWeight:'bold', fontSize:14}}>{methodId != 1 ? "TRANSFER" : "COD"} {invoice}</Text>
                                 {trackingId != "" ?
-                                    <Text>{trackingId}</Text>
+                                    <Text>{trackingName} {trackingId}</Text>
                                 :
                                     <Text style={{color:'red'}}>Resi Belum di Input</Text>
                                 }
@@ -270,7 +330,7 @@ function Pesan(props) {
                                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                                 style={{padding:5, justifyContent:'center', alignItems:'center', padding:8, borderRadius:10,}}
                                             >
-                                                <Text style={{fontSize:14, textAlign:'center', color:'white'}}>
+                                                <Text style={{fontSize:12, textAlign:'center', color:'white'}}>
                                                     LACAK
                                                 </Text>
                                             </LinearGradient>
@@ -290,14 +350,14 @@ function Pesan(props) {
                                     </TouchableOpacity>
                                 </View> */}
 
-                                {trackingId != "" &&
+                                {(trackingId != "" && label != "Dibayar") &&
                                 <View>
-                                    <TouchableOpacity style={{width:'90%', alignSelf:'center',}} onPress={gotoKembali}>
+                                    <TouchableOpacity style={{width:'90%', alignSelf:'center', marginTop:height*0.01}} onPress={modalPesananTrigger}>
                                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                            style={{padding:5, justifyContent:'center', alignItems:'center', padding:8, borderRadius:10,}}
+                                            style={{padding:5, justifyContent:'center', alignItems:'center',borderRadius:10,}}
                                         >
-                                            <Text style={{fontSize:16, textAlign:'center', color:'white'}}>
-                                                Tukar / Kembalikan
+                                            <Text style={{fontSize:14, textAlign:'center', color:'white'}}>
+                                                Pesanan Selesai
                                             </Text>
                                         </LinearGradient>
                                     </TouchableOpacity>
@@ -309,7 +369,7 @@ function Pesan(props) {
                         </View>
                     </View>
 
-                    <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
+                    <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginTop:height*0.03, marginBottom:height*0.01}}></View>
 
                     <View style={{padding:10}}>
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:height*0.01}}>
@@ -362,6 +422,38 @@ function Pesan(props) {
 
                 </ScrollView>
 
+                {modalPesanan &&
+                <View style={{position:'absolute', flex:1, zIndex:1, width:width, height:height, bottom:0, backgroundColor:'rgba(0,0,0,0.5)', justifyContent:'center', alignItems:'center'}}>
+                    <View style={[styles.shadow,{alignSelf:'center', width:width*0.8, backgroundColor:'rgba(255,255,255,1)', padding:15}]}>
+                        
+                        <TouchableOpacity style={{width:'60%', alignSelf:'center', marginVertical:height*0.01}} onPress={gotoKembali}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                style={{padding:5, justifyContent:'center', alignItems:'center', padding:8, borderRadius:10,}}
+                            >
+                                <Text style={{fontSize:16, textAlign:'center', color:'white'}}>
+                                    Komplain
+                                </Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={{width:'60%', alignSelf:'center',}} onPress={submitFinisOrder}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                style={{padding:5, justifyContent:'center', alignItems:'center', padding:8, borderRadius:10,}}
+                            >
+                                <Text style={{fontSize:16, textAlign:'center', color:'white'}}>
+                                    Pesanan Selesai
+                                </Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={{alignSelf:'flex-end'}} onPress={modalPesananTrigger}>
+                            <Text style={{fontSize:14, color:'#07A9F0'}}>Tutup</Text>
+                        </TouchableOpacity>
+                        
+                    </View>
+                </View>
+                }
+
                 {loading &&
                     <Loading/>
                 }
@@ -398,3 +490,17 @@ function Pesan(props) {
 }
 
 export default Pesan;
+
+const styles=StyleSheet.create({
+    shadow : {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+    },
+})

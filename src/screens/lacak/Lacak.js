@@ -31,6 +31,8 @@ function Lacak(props) {
     const [buktiBayar, setBuktiBayar] = useState(0)
     const [lengthBukti, setLengthBukti] = useState(0)
     const [trackingId, setTrackingId] = useState("")
+    const [trackingName, setTrackingName] = useState("")
+    const [manifest, setManifest] = useState([])
 
     const [productImages, setProductImages] = useState("https://via.placeholder.com/150")
     const [productName, setProductName] = useState("0")
@@ -39,6 +41,9 @@ function Lacak(props) {
 
     const urlRincianPesanan = URL+"/v1/orders/"
     const urlProdukDetail = URL+'v1/product/'
+    const urlCourir = URL+'v1/courier/'
+    const urlCourirTracing = URL+'v1/shipment/tracing'
+    
 
     const {height,width} = Dimensions.get("window")
 
@@ -52,15 +57,18 @@ function Lacak(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
+            'Content-Type' : 'multipart/form-data'
         }
 
         fetch(urlRincianPesanan+id_order, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
-                console.log(id_order)
+                // console.log(id_order)
+                let logs = responseData.data.logs
+                logs.reverse();
 
                 setDataDetail(responseData.data)
-
+                setLogs(logs)
                 setMethodId(responseData.data.payment.method_id)
                 setTrackingId(responseData.data.delivery.tracking_id)
                 setInvoice(responseData.data.invoice)
@@ -73,7 +81,7 @@ function Lacak(props) {
                 setAmmount(responseData.data.payment.ammount)
                 setCommission(responseData.data.details[0].commission)
                 setCustom_commission(responseData.data.details[0].custom_commission)
-                setLogs(responseData.data.logs)
+                // setLogs(responseData.data.logs)
                 // console.log(responseData.data.logs)
                 
                 setLengthBukti(responseData.data.payment.metadata_decode.length)
@@ -90,18 +98,51 @@ function Lacak(props) {
                     .then(responseData => {
                         // console.log(responseData.data.images[0].file_upload)
                         setLoading(false)
-                        console.log(responseData.data.id)
+                        // console.log(responseData.data.id)
                         setProductDetail(responseData.data)
                         setProductName(responseData.data.name)
                         setProductImages(responseData.data.images[0].image_url)
                 })
+
+                fetch(urlCourir+responseData.data.delivery.courier_id, {headers})
+                    .then(response => response.json())
+                    .then(responseData => {
+                        // console.log(responseData.data)
+                        setTrackingName(responseData.data.name)
+
+                        let nameTracking= responseData.data.name
+
+                        var formdata = new FormData();
+                        formdata.append("resi", trackingId);
+                        formdata.append("courier", nameTracking.toLowerCase());
+                        // formdata.append("resi", "0114782000003307");
+                        // formdata.append("courier", "jne");
+
+                        fetch(urlCourirTracing, {method: 'POST', headers,
+                            body:formdata
+                        })
+                            .then(response => response.json())
+                            .then(async(responseData) => {
+                                let manifest = responseData.rajaongkir.result.manifest
+                                // console.log(responseData.rajaongkir.result.manifest)
+                                // let logs = responseData.data.logs 
+                                // logs.push(manifest);
+                                // console.log(manifest)
+                                // setLogs(responseData.data.logs)
+                                setManifest(manifest)
+                                
+                            })
+                })
+
+                
+                
                 
             })
 
     }
 
     const copyToClipboard = async() => {
-        const copyText = dataDetail.invoice
+        const copyText = trackingId
         Clipboard.setString(copyText)
         setCopy(true)
     }
@@ -136,7 +177,27 @@ function Lacak(props) {
                 
                 <View>
                     <Text>{moment(data.created_at).format("D MMMM YYYY, h:mm A")}</Text>
-                    <Text>{data.description}</Text>
+                    <Text style={{width:width*0.8}}>{data.description}</Text>
+                </View>
+            </View>
+            ))}
+            {manifest.map((data,i) => (
+            <View key={i} style={{flexDirection:'row',  width:'90%', alignSelf:'center'}}>
+                
+                <View style={{alignItems:'center', marginRight:width*0.03}}>
+                    <Image 
+                        source={require('../../assets/images/EllipseNo.png')}
+                        style={{width:width*0.05, height:width*0.05}}                    
+                    />
+                    <Image 
+                        source={require('../../assets/images/Line.png')}
+                        style={{width:width*0.005, height:height*0.1}}                    
+                    />
+                </View>
+                
+                <View>
+                    <Text>{moment(data.created_at).format("D MMMM YYYY, h:mm A")}</Text>
+                    <Text style={{width:width*0.8}}>{data.manifest_description}</Text>
                 </View>
             </View>
             ))}
@@ -150,7 +211,7 @@ function Lacak(props) {
                 <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end'}}>
                     <View>
                             <Text style={{fontWeight:'bold', fontSize:18}}>{methodId != 1 ? "TRANSFER" : "COD"}</Text>
-                            <Text>Kurir : JNE</Text>
+                            <Text>Kurir : {trackingName}</Text>
                         
                             <Text>No. Resi :
                             {trackingId != "" ?
@@ -182,7 +243,7 @@ function Lacak(props) {
 
                         <View style={{width:'60%', justifyContent:'space-between', height:'100%', flexDirection:'column'}}>
                             <View>
-                                <Text style={{fontSize:18}}>{productName}</Text>
+                                <Text style={{fontSize:14}}>{productName}</Text>
                                 <Text>Rp. {formatRupiah(total_price)}</Text>
                                 <View style={{flexDirection:'row'}}>
                                     <View style={{flexDirection:'row', justifyContent:'space-between', width:'50%', alignItems:'center'}}>

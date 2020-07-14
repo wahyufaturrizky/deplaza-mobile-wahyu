@@ -101,7 +101,7 @@ function Pesan(props) {
             // console.log(image);
             setPhoto(image)
             let image64 = `data:${image.mime};base64,${image.data}`;
-            // console.log(image)
+            console.log(image64)
 
             let formdata = new FormData();
             formdata.append("proof_payment", image64)
@@ -111,7 +111,7 @@ function Pesan(props) {
             })
             .then(response => response.json())
             .then(async(responseData) => {
-                // console.log(responseData)
+                console.log(responseData)
                 setLoading(false)
                 gotoPesanan()
             })
@@ -377,21 +377,29 @@ function Pesan(props) {
                 "payment_method_id" : id_metode // 1 atau 3 = 1(COD), 3 (Transfer)
             }
 
+            console.log(dataBody)
+
             fetch(URL+"v1/orders", {method: 'POST', headers,
                 body:JSON.stringify(dataBody)
             })
             .then(response => response.json())
             .then(async(responseData) => {
                 console.log(responseData)
-                setIdOrder(responseData.data.id)
-                setPesan(true)
                 setLoading(false)
-                if(metode){
-                    alert("Silahkan Upload Bukti Pembayaran di Tombol Upload Bukti Transfer (JIKA SUDAH ADA)")
+                if(responseData.errors!=null){
+                    alert(responseData.message)
                 }else{
-                    alert("Pesanan Sudah Di Masukkan")
-                    gotoPesanan()
+                    setIdOrder(responseData.data.id)
+                    setPesan(true)
+                    if(metode){
+                        alert("Pesanan Sudah Di Masukkan")
+                        gotoPesanan()
+                    }else{
+                        alert("Pesanan Sudah Di Masukkan")
+                        gotoPesanan()
+                    }
                 }
+                
                 //    gotoPesanan()
             })
         }
@@ -473,7 +481,7 @@ function Pesan(props) {
                                 <Text>Rp. </Text>
                                 <View style={{backgroundColor:'#d5d5d5', width:'35%'}}>
                                     <InputNormal
-                                        style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
+                                        style={{borderColor:'rgb(18, 48, 92)',fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
                                         value={margin}
                                         onChangeText={(text) => changeMargin(text)}
                                         disabled={pesan ? true : false}
@@ -506,7 +514,7 @@ function Pesan(props) {
 
                     <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                         
-                    {(!metodeCOD && metode && pesan) &&
+                    {(!metodeCOD && metode) &&
                         <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}

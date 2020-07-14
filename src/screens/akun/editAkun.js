@@ -36,7 +36,7 @@ function MyTabBar(props) {
                 <Text style={{fontSize:16}}>Ubah Informasi Profil</Text>
             </View>
             <View style={{width:'25%'}}>
-                <TouchableOpacity>
+                {/* <TouchableOpacity>
                     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                         style={{borderRadius:10, padding:8,justifyContent:'center', alignItems:'center'}}
                     >
@@ -44,7 +44,7 @@ function MyTabBar(props) {
                             Simpan
                         </Text>
                     </LinearGradient>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </View>
 

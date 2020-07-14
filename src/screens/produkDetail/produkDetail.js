@@ -60,7 +60,7 @@ function produkDetail(props) {
     const urlOngkir = URL+"v1/shipment/cost"
     const urlWishlistMe = URL+"v1/wishlist/me"
     const urlWishlist = URL+"v1/wishlist"
-    
+    const urlKotaDetail = URL+"v1/shipment/city/"
 
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
@@ -219,7 +219,7 @@ function produkDetail(props) {
                 responseImage.map( async(data,i) => {
                     dataG = dataGambar
                     dataUrl = data.image_url
-                    console.log(dataG)
+                    // console.log(dataG)
                     dataG.push(dataUrl)
                     // dataGambar.concat(data.image_URL)
                     // setDataGambar(dataGambar.concat(responseImage.image_URL))
@@ -327,7 +327,6 @@ function produkDetail(props) {
             .then(responseData => {
                 // setKota(responseData.rajaongkir.results)
                 const mapKota = responseData.rajaongkir.results
-
                 let data = mapKota.map( s => ({id:s.city_id, name:s.type+" "+s.city_name}) );
                 setKota(data)
             })
@@ -336,7 +335,7 @@ function produkDetail(props) {
 
     const _selectKota = async(data_kota) => {
         // alert("data",data_kota)
-        console.log(data_kota)
+        // console.log(data_kota)
         setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -346,15 +345,27 @@ function produkDetail(props) {
             'Access-Control-Allow-Origin': '*',
         }
 
-        // console.log(dataDetail.cod_city_id)     
-        let cod_city =  dataDetail.cod_city_id
-        let cek_code_city = cod_city.indexOf(data_kota);
+        fetch(urlKotaDetail+data_kota.id, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                const mapKota = responseData.rajaongkir.results
+                console.log(responseData)
 
-        if(cek_code_city >= 0) {
-            setmetodeCOD(true)
-        }else{
-            setmetodeCOD(false)
-        }
+                let select_cod = data_kota.id  
+                let cod_city =  dataDetail.cod_city_id
+                let cek_code_city = cod_city.indexOf(select_cod);
+                let cek_code_province = cod_city.indexOf(mapKota.province_id);
+
+                if(cek_code_city >= 0 || cek_code_province >= 0) {
+                    setmetodeCOD(true)
+                }else{
+                    setmetodeCOD(false)
+                }
+            })
+            .catch(e => console.log(e))
+
+        // console.log(data_kota.id)  
+        
 
         let formdata = new FormData();
         formdata.append("origin", dataDetail.city_id)
@@ -372,6 +383,7 @@ function produkDetail(props) {
             tipe.map((type) => {
                 if(type.service === "REG"){
                     setPilihKota(true)
+                    // console.log(type.cost[0].value)
                     setTotalOngkir(type.cost[0].value, setTotalHarga(dataDetail.price_basic+type.cost[0].value))
                 }
             })
@@ -442,7 +454,6 @@ function produkDetail(props) {
                             style={{width:'100%', height:height*0.5 , resizeMode:'cover'}}
                         /> */}
                         {/* <View style={{width:'100%',height:height*0.5, backgroundColor:'blue'}}> */}
-                        {console.log(dataGambar)}
                             <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
                         {/* </View> */}
                         <Text style={{fontSize:14}}>{dataDetail.name}</Text>

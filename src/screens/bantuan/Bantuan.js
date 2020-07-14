@@ -58,11 +58,11 @@ function Bantuan(props) {
                         </ImageBackground>
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity onPress={gotoBantuanFaq}>
+                    {/* <TouchableOpacity onPress={gotoBantuanFaq}>
                         <ImageBackground source={require('../../assets/images/bantuJualan3.png')} style={{justifyContent:'center', padding:10, alignItems:'center', marginVertical:height*0.005, height:height*0.2}}>
                                 <Text style={{color:'white', fontSize:22}}>FAQ</Text>
                         </ImageBackground>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 }
 

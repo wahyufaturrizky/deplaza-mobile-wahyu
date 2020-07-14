@@ -48,9 +48,9 @@ function produk(props) {
             .then(response => response.json())
             .then(responseData => {
                 setOrders(responseData.data)
-                console.log(responseData.data)
+                console.log(responseData.data[0].payment.method_id)
                 setLoading(false)
-   
+                
             })
     }
 
@@ -119,8 +119,8 @@ function produk(props) {
                                 <Text style={{fontSize:14}}>Rp. {formatRupiah(data.payment.ammount)}</Text>
                                 <Text style={{color:'#949494', fontSize:10}}>{data.payment.method.id != 1 ? "BANK" : "COD"} Margin Rp. {formatRupiah(data.total_commission)}</Text>
                             </View>
-                            <View style={{width:'30%', borderWidth:1, borderColor:(data.payment.status_label=="Blm Dibayar") ? 'red' :'green', padding:5, borderRadius:10}}>
-                                <Text style={{textAlign:'center', fontSize:8, color:(data.payment.status_label=="Blm Dibayar") ? 'red' :'green'}}>{data.payment.status_label}</Text>
+                            <View style={{width:'30%', borderWidth:1, borderColor:(data.payment.status_label=="Blm Dibayar" || data.payment.status_label=="Ditolak") ? 'red' :'green', padding:5, borderRadius:10}}>
+                                <Text style={{textAlign:'center', fontSize:8, color:(data.payment.status_label=="Blm Dibayar" || data.payment.status_label=="Ditolak") ? 'red' :'green'}}>{data.status_label}</Text>
                                 {/* <Text style={{textAlign:'center', fontSize:8, color:'green'}}>Pesanan Sukses</Text> */}
                             </View>
                         </View>
@@ -129,14 +129,14 @@ function produk(props) {
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10, paddingBottom:20}}>
                             <View style={{justifyContent:'space-around', width:'40%'}}>
                                 {data.delivery.tracking_id !="" ?
-                                    <Text style={{fontSize:10}}>{data.delivery.tracking_id}</Text>
+                                    <Text style={{fontSize:8}}>{data.delivery.tracking_id}</Text>
                                 :
-                                    <Text style={{fontSize:10, color:'red'}}>Resi Belum di Input</Text>
+                                    <Text style={{fontSize:8, color:'red'}}>Resi Belum di Input</Text>
                                 }
                                 <Text style={{color:'#949494', fontSize:10}}>{moment(data.created_at).format("MMMM D, YYYY")}</Text>
                             </View>
                             <TouchableOpacity style={{width:'50%'}}  onPress={() => detailProduk(data.id)}>
-                                <Text style={{color:'#07A9F0', fontSize:12}}>Cek Resi dan Lacak</Text>
+                                <Text style={{color:'#07A9F0', fontSize:10}}>Cek Resi dan Lacak</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage'
 import {Picker} from '@react-native-community/picker'
+import LinearGradient from 'react-native-linear-gradient'
 
 import Loading from '../../components/loading'
 
@@ -37,6 +38,7 @@ function editKontak(props) {
     const urlKecamatan = URL+'v1/shipment/subdistrict/city/'
     const urlProvincesDetail = URL+'v1/shipment/province/'
     const urlKotaDetail = URL+'v1/shipment/city/'
+    const urlUpdateUser = URL+'v1/user/'
 
     // let data = props.data
     console.log(props)
@@ -123,6 +125,37 @@ function editKontak(props) {
                     })
             })
     }
+
+    // Fungsi untuk get data kota
+    const updateAkun = async() => {
+        setLoading(true)
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+        
+        var formdata = new FormData();
+        formdata.append("username", email);
+        formdata.append("fullname", fullname);
+        formdata.append("email", email);
+        formdata.append("phone", phone);
+        formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
+        formdata.append("_method", "put");
+
+        var requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch(urlUpdateUser+data.id, requestOptions)
+        .then(response => response.json())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
     
     return (
     <View style={{flex:1}}>
@@ -203,6 +236,17 @@ function editKontak(props) {
         {loading &&
             <Loading />
         }
+
+        <TouchableOpacity onPress={updateAkun}>
+            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{borderRadius:10, padding:8,justifyContent:'center', alignItems:'center'}}
+            >
+                <Text style={{fontSize:14, textAlign:'center', color:'white'}}>
+                    Simpan
+                </Text>
+            </LinearGradient>
+        </TouchableOpacity>
+
     </View>
     );
 }

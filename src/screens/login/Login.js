@@ -83,7 +83,7 @@ function Login(props) {
     
         .then((response) => response.json())
         .then( async(responseData) => {
-            console.log(responseData)
+            // console.log(responseData)
             setLoading(false)
             if(responseData.data=="Password incorrect"){
                 alert("Password Anda Salah")
@@ -91,7 +91,7 @@ function Login(props) {
                 alert("Akun Belum Terdaftar")
             }else{
                 await AsyncStorage.setItem('data', JSON.stringify(responseData.data));
-                // console.log(responseData.data)
+                console.log(responseData.data)
                 goToHome()
             }
         })
