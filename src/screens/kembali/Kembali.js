@@ -1,11 +1,14 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Image, Platform } from 'react-native';
 import { RadioButton, TextInput, Checkbox, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient'
 import AsyncStorage from '@react-native-community/async-storage'
+import {Picker} from '@react-native-community/picker'
 import ImagePicker from 'react-native-image-crop-picker';
+import RNFetchBlob from 'rn-fetch-blob';
+// import ImagePicker from 'react-native-image-picker';
 
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
@@ -45,16 +48,21 @@ function Kembali(props) {
 
     const [productImages, setProductImages] = useState("https://via.placeholder.com/150")
     const [productName, setProductName] = useState("0")
+    const [reasonComplaint, setReasonComplaint] = useState([])
+    const [selectReason, setSelectReason] = useState("kosong")
 
     const urlRincianPesanan = URL+"/v1/orders/"
     const urlProdukDetail = URL+'v1/product/'
     const urlOrder = URL+'v1/orders/'
+    const urlReasonComplaint = URL+'v1/complaint/reason'
+    const urlComplaint = URL+'v1/complaint'
 
     const id_order = props.route.params.id
     const { height, width } = Dimensions.get("window");
 
     useEffect(() => {
         getRincianPesanan()
+        getReasonComplaint()    
     }, [])
 
     const getRincianPesanan = async() => {
@@ -108,6 +116,23 @@ function Kembali(props) {
 
     }
 
+    const getReasonComplaint = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlReasonComplaint, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                console.log(responseData.data)
+                setReasonComplaint(responseData.data)
+            })
+
+    }
+
     const changeQty = (simbol) => {
         // let hargaProduk = parseInt(dataDetail.price_basic)
         // let totalOngkirNow = parseInt(totalOngkir)
@@ -127,12 +152,9 @@ function Kembali(props) {
         let date = new Date(); //To add the time suffix in filename
         ImagePicker.openPicker({
             multiple: true,
-            includeBase64:true,
-            width: 768,
-            height: 1080,
-            cropping: true
+            // includeBase64:true,\
         }).then(image => {
-            // console.log(image)
+            console.log(image)
             setImage(image)
             // let image64 = `data:${image.mime};base64,${image.data}`;
             // setFiles(image64)
@@ -146,7 +168,6 @@ function Kembali(props) {
         ImagePicker.openPicker({
             mediaType: "video",
         }).then((video) => {
-            // console.log(video)
             setVideo(video)
             // let image64 = `data:${image.mime};base64,${image.data}`;
             // setFiles(image64)
@@ -166,25 +187,89 @@ function Kembali(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'multipart/form-data',
+            Accept : 'application/x-www-form-urlencoded',
+            'Content-Type': 'multipart/form-data'
         }
 
-        let formdata = new FormData();
-        formdata.append("reason_id", 1)
-        formdata.append("order_id", id_order)
-        formdata.append("description", checked+" : "+alasanDetail)
-        formdata.append("qty", qty)
-        formdata.append("address_id", 1)
-        formdata.append("files[]", files)
+        let imageBody = {
+            uri: image.uri,
+            type: image.type,
+            name: image.fileName,
+        }
 
-        setLoading(true)
-        fetch(urlOrder+idOrder+"/pay-base", {method: 'POST', headers,
-            body:formdata
+        // let imageBody ={}
+
+        // imageBody.uri = image.filename;
+        // imageBody.name = "TEST.jpg";
+        // imageBody.type = image.mime;
+        // imageBody.dateModified = new Date();
+
+        let formData = new FormData();
+        formData.append("reason_id", selectReason)
+        formData.append("order_id", id_order)
+        formData.append("description", checked+" : "+alasanDetail)
+        formData.append("qty", qty)
+        formData.append("address_id", 1)
+        // formData.append('Content-Type', 'image/png');
+
+        // for (let i = 0; i < image.length; i++) {
+        //     formData.append('files[]', {
+        //       name: image[i].path.split('/').pop(),
+        //       type: image[i].mime,
+        //       uri: Platform.OS === 'android' ? image[i].path : image[i].path.replace('file://', ''),
+        //     });
+        // }
+        
+        // let string = image.path
+        // let substr = string.substr(1);
+        // string.replace('/', '')
+
+        // console.log(RNFetchBlob.wrap(substr))
+
+        // RNFetchBlob.fetch('POST', urlComplaint, {
+        //     Authorization: `Bearer ${data.token}`,
+        //     'Content-Type' : 'multipart/form-data',
+        // }, [
+        // { name : 'files[]', filename : 'avatar.png', type:'image/png', data:(RNFetchBlob.wrap(substr))},
+        // { name : 'reason_id', data : selectReason},
+        // { name : 'order_id', data : id_order},
+        // { name : 'description', data : checked+" : "+alasanDetail},
+        // { name : 'qty', data : "qty"},
+        // { name : 'address_id', data : "1"},
+        // ]).then((resp) => {
+        //     console.log(resp)
+        // }).catch((err) => {
+        //     console.log(err)
+        // })
+        console.log(image[0].path)
+        let filename = image[0].path
+        let fileUrl = (!filename.match(/^file:/) ? 'file://' : '') + filename
+        let fileMeta = {
+            uri: fileUrl,
+            type: 'image/jpeg',
+            name: fileUrl.split(/[\\/]/).pop() // basename
+        }
+        formData.append('files[]', fileMeta)
+        
+
+        // const photos = image
+        // photos.forEach((photo) => {
+        //         formData.append('files[]', {
+        //         uri: photo.path,
+        //         type: 'image/jpeg', // or photo.type
+        //         name: 'avatar.jpg'
+        //     });  
+        // });
+        console.log(JSON.stringify(formData))
+        // // setLoading(true)
+        fetch(urlComplaint, {method: 'POST', headers,
+            body:formData
         })
-        .then(response => response.json())
+
+        .then(response => console.log(response))
         .then(async(responseData) => {
-            // console.log(responseData)
-            setLoading(false)
+            console.log(responseData)
+            // setLoading(false)
             // gotoPesanan()
         })
     }
@@ -216,21 +301,25 @@ function Kembali(props) {
                 <View style={{width:'90%', alignSelf:'center'}}>
                     <View style={{padding:10, marginBottom:height*0.02}}>
 
-                        <TextInput
-                            label='Alasan Barang ditukar/dikembalikan'
-                            value={alasan}
-                            mode = "outlined"
-                            onChangeText={(val)=> setAlasan(val)}
-                            style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10}}
-                            
-                        />  
+                        <View style={{borderWidth:1, borderColor:'gray', alignSelf:'center', justifyContent:'center', width:'90%', borderRadius:10, height:height*0.055}}>
+                            <Picker
+                                selectedValue={selectReason}
+                                onValueChange={(itemValue, itemIndex) => setSelectReason(itemValue)}
+                                style={{justifyContent:'center', alignItems:'center'}}
+                            >   
+                                    <Picker.Item label={"Pilih Alasan"} value={"kosong"} />
+                                {reasonComplaint.map((data,i) => (
+                                    <Picker.Item key={i} label={data.description} value={data.id} />
+                                ))}
+                            </Picker>
+                        </View>
 
                         <TextInput
                             label='Alasan Detail'
                             value={alasanDetail}
                             mode = "outlined"
                             onChangeText={(val)=> setAlasanDetail(val)}
-                            style={{width:'90%', alignSelf:'center',  backgroundColor:'white', marginTop:height*0.005}}
+                            style={{width:'90%', alignSelf:'center',  borderRadius:10, backgroundColor:'white', marginTop:height*0.005}}
                             multiline={true}
                             numberOfLines={4}
                         />  
@@ -247,8 +336,15 @@ function Kembali(props) {
                                     </TouchableOpacity>
                                 </View>
                             :
-                                <View>
-                                    <Text>Image Proses Upload</Text>
+                                <View  style={{flexDirection:'row', alignItems:'center',}}>
+                                    {image.map((data,i) => (
+                                        <View style={{marginHorizontal:width*0.01}}>
+                                            <Image 
+                                                source={{uri:data.path}}
+                                                style={{width:width*0.2, height:width*0.2}}
+                                            />
+                                        </View>
+                                    ))}
                                 </View>
                             }
 
@@ -281,14 +377,14 @@ function Kembali(props) {
                     <Title>Jumlah</Title>
                     <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-end', width:'50%'}}>
                         <TouchableOpacity  onPress={() => changeQty("-")}>
-                            <View style={{height:height*0.045, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
+                            <View style={{height:height*0.065, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
                                 <Text style={{fontSize:20}}>-</Text>
                             </View>
                         </TouchableOpacity>
 
-                        <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'20%'}}>
+                        <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'20%', height:height*0.065, justifyContent:'center', alignItems:'center'}}>
                             <InputNormal
-                                style={{borderColor:'rgb(18, 48, 92)',height:height*0.045, fontSize:10}}
+                                style={{borderColor:'rgb(18, 48, 92)', fontSize:10, color:'black', }}
                                 value={qty.toString()}
                                 disabled
                                 editable={false}
@@ -296,7 +392,7 @@ function Kembali(props) {
                         </View>
 
                         <TouchableOpacity onPress={() => changeQty("+")}>
-                            <View style={{height:height*0.045, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
+                            <View style={{height:height*0.065, backgroundColor:'#D5D5D5', justifyContent:'center', alignItems:'center', paddingHorizontal:10}}>
                                 <Text style={{fontSize:20}}>+</Text>
                             </View>
                         </TouchableOpacity>

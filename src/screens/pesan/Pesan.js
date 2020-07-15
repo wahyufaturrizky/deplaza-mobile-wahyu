@@ -514,7 +514,7 @@ function Pesan(props) {
 
                     <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                         
-                    {(!metodeCOD && metode) &&
+                    {/* {(!metodeCOD && metode) &&
                         <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}
@@ -525,7 +525,7 @@ function Pesan(props) {
                                 </Text>
                             </LinearGradient>
                         </TouchableOpacity>
-                    }
+                    } */}
 
                     {photo != 0 && (
                         <Image

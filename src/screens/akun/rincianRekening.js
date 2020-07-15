@@ -17,14 +17,17 @@ function rincianRekening(props) {
     const [bank,setBank] = useState("kosong")
     const [loading,setLoading] = useState(true)
     const [allBank, setAllBank] = useState([])
+    const [allRek, setAllRek] = useState([])
 
     const { height, width } = Dimensions.get("window");
     const urlBank = URL+'v1/bank'
     const urlRekening = URL+'v1/account'
+    const urlListRekeing = URL+'v1/account/me'
     
 
     useEffect(() => {
         getListBank()
+        getRekening()
     },[])
 
     const getListBank = async() => {
@@ -40,6 +43,27 @@ function rincianRekening(props) {
             .then(response => response.json())
             .then(responseData => {
                 setAllBank(responseData.data)
+                setLoading(false)
+            })
+    }
+
+    const getRekening = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlListRekeing, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                console.log(responseData.data[0])
+                setAllRek(responseData.data)
+                setNoRek(responseData.data[0].number)
+                setNamaRekening(responseData.data[0].number)
+                setBank(responseData.data[0].bank.id)
                 setLoading(false)
             })
     }
@@ -87,12 +111,12 @@ function rincianRekening(props) {
         <View style={{backgroundColor:'white', flex:1}}>
             <Appbar params={props} />
 
-            <View style={{justifyContent:"center", alignItems:'center', backgroundColor:'#9FB4BE', padding:20, marginBottom:height*0.02}}>
+            {/* <View style={{justifyContent:"center", alignItems:'center', backgroundColor:'#9FB4BE', padding:20, marginBottom:height*0.02}}>
                 <Icon name="image" size={32} color="gray"/>
                 <Text style={{color:'white'}}>Tambahkan Foto Buku Tabungan/Cek</Text>
-            </View>
+            </View> */}
 
-            <View style={{width:'90%', alignSelf:'center', marginBottom:height*0.01 }}>
+            <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.01 }}>
                 <Text>Nomor Rekening</Text>
                 <TextInput
                     value={noRek}

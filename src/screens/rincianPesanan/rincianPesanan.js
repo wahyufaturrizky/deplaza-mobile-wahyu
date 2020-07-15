@@ -338,18 +338,6 @@ function Pesan(props) {
                                     </View>
                                 </View>
 
-                                {/* <View>
-                                    <TouchableOpacity style={{width:'90%', alignSelf:'center',}}>
-                                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                            style={{padding:5, justifyContent:'center', alignItems:'center', borderRadius:10,}}
-                                        >
-                                            <Text style={{fontSize:20, textAlign:'center', color:'white'}}>
-                                                Lacak
-                                            </Text>
-                                        </LinearGradient>
-                                    </TouchableOpacity>
-                                </View> */}
-
                                 {(trackingId != "" && label != "Dibayar") &&
                                 <View>
                                     <TouchableOpacity style={{width:'90%', alignSelf:'center', marginTop:height*0.01}} onPress={modalPesananTrigger}>

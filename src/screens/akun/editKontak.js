@@ -41,7 +41,7 @@ function editKontak(props) {
     const urlUpdateUser = URL+'v1/user/'
 
     // let data = props.data
-    console.log(props)
+    // console.log(props)
 
     useEffect(() => {
         getProvinsi()
@@ -135,25 +135,42 @@ function editKontak(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
+            'Content-Type' : 'application/json'
         }
         
-        var formdata = new FormData();
-        formdata.append("username", email);
-        formdata.append("fullname", fullname);
-        formdata.append("email", email);
-        formdata.append("phone", phone);
-        formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
-        formdata.append("_method", "put");
+        // var formdata = new FormData();
+        // formdata.append("username", email);
+        // formdata.append("fullname", fullname);
+        // formdata.append("email", email);
+        // formdata.append("phone", phone);
+        // formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
+        // formdata.append("_method", "put");
+
+        let dataBody = {
+            "username": email,
+            "fullname": fullname, 
+            "email": email, 
+            "phone": phone, 
+            "_method": "put"
+        }
+
+        // console.log(formdata)
 
         var requestOptions = {
+            headers,
             method: 'POST',
-            body: formdata,
-            redirect: 'follow'
+            body: JSON.stringify(dataBody),
         };
 
+        console.log(urlUpdateUser+data.id)
+
         fetch(urlUpdateUser+data.id, requestOptions)
-        .then(response => response.json())
-        .then(result => console.log(result))
+        .then(response => response.text())
+        .then(result => {
+            console.log(result)
+            setLoading(false)
+            alert("Data Berhasil Dirubah")
+        })
         .catch(error => console.log('error', error));
     }
     
@@ -239,7 +256,7 @@ function editKontak(props) {
 
         <TouchableOpacity onPress={updateAkun}>
             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                style={{borderRadius:10, padding:8,justifyContent:'center', alignItems:'center'}}
+                style={{padding:10,justifyContent:'center', alignItems:'center'}}
             >
                 <Text style={{fontSize:14, textAlign:'center', color:'white'}}>
                     Simpan

@@ -38,6 +38,7 @@ function Akun(props) {
         fetch(urlProfile, {headers})
             .then(response => response.json())
             .then(responseData => {
+                console.log(responseData.data)
                 setNama(responseData.data.fullname)
                 setPhone(responseData.data.phone)
                 setPhoto(responseData.data.avatar_url)

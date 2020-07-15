@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, Dimensions, Image } from 'react-native'
-import {URL} from '../../utils/global'
+import {URL, formatRupiah} from '../../utils/global'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import Appbar from '../../components/appbarHome'
@@ -22,6 +22,10 @@ function saldoPenjual(props) {
 
     const gotoPenarikan = () => {
         props.navigation.navigate('Penarikan',{title:"Penarikan"})      
+    }
+
+    const gotoPembayaran = () => {
+        props.navigation.navigate("PembayaranSaya", {title:"Pembayaran Saya"})
     }
 
     const getSaldo = async() => {
@@ -49,7 +53,7 @@ function saldoPenjual(props) {
             <Appbar params={props}/>
             <View style={{justifyContent:'center', alignItems:'center', padding:30, backgroundColor:'#93DCFC'}}>
                 <Text style={{marginBottom:height*0.01}}>Saldo</Text>
-                <Text style={{marginBottom:height*0.01, fontSize:width*0.05, fontWeight:'bold', color:'#0A56C3'}}>Rp. {saldo}</Text>
+                <Text style={{marginBottom:height*0.01, fontSize:width*0.05, fontWeight:'bold', color:'#0A56C3'}}>Rp. {formatRupiah(saldo)}</Text>
             </View>
 
             <View style={{flex:1, flexDirection:'row', justifyContent:'space-around', padding:15}}>
@@ -64,7 +68,7 @@ function saldoPenjual(props) {
                 </View>
 
                 <View style={{backgroundColor:'white', padding:20, width:width*0.4, height:height*0.18}}>
-                    <TouchableOpacity style={{justifyContent:'center', alignItems:'center'}}>
+                    <TouchableOpacity onPress={gotoPembayaran} style={{justifyContent:'center', alignItems:'center'}}>
                         <Image 
                             source={require('../../assets/images/transaksi.png')}
                             style={{width:width*0.2,height:width*0.2,marginBottom:height*0.01}}
