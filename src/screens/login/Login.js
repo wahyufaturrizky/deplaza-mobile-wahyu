@@ -5,17 +5,20 @@ import {
     Image,
     Dimensions,
     TouchableOpacity,
-    StyleSheet
+    StyleSheet,
+    ScrollView
 } from 'react-native'
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage'
 
 import { TextInput } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { listenToKeyboardEvents } from 'react-native-keyboard-aware-scroll-view'
 
 import {URL} from '../../utils/global'
 import Loading from '../../components/loading'
+
+const KeyboardAwareScrollView = listenToKeyboardEvents((props) => <ScrollView {...props} />);
 
 function Login(props) {
     const [fullname, setFullname] = useState('')
@@ -154,7 +157,7 @@ function Login(props) {
             <View style={{ backgroundColor: 'white', flex: 1}}>
 
                 <KeyboardAwareScrollView>
-                
+                    <View>
                     <Image
                         source={require(logo)}
                         style={{ width: width*1.2, height:  height*0.3, alignSelf: 'center', marginBottom:height*0.05, marginTop:height*0.08}}
@@ -281,7 +284,7 @@ function Login(props) {
                     </View>
                     }
 
-                    
+                    </View>
                     </KeyboardAwareScrollView>
                     
                     {loading &&

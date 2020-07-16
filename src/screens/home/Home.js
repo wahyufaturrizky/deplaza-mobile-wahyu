@@ -6,11 +6,10 @@ import AsyncStorage from '@react-native-community/async-storage'
 import LinearGradient from 'react-native-linear-gradient'
 
 //Untuk Video dari Youtube
-import YouTube from 'react-native-youtube';
 
 //Untuk Video
-import Video from 'react-native-video'
-import YoutubePlayer from 'react-native-youtube-iframe';
+// import Video from 'react-native-video'
+// import YoutubePlayer from 'react-native-youtube-iframe';
 
 //Untuk Header Var
 import Appbar from '../../components/appbarHome'

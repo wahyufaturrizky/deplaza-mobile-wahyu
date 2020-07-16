@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import {Picker} from '@react-native-community/picker'
 import ImagePicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'rn-fetch-blob';
+// import axios from 'axios'
 // import ImagePicker from 'react-native-image-picker';
 
 import Appbar from '../../components/appbarHome';
@@ -21,6 +22,7 @@ function Kembali(props) {
     const [alasan, setAlasan] = useState("");
     const [alasanDetail, setAlasanDetail] = useState("");
     const [qty, setQty] = useState("0");
+    const [selectQty, setSelectQty] = useState("0");
     const [files, setFiles] = useState([]);
 
     const [copy, setCopy] = useState(false)
@@ -53,7 +55,6 @@ function Kembali(props) {
 
     const urlRincianPesanan = URL+"/v1/orders/"
     const urlProdukDetail = URL+'v1/product/'
-    const urlOrder = URL+'v1/orders/'
     const urlReasonComplaint = URL+'v1/complaint/reason'
     const urlComplaint = URL+'v1/complaint'
 
@@ -64,6 +65,10 @@ function Kembali(props) {
         getRincianPesanan()
         getReasonComplaint()    
     }, [])
+
+    const gotoPesanan = () => {
+        props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
+    }
 
     const getRincianPesanan = async() => {
         const value = await AsyncStorage.getItem('data');
@@ -76,7 +81,7 @@ function Kembali(props) {
         fetch(urlRincianPesanan+id_order, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
-                console.log(id_order)
+                console.log(responseData.data)
 
                 setDataDetail(responseData.data)
 
@@ -86,7 +91,6 @@ function Kembali(props) {
                 setReceiver_name(responseData.data.delivery.receiver_name)
                 setReceiver_address(responseData.data.delivery.receiver_address)
                 setPhone(responseData.data.customer.phone)
-                // setColor(JSON.parse(responseData.data.details[0].variation).color[0])
                 setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
                 setAmmount(responseData.data.payment.ammount)
@@ -100,12 +104,10 @@ function Kembali(props) {
                 }
 
                 let id_produk = responseData.data.details[0].product_id
-                // console.log(responseData.data.details[0].product_id)
 
                 fetch(urlProdukDetail+id_produk, {headers})
                     .then(response => response.json())
                     .then(responseData => {
-                        // console.log(responseData.data.images[0].file_upload)
                         setLoading(false)
                         setProductDetail(responseData.data)
                         setProductName(responseData.data.name)
@@ -134,17 +136,22 @@ function Kembali(props) {
     }
 
     const changeQty = (simbol) => {
-        // let hargaProduk = parseInt(dataDetail.price_basic)
-        // let totalOngkirNow = parseInt(totalOngkir)
-
         if(simbol === "+"){
-            let qtynow = parseInt(qty)+1
-            // setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
-            setQty(qtynow)
+            let qtynow = parseInt(selectQty)+1
+            if(qtynow>qty){
+                setSelectQty(qty)
+                alert("Maksimal Kuantiti Adalah = " +qty)
+            }else{
+                setSelectQty(qtynow)
+            }
         }else if(simbol === "-"){
-            let qtynow = parseInt(qty)-1
-            setQty(qtynow)
-            // setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
+            let qtynow = parseInt(selectQty)-1
+            if(qtynow<1) {
+                setSelectQty(1)
+                alert("Maksimal Kuantiti Adalah = 1")
+            }else{
+                setSelectQty(qtynow)
+            }
         }
     }
 
@@ -177,6 +184,7 @@ function Kembali(props) {
     }
 
     const postTukar = async() => {
+        setLoading(false)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
@@ -187,22 +195,8 @@ function Kembali(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
-            Accept : 'application/x-www-form-urlencoded',
-            'Content-Type': 'multipart/form-data'
+            "content-type": 'multipart/form-data'
         }
-
-        let imageBody = {
-            uri: image.uri,
-            type: image.type,
-            name: image.fileName,
-        }
-
-        // let imageBody ={}
-
-        // imageBody.uri = image.filename;
-        // imageBody.name = "TEST.jpg";
-        // imageBody.type = image.mime;
-        // imageBody.dateModified = new Date();
 
         let formData = new FormData();
         formData.append("reason_id", selectReason)
@@ -210,67 +204,38 @@ function Kembali(props) {
         formData.append("description", checked+" : "+alasanDetail)
         formData.append("qty", qty)
         formData.append("address_id", 1)
-        // formData.append('Content-Type', 'image/png');
 
-        // for (let i = 0; i < image.length; i++) {
-        //     formData.append('files[]', {
-        //       name: image[i].path.split('/').pop(),
-        //       type: image[i].mime,
-        //       uri: Platform.OS === 'android' ? image[i].path : image[i].path.replace('file://', ''),
-        //     });
+        // let filename = image[0].path.substr(8)
+        // let fileUrl = (!filename.match(/^file:/) ? 'file://' : '') + filename
+        // let fileMeta = {
+        //     uri: fileUrl,
+        //     type: 'image/jpeg',
+        //     name: fileUrl.split(/[\\/]/).pop() // basename
         // }
-        
-        // let string = image.path
-        // let substr = string.substr(1);
-        // string.replace('/', '')
-
-        // console.log(RNFetchBlob.wrap(substr))
-
-        // RNFetchBlob.fetch('POST', urlComplaint, {
-        //     Authorization: `Bearer ${data.token}`,
-        //     'Content-Type' : 'multipart/form-data',
-        // }, [
-        // { name : 'files[]', filename : 'avatar.png', type:'image/png', data:(RNFetchBlob.wrap(substr))},
-        // { name : 'reason_id', data : selectReason},
-        // { name : 'order_id', data : id_order},
-        // { name : 'description', data : checked+" : "+alasanDetail},
-        // { name : 'qty', data : "qty"},
-        // { name : 'address_id', data : "1"},
-        // ]).then((resp) => {
-        //     console.log(resp)
-        // }).catch((err) => {
-        //     console.log(err)
-        // })
-        console.log(image[0].path)
-        let filename = image[0].path
-        let fileUrl = (!filename.match(/^file:/) ? 'file://' : '') + filename
-        let fileMeta = {
-            uri: fileUrl,
-            type: 'image/jpeg',
-            name: fileUrl.split(/[\\/]/).pop() // basename
-        }
-        formData.append('files[]', fileMeta)
+        // formData.append('files[]', fileMeta)
         
 
-        // const photos = image
-        // photos.forEach((photo) => {
-        //         formData.append('files[]', {
-        //         uri: photo.path,
-        //         type: 'image/jpeg', // or photo.type
-        //         name: 'avatar.jpg'
-        //     });  
-        // });
+        const photos = image
+        photos.forEach((photo) => {
+                formData.append('files[]', {
+                uri: photo.path,
+                type: 'image/jpeg', // or photo.type
+                name: 'avatar.jpg'
+            });  
+        });
+
         console.log(JSON.stringify(formData))
         // // setLoading(true)
         fetch(urlComplaint, {method: 'POST', headers,
             body:formData
         })
 
-        .then(response => console.log(response))
+        .then(response => response.json())
         .then(async(responseData) => {
             console.log(responseData)
-            // setLoading(false)
-            // gotoPesanan()
+            setLoading(false)
+            alert("Komplain Berhasil di Kirim")
+            gotoPesanan()
         })
     }
 
@@ -322,7 +287,8 @@ function Kembali(props) {
                             style={{width:'90%', alignSelf:'center',  borderRadius:10, backgroundColor:'white', marginTop:height*0.005}}
                             multiline={true}
                             numberOfLines={4}
-                        />  
+                            theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
+                            />  
 
                         <View style={{flexDirection:'row', width:'90%', alignSelf:'center', marginVertical:height*0.01, justifyContent:'space-between', alignItems:'center'}}>
                             
@@ -338,7 +304,7 @@ function Kembali(props) {
                             :
                                 <View  style={{flexDirection:'row', alignItems:'center',}}>
                                     {image.map((data,i) => (
-                                        <View style={{marginHorizontal:width*0.01}}>
+                                        <View key={i} style={{marginHorizontal:width*0.01}}>
                                             <Image 
                                                 source={{uri:data.path}}
                                                 style={{width:width*0.2, height:width*0.2}}
