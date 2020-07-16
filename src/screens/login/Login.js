@@ -37,6 +37,11 @@ function Login(props) {
     const urlRegister = URL+"v1/oauth/register"
     const urlLogin = URL+"v1/oauth/login"
 
+    useEffect(()=>{
+        checkLogin()
+    },[])
+
+    // Pergi Ke Home Reset Index
     const goToHome = () => {
         props.navigation.dispatch(CommonActions.reset({
             index: 0,
@@ -46,10 +51,7 @@ function Login(props) {
         }));  
     }
 
-    useEffect(()=>{
-        checkLogin()
-    },[])
-
+    //Check Udah ada data di local storage apa belum
     const checkLogin = async() =>{
         let value = await AsyncStorage.getItem('data');
         if(value!=null){
@@ -60,11 +62,14 @@ function Login(props) {
 
     }
 
+    //Modal Lupa Password
     const forgotTrigger = () =>{
         setModal(!modal)
     }
 
+    //Proses Login
     const SignIn = async() => {
+        setLoading(true)
         let formdata = new FormData();
         formdata.append("username", email)
         formdata.append("password", password)
@@ -79,32 +84,26 @@ function Login(props) {
             }
         };
 
-        setLoading(true)
-        // alert(email+password)
         fetch(urlLogin, requestOptions)
-
-    
-        .then((response) => response.json())
-        .then( async(responseData) => {
-            // console.log(responseData)
-            setLoading(false)
-            if(responseData.data=="Password incorrect"){
-                alert("Password Anda Salah")
-            }else if(responseData.data=="Your account not yet registered"){
-                alert("Akun Belum Terdaftar")
-            }else{
-                await AsyncStorage.setItem('data', JSON.stringify(responseData.data));
-                console.log(responseData.data)
-                goToHome()
-            }
-        })
-        .done();
-        // await AsyncStorage.setItem('data', JSON.stringify(data));
-        // goToHome()
+            .then((response) => response.json())
+            .then( async(responseData) => {
+                setLoading(false)
+                if(responseData.data=="Password incorrect"){
+                    alert("Password Anda Salah")
+                }else if(responseData.data=="Your account not yet registered"){
+                    alert("Akun Belum Terdaftar")
+                }else{
+                    await AsyncStorage.setItem('data', JSON.stringify(responseData.data));
+                    console.log(responseData.data)
+                    goToHome()
+                }
+            })
+            .done();
     }
 
-    //Pergi ke Hal Home, Indexnya di reset
+    //Proses Daftar
     const SignUp = () => {  
+        setLoading(true)
         let formdata = new FormData();
         formdata.append("fullname", fullname)
         formdata.append("phone", phone)
@@ -112,7 +111,6 @@ function Login(props) {
         formdata.append("email", email)
         formdata.append("username", email)
 
-        setLoading(true)
 
         let requestOptions = {
             method: 'POST',
@@ -126,7 +124,7 @@ function Login(props) {
 
         fetch(urlRegister, requestOptions)
         .then((response) => response.json())
-        .then( async(responseData) => {
+        .then(async(responseData) => {
                 setLoading(false)
                 if(!responseData.status){
                     if(responseData.data.email!=null){
@@ -148,8 +146,8 @@ function Login(props) {
         setLogin(!login)
     }
 
+    //Submit Lupa Password
     const forgotSubmit = () => {
-        // setLogin(!login)
         alert("tes")
     }
 

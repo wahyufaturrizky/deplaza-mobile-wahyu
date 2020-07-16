@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import Loading from '../../components/loading'
+import { URL } from '../../utils/global';
 
 function editKontak(props) {
     const [fullname,setFullName] = useState("")
@@ -14,6 +15,7 @@ function editKontak(props) {
     const [pendidikan,setPendidikan] = useState("")
     const [loading,setLoading] = useState(false)
 
+    const urlUpdateUser = URL+'v1/user/'
 
     const { height, width } = Dimensions.get("window");
 

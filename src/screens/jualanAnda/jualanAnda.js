@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react';
 import { View, Image, Dimensions, ImageBackground, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import { Avatar, Button,Text, Card, Title, Paragraph } from 'react-native-paper';
+import {Text, Card, } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient'
@@ -12,7 +12,6 @@ import AppbarT from '../../components/appBarTransparent'
 import BottomTab from '../../components/bottomTab'
 import Loading from '../../components/loading'
 
-const { height, width } = Dimensions.get("window");
 
 function jualanAnda(props) {
     const [wishlist,setWishlist] = useState(0)
@@ -20,7 +19,6 @@ function jualanAnda(props) {
     const [search, setSearch] = useState("")
     const [saldo, setSaldo] = useState("0")
     const [totalOrder, setTotalOrder] = useState("0")
-    // const [haveProduk, setHaveProduk] = useState(true)
  
     const { height, width } = Dimensions.get("window");
     const haveProduk = true
@@ -39,18 +37,22 @@ function jualanAnda(props) {
         props.navigation.navigate('Produk',{title})      
     }
 
+    //Pergi ke Hal Pesanan
     const gotoPesanan = () => {
         props.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
     }
 
+    //Pergi ke Hal List Kategori
     const gotoKategori = () => {
         props.navigation.navigate("Kategori", {title:"Produk Lain"})
     }
 
+    //Pergi ke Hal List Wishlist
     const gotoWishlist = () => {
         props.navigation.navigate('Wishlist',{title:"Produk Saya"})      
     }
 
+    //Untuk Ngecek Berapa saldonya
     const getSaldo = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -69,6 +71,7 @@ function jualanAnda(props) {
             .catch(e => console.log(e))
     }
 
+    //Untuk Ngecek udah ada wishlist apa belum
     const getListWishlist = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -89,6 +92,7 @@ function jualanAnda(props) {
             .catch(e => console.log(e))
     }
 
+    //Untuk dapetin udah berapa banyak yang order
     const getTotalOrder = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -107,16 +111,15 @@ function jualanAnda(props) {
                 order.map((data,i) => {
                     a++
                 })
-                // console.log(totalData)
                 setTotalOrder(a)
             })
             .catch(e => console.log(e))
     }
 
+    //Pergi ke Hal Cari Produk
     const searchProduk = () => {
         props.navigation.navigate('Produk',{title:"Cari Produk", search:search})      
     }
-    
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
@@ -181,7 +184,6 @@ function jualanAnda(props) {
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                             style={{padding:15, flexDirection:"row", borderRadius:10, justifyContent:'center', alignItems:'center'}}
                         >
-                            {/* <Icon name="store" size={height*0.04} color="#fff"/> */}
                             <Image
                                 source={require('../../assets/images/box2.png')}
                                 style={{width:width*0.05, height:width*0.05}}
@@ -204,18 +206,6 @@ function jualanAnda(props) {
                                 </View>
                             </ImageBackground>
                         </TouchableOpacity>
-
-                        // <TouchableOpacity imageStyle={{borderRadius:20}} onPress={() => gotoPesanan()} style={{width:'32%'}}>
-                        //     <View style={{justifyContent:'center', alignItems:'center', flex:1}}>
-                        //     <ImageBackground source={require('../../assets/images/produk-lain.png')} resizeMode="stretch" style={{justifyContent:'flex-end',  padding:10, height:height*0.2, }}>
-                        //         <Text style={{color:'white', marginLeft:width*0.01, fontSize:width*0.02}}>Pesanan Saya</Text>
-                        //         <View style={{alignItems:'center', flexDirection:'row',  marginBottom:height*0.01, marginLeft:width*0.01}}>
-                        //             <Icon name="shopping" size={width*0.1} color="#000"/>
-                        //             <Text style={{color:'black', fontSize:width*0.03}}>Pesanan Saya</Text>
-                        //         </View>
-                        //     </ImageBackground>
-                        //     </View>
-                        // </TouchableOpacity>
                     }
 
                     { wishlist==0 &&

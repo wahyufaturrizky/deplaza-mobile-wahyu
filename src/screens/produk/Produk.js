@@ -2,9 +2,8 @@ import React, {useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
 
-// import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
-import { Title, ActivityIndicator, Appbar } from 'react-native-paper';
+import { Title, Appbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
@@ -15,18 +14,14 @@ function produk(props) {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(false)
     const [page, setPage] = useState(1)
-    const [load, setLoad] = useState(false)
     const [any, setAny] = useState(true)
     const [search, setSearch] = useState(false)
 
-    const [color, setColor] = useState(false)
-
+    // Untuk Dapetin lagi di page mana
     let halaman = props.route.params.title
 
     const { height, width } = Dimensions.get("window");
     const urlProduk = URL+"v1/product" 
-    const scrollRef = useRef(); 
-    const searchRef = useRef();
 
     useEffect(() => {
         if(halaman=="Cari Produk"){
@@ -61,11 +56,6 @@ function produk(props) {
             param = ""
         }
 
-       
-
-        console.log(urlProduk+"?limit=10&offset="+page+""+param)
-        // console.log(props.route.params.idKategori)
-
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
@@ -75,10 +65,8 @@ function produk(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProducts(responseData.data)
-                // setColor
                 console.log(products.data)
                 setPage(1)
-                setLoad(true)
                 setLoading(false)
             })
             .catch(e => console.log(e))
@@ -86,12 +74,6 @@ function produk(props) {
 
     const loadMore = async(hal) => {
         setLoading(true)
-        setLoad(false)
-
-        // scrollRef.current?.scrollTo({
-        //     y: 0,
-        //     animated: true,
-        // });
         
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -109,8 +91,6 @@ function produk(props) {
             param = ""
         }
 
-        console.log(urlProduk+"?limit=10&offset="+off+""+param)
-
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
@@ -119,12 +99,7 @@ function produk(props) {
         fetch(urlProduk+"?limit=10&offset="+off+""+param, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
-
                 await setProducts(products.concat(responseData.data))
-
-                // await setProducts([...products, responseData.data])
-                // setColor
-                console.log(products)
                 setPage(pageNow++)
                 setLoading(false)
                 setLoad(true)
@@ -160,11 +135,7 @@ function produk(props) {
         }else{
             param += ""
         }
-
         param +="&keyword="+search
-
-        console.log(urlProduk+"?limit=10&offset=0"+param)
-        // console.log(props.route.params.idKategori)
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
@@ -175,10 +146,7 @@ function produk(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProducts(responseData.data)
-                // setColor
-                console.log(products.data)
                 setPage(2)
-                setLoad(true)
                 setLoading(false)
             })
             .catch(e => console.log(e))
@@ -187,7 +155,6 @@ function produk(props) {
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             
-            {/* <Appbar params={props}/> */}
 
             <Appbar.Header style={[styles.shadow,{backgroundColor:'white', width:'100%', height: 70}]}>
 
@@ -236,7 +203,6 @@ function produk(props) {
                 <View key={product.id} style={{flexDirection:'row', marginVertical:10, height:height*0.18, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
                    
                         <Image
-                            // source={require('../../assets/images/ex-produk.png')}
                             source={{uri : product.images[0].image_url}}
                             style={{height:'100%', width:'30%', borderRadius:10}}
                         />
@@ -254,9 +220,6 @@ function produk(props) {
                 )
                 })}
 
-                {/* <TouchableOpacity style={{justifyContent:'center', alignItems:'center', width:'100%',}} onPress={loadMore}>
-                    <Text>Load More</Text>
-                </TouchableOpacity> */}
                 {any ?
                     <TouchableOpacity style={{justifyContent:'center', alignItems:'center', width:'100%',}} onPress={() => loadMore(page+1)}>
                         <Text>Produk Selanjutnya</Text>

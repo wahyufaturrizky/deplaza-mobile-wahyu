@@ -71,7 +71,6 @@ function rincianRekening(props) {
     const postRekening = async() => {
         
         const value = await AsyncStorage.getItem('data');
-        // console.log(value)
         const data = JSON.parse(value)
         const id_user = data.id
         if(noRek!=konfnoRek){
@@ -157,7 +156,6 @@ function rincianRekening(props) {
                     underlineColor={"#07A9F0"}
                     underlineColorAndroid={"#07A9F0"}
                     selectionColor={"#07A9F0"}
-                    keyboardType={"numeric"}
                 />
                 <HelperText style={{color:'#93DCFC', paddingLeft:0}}>
                    Wajib Isi

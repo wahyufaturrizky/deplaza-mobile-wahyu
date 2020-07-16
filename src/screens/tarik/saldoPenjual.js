@@ -25,7 +25,7 @@ function saldoPenjual(props) {
     }
 
     const gotoPembayaran = () => {
-        props.navigation.navigate("PembayaranSaya", {title:"Pembayaran Saya"})
+        props.navigation.navigate("Transaksi", {title:"Transaksi Saya"})
     }
 
     const getSaldo = async() => {

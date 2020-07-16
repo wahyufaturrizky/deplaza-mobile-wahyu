@@ -9,14 +9,14 @@ import { URL, formatRupiah } from '../../utils/global';
 function pembayaranSaya(props) {
     const [modal, setModal] = useState(false)
     const [history, setHistory] = useState([])
-    const [date, setDate] = useState("")
-    const [description, setDescription] = useState("")
+    const [date, setDate] = useState([])
+    const [feedback, setFeedback] = useState("")
     const [ammount, setAmmount] = useState("0")
 
     const { height, width } = Dimensions.get("window");
 
-    const urlHistory = URL+'v1/saldo/my-history'
-
+    const urlWithdraw = URL+'v1/withdrawal/me'
+    
     useEffect(() => {
         getHistory()
     },[])
@@ -24,8 +24,8 @@ function pembayaranSaya(props) {
     const modalTrigger = (data) =>{
         if(data!=""){
             setDate(data.created_at)
-            setDescription(data.description)
-            setAmmount(data.ammount)
+            setFeedback(data.feedback)
+            setAmmount(data.amount)
         }
         setModal(!modal)
     }
@@ -39,7 +39,7 @@ function pembayaranSaya(props) {
             'Access-Control-Allow-Origin': '*',
         }
 
-        fetch(urlHistory, {headers})
+        fetch(urlWithdraw, {headers})
             .then(response => response.json())
             .then(responseData => {
                 let data = responseData.data
@@ -57,7 +57,7 @@ function pembayaranSaya(props) {
                         <View style={{width:'90%', alignSelf:'center', paddingVertical:10}}>
                             <Text style={{fontWeight:'bold', marginBottom:height*0.01}}>{moment(data.created_at).format("D MMMM YYYY, H:mm A")}</Text>
                             <Text style={{marginBottom:height*0.02}}>
-                                {data.description}
+                                Penarikan Nomor {data.withdrawal_no}
                             </Text>
                             <TouchableOpacity onPress={() => modalTrigger(data)} style={{justifyContent:'flex-end', alignItems:'flex-end'}}>
                                 <Text style={{color:'#07A9F0'}}>Lihat Lebih Banyak</Text>
@@ -73,15 +73,26 @@ function pembayaranSaya(props) {
 
             { modal &&
             <View style={{position:'absolute', flex:1, zIndex:1, width:width, height:height, bottom:0, backgroundColor:'rgba(0,0,0,0.5)', justifyContent:'center', alignItems:'center'}}>
+                    {feedback != null ?
                     <View style={[styles.shadow,{alignSelf:'center', width:width*0.8, backgroundColor:'rgba(255,255,255,1)', padding:15}]}>
                         <Text style={{fontSize:16, fontWeight:'bold', marginBottom:height*0.01}}>{moment(date).format("D MMMM YYYY, H:mm A")}</Text>
-                        <Text style={{fontSize:14, marginBottom:height*0.01}}>{description} Sebesar Rp. {formatRupiah(ammount)}</Text>
+                        <Text style={{fontSize:14, marginBottom:height*0.01}}>{feedback}</Text>
+                        <Text>Dana yang di ajukan : {formatRupiah(ammount)}</Text>
 
                         <TouchableOpacity style={{alignSelf:'flex-end'}} onPress={() => modalTrigger("")}>
                             <Text style={{fontSize:14, color:'#07A9F0'}}>Tutup</Text>
                         </TouchableOpacity>
                         
                     </View>
+                    :
+                    <View style={[styles.shadow,{alignSelf:'center', width:width*0.8, backgroundColor:'rgba(255,255,255,1)', padding:15}]}>
+                        <Text>Sedang di Proses</Text>
+
+                        <TouchableOpacity style={{alignSelf:'flex-end'}} onPress={() => modalTrigger("")}>
+                            <Text style={{fontSize:14, color:'#07A9F0'}}>Tutup</Text>
+                        </TouchableOpacity>
+                    </View>
+                    }
             </View>
             }
             

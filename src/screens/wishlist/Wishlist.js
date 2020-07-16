@@ -1,10 +1,10 @@
 import React,{useEffect, useState} from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage'
 import Loading from '../../components/loading'
 import { ScrollView } from 'react-native-gesture-handler';
-import { Title, ActivityIndicator } from 'react-native-paper';
+import { Title, } from 'react-native-paper';
 
 import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
@@ -13,7 +13,6 @@ import {URL, formatRupiah} from '../../utils/global'
 
 function wishlist(props) {
     const [wishlist, setWishlist] = useState([])
-    const [gambar, setGambar] = useState(false)
     const [loading, setLoading] = useState(true)
     
     const { height, width } = Dimensions.get("window");
@@ -36,7 +35,6 @@ function wishlist(props) {
             .then(response => response.json())
             .then(responseData => {
                 setWishlist(responseData.data)
-                // setColor
                 setLoading(false)
             })
             .catch(e => console.log(e))
@@ -61,7 +59,6 @@ function wishlist(props) {
                 <View key={index} style={{flexDirection:'row', marginVertical:10, height:height*0.18, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
                                 
                     <Image
-                        // source={require('../../assets/images/ex-produk.png')}
                         source={{uri : data.product.images[0].image_url}}
                         style={{height:'100%', width:'30%', borderRadius:10}}
                     />

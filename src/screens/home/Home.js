@@ -5,12 +5,6 @@ import AsyncStorage from '@react-native-community/async-storage'
 //Untuk Linear Gradient
 import LinearGradient from 'react-native-linear-gradient'
 
-//Untuk Video dari Youtube
-
-//Untuk Video
-// import Video from 'react-native-video'
-// import YoutubePlayer from 'react-native-youtube-iframe';
-
 //Untuk Header Var
 import Appbar from '../../components/appbarHome'
 
@@ -18,48 +12,19 @@ import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
 
 function Home(props) {
-    const [video,setVideo] = useState(false)
     const logoStore = '../../assets/images/store.png'
-
     const { height, width } = Dimensions.get("window");
-    const YOUR_API_KEY = "AIzaSyDq1wgEsDvlY9QPUEMA8GDhiFkEtGQNwrI";
-
-    const _youTubeRef = React.createRef();
-    const playerRef = useRef(null);
-
-    useEffect(()=>{
-        checkLogin()
-        setTimeout(() => {
-            setVideo(true)
-        }, 1000);
-    },[])
-
-    const checkLogin = async() =>{
-        let value = await AsyncStorage.getItem('data');
-        console.log(value)
-    }
     
     //Pergi ke Hal Jualan Anda
     const mulaiJualan = () => {
         props.navigation.navigate('JualanAnda',{title:'Jualan Anda'})      
     }
 
-    
-
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             <Appbar params={props}/>
             
             <View style={{backgroundColor:'blue'}}>
-                {/* {video &&
-                    <YouTube
-                        ref={_youTubeRef}
-                        apiKey = {YOUR_API_KEY}
-                        videoId="B8IIAMXig2c"
-                        play
-                        style={{ alignSelf: 'stretch', height: height*0.3 }}
-                    />
-                }  */}
                 <Image
                     source={require('../../assets/images/banner-home.png')}
                     style={{width:width*1, height:height*0.3, alignSelf: 'stretch',}}

@@ -9,12 +9,10 @@ import {URL, formatRupiah} from '../../utils/global'
 import RNFetchBlob from 'rn-fetch-blob';
 import Loading from '../../components/loading'
 
-// import Select2 from 'react-native-select-two';
-
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { Title, TextInput, Snackbar  } from 'react-native-paper';
+import { Title, Snackbar  } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Appbar from '../../components/appbarHome';
@@ -22,41 +20,30 @@ import InputNormal from '../../components/inputNormal'
 
 function produkDetail(props) {
     const [dataDetail, setDataDetail] = useState([])
-    const [dataColor, setDataColor] = useState([])
     const [dataGambar, setDataGambar] = useState([])
     const [loading, setLoading] = useState(true)
 
     const [copy, setCopy] = useState(false)
     const [qty, setQty] = useState(1)
 
-    const [color, setColor] = useState([])
-    const [size, setSize] = useState([])
     const [selectVariasi, setSelectVariasi]= useState([])
 
     const [pressSize, setPressSize] = useState(false)
-    const [pressColor, setPressColor] = useState(-1)
 
     const [selectKota, setSelectKota] = useState([])
-    const [selectColor, setSelectColor] = useState("")
-    const [selectSize, setSelectSize] = useState("")
     const [totalKomisi, setTotalKomisi] = useState("0")
 
     const [varian, setVarian] = useState([])
 
-    const [kota, setKota] = useState([
-    ])
-    const [allKota, setAllKota] = useState([])
-    const [kecamatan, setKecamatan] = useState([])
+    const [kota, setKota] = useState([])
     const [totalOngkir, setTotalOngkir] = useState(0)
     const [totalHarga, setTotalHarga] = useState(0)
     const [metodeCOD, setmetodeCOD] = useState(false) //false kalo untuk bank 
     const [likeProduk, setLikeProduk] = useState(0)
     const [pilihKota, setPilihKota] = useState(false)
-    // const likeProduk = true
 
     const urlProdukDetail = URL+'v1/product/'
     const urlKota = URL+"v1/shipment/cities"
-    const urlKecamatan = URL+"v1/shipment/subdistrict/city/"
     const urlOngkir = URL+"v1/shipment/cost"
     const urlWishlistMe = URL+"v1/wishlist/me"
     const urlWishlist = URL+"v1/wishlist"
@@ -64,7 +51,6 @@ function produkDetail(props) {
 
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
-    let tvarian = 0
 
     useEffect(() => {
         getDetailProduct()
@@ -94,19 +80,14 @@ function produkDetail(props) {
         fetch(urlWishlistMe, {headers})
             .then(response => response.json())
             .then(responseData => {
-                // setWishlist(responseData.data)
-                // console.log(responseData.data[1].product_id)
                 let res = responseData.data
                 let row = 0
                 res.map((data,i) => {
-                    // console.log(data.product_id+" id ="+id)
                     if(data.product_id == id){
                         row++
                     }
                 })
-                // console.log(row)
                 setLikeProduk(row)
-                // setColor
             })
             .catch(e => console.log(e))
     }
@@ -146,30 +127,12 @@ function produkDetail(props) {
         }
     }
 
-    const changeColor = (data,color) => {
-        setPressColor(data)
-        setSelectColor(color)
-    }
-
-    const changeSize = (data,size) => {
-        setPressSize(data)
-        setSelectSize(size)
-    }
-
-    const goToHome = () => {
-        props.navigation.dispatch(CommonActions.reset({
-            index: 0,
-            routes: [
-                        { name: 'JualanAnda', params:{title:'Jualan Anda'} },
-                    ]
-        }));  
-    }
-
+    
     const gotoRincianProduk = () => {
         props.navigation.navigate('Produk',{title:"Paling Disukai"})   
     }
 
-    const gotoPesan = () => { //{"color": ["red", "yellow"], "size": ["s", "m", "l", "xl"]}
+    const gotoPesan = () => {
         if(totalOngkir===0){
             alert("Pilih Terlebih Kota atau Kecamatan Tujuan")
         }else{
@@ -177,12 +140,8 @@ function produkDetail(props) {
         }
     }
 
-    const gotoWishlist = () => {
-        props.navigation.navigate("Wishlist", {title:"Pesanan Saya"})
-    }
-
     const getDetailProduct = async() => {
-        // setDataGambar([])
+        setDataGambar([])
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
         let headers = {
@@ -195,52 +154,28 @@ function produkDetail(props) {
             .then(async(responseData) => {
                 await setDataDetail(responseData.data)
                 setLoading(false)
-                
-                // console.log(responseData.data)
                 setTotalKomisi(responseData.data.price_commission)
 
-                setColor("")
-                // if(responseData.data.variation_data!=null){
-                    // setSize(responseData.data.variation_data.size)
-                    // setColor(responseData.data.variation_data.color)
-                // }
                 if(responseData.data.variation_data!=null){
                     setVarian(responseData.data.variation_data)
                 }
-                // console.log(responseData.data.variation_data[0].Warna[0])
                 
                 let responseImage = responseData.data.images
                 let dataG = ""
                 let dataUrl = ""
 
-                // setDataGambar(responseImage)
-
-                // console.log(responseImage)
                 responseImage.map( async(data,i) => {
                     dataG = dataGambar
                     dataUrl = data.image_url
-                    // console.log(dataG)
                     dataG.push(dataUrl)
-                    // dataGambar.concat(data.image_URL)
-                    // setDataGambar(dataGambar.concat(responseImage.image_URL))
 
                     await setDataGambar(dataG)
                 })
-                // for(let i=0; i<=(responseData.data.images.length)-1; i++){
-                    // setDataGambar([...dataGambar, responseData.data.images[i].image_url])
-                // }
-                
-                
             })
 
     }
 
     const checkPermission = async () => {
-    
-        //Function to check the platform
-        //If iOS the start downloading
-        //If Android then ask for runtime permission
-    
         if (Platform.OS === 'ios') {
           downloadImage();
         } else {
@@ -253,40 +188,29 @@ function produkDetail(props) {
               }
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              //Once user grant the permission start downloading
               console.log('Storage Permission Granted.');
               downloadImage();
             } else {
-              //If permission denied then show alert 'Storage Permission Not Granted'
               alert('Storage Permission Not Granted');
             }
           } catch (err) {
-            //To handle permission related issue
             console.warn(err);
           }
         }
       };
 
     const downloadImage = () => {
-        //Main function to download the image
-        let date = new Date(); //To add the time suffix in filename
-        //Image URL which we want to download
+        let date = new Date();
         let image_URL = dataGambar;
-        // console.log(dataGambar[0])
-        //Getting the extention of the file
 
         image_URL.map((url,i) => {
             let ext = getExtention(url);
             ext = '.' + ext[0];
-            //Get config and fs from RNFetchBlob
-            //config: To pass the downloading related options
-            //fs: To get the directory path in which we want our image to download
             const { config, fs } = RNFetchBlob;
             let PictureDir = fs.dirs.PictureDir;
             let options = {
             fileCache: true,
             addAndroidDownloads: {
-                //Related to the Android only
                 useDownloadManager: true,
                 notification: true,
                 path:
@@ -298,7 +222,6 @@ function produkDetail(props) {
             config(options)
             .fetch('GET', url)
             .then(res => {
-                //Showing alert after successful downloading
                 console.log('res -> ', JSON.stringify(res));
             });
         })
@@ -309,7 +232,6 @@ function produkDetail(props) {
     };
 
     const getExtention = filename => {
-        //To get the file extension
         return /[.]/.exec(filename) ? /[^.]+$/.exec(filename) : undefined;
     };
 
@@ -325,7 +247,6 @@ function produkDetail(props) {
         fetch(urlKota, {headers})
             .then(response => response.json())
             .then(responseData => {
-                // setKota(responseData.rajaongkir.results)
                 const mapKota = responseData.rajaongkir.results
                 let data = mapKota.map( s => ({id:s.city_id, name:s.type+" "+s.city_name}) );
                 setKota(data)
@@ -334,8 +255,6 @@ function produkDetail(props) {
     }
 
     const _selectKota = async(data_kota) => {
-        // alert("data",data_kota)
-        // console.log(data_kota)
         setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -348,24 +267,18 @@ function produkDetail(props) {
         fetch(urlKotaDetail+data_kota.id, {headers})
             .then(response => response.json())
             .then(responseData => {
-                const mapKota = responseData.rajaongkir.results
                 console.log(responseData)
 
-                let select_cod = data_kota.id  
-                let cod_city =  dataDetail.cod_city_id
-                let cek_code_city = cod_city.indexOf(select_cod);
-                let cek_code_province = cod_city.indexOf(mapKota.province_id);
+                var cod_city = JSON.parse(dataDetail.cod_city_id)
+                var n = cod_city.includes(data_kota.id);
 
-                if(cek_code_city >= 0 || cek_code_province >= 0) {
+                if(n) {
                     setmetodeCOD(true)
                 }else{
                     setmetodeCOD(false)
                 }
             })
-            .catch(e => console.log(e))
-
-        // console.log(data_kota.id)  
-        
+            .catch(e => console.log(e))        
 
         let formdata = new FormData();
         formdata.append("origin", dataDetail.city_id)
@@ -383,7 +296,6 @@ function produkDetail(props) {
             tipe.map((type) => {
                 if(type.service === "REG"){
                     setPilihKota(true)
-                    // console.log(type.cost[0].value)
                     setTotalOngkir(type.cost[0].value, setTotalHarga(dataDetail.price_basic+type.cost[0].value))
                 }
             })
@@ -393,10 +305,8 @@ function produkDetail(props) {
     const postWishlist = async(id) => {
         setLoading(true)
         const value = await AsyncStorage.getItem('data');
-        // console.log(value)
         const data = JSON.parse(value)
         const id_user = data.id
-        // console.log(id,id_user)
 
         var formdata = new FormData();
         formdata.append("product_id", id);
@@ -417,17 +327,13 @@ function produkDetail(props) {
         .then((response) => response.json())
         .then( async(responseData) => {
                 setLoading(false)
-                // goToHome()
                 gotoRincianProduk()
-                // console.log(responseData)
         })
         .done();
     }
     
 
     const _onDismissSnackBar = () => setCopy(false)
-
-    const clickSize = () => setPressSize(!pressSize)
 
     const addVariasi = (variant, value) => {
         let data = [{[variant]:value}]
@@ -449,36 +355,11 @@ function produkDetail(props) {
             
                 <ScrollView keyboardShouldPersistTaps = 'always' >
                     <View style={{width:'90%', alignSelf:'center', marginBottom:height*0.02 ,flex:1}}>
-                        {/* <Image
-                            source={{uri : dataDetail.images[0].file_upload}}
-                            style={{width:'100%', height:height*0.5 , resizeMode:'cover'}}
-                        /> */}
-                        {/* <View style={{width:'100%',height:height*0.5, backgroundColor:'blue'}}> */}
-                            <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
-                        {/* </View> */}
+                        <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
                         <Text style={{fontSize:14}}>{dataDetail.name}</Text>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start', marginVertical:height*0.01}}>
-                            {/* <Select2
-                                isSelectSingle
-                                style={{ width:'64%', borderRadius:10}}
-                                colorTheme={'blue'}
-                                popupTitle='Pilih Kota'
-                                title='Pilih Kota'
-                                listEmptyTitle={"Kota Tidak di Temukan"}
-                                data={kota}
-                                onSelect={data => {
-                                    setSelectKota(data)
-                                    _selectKota(data)
-                                }}
-                                onRemoveItem={data => {
-                                    setSelectKota(data)
-                                }}
-                                cancelButtonText="Batal"
-                                selectButtonText="Pilih"
-                                searchPlaceHolderText="Ketik Nama Kota"
-                            /> */}
-
+                            
                             <SearchableDropdown
                                 onItemSelect={(item) => {
                                     const items = selectKota;
@@ -515,7 +396,6 @@ function produkDetail(props) {
                                         borderColor: '#ccc',
                                         borderRadius: 5,
                                     },
-                                    // onTextChange: text => alert(text)
                                 }
                                 }
                                     listProps={
@@ -578,11 +458,7 @@ function produkDetail(props) {
                             </TouchableOpacity>
                         </View>
                         <View style={{marginTop:height*0.01}}>
-                            {/* <Text>{dataDetail.description}</Text> */}
                             <HTML html={"<div>" + dataDetail.description + "</div>"}/>
-                            {/* <Text>Warna : Black</Text>
-                            <Text>Bahan : Cotton</Text>
-                            <Text>Ukuran : M, L, XL, XXL</Text> */}
                         </View>
                     </View>
 
@@ -596,7 +472,6 @@ function produkDetail(props) {
 
                     {varian.map((data,i) => {
                         let tvariant = Object.keys(data)[0]
-                        // console.log(tvariant)
                         if(tvariant!=""){
                         return(
                         
@@ -607,8 +482,6 @@ function produkDetail(props) {
                                 <Title style={{marginBottom:height*0.01}}>{tvariant}</Title>
                                 <View style={{flexDirection:'row', alignItems:'center', flexWrap:'wrap',  width:'50%'}}>
                                 { data[tvariant].map((val,j) => {
-                                    // console.log(selectVariasi)
-                                    // console.log({[tvariant]:val})
 
                                     let found = false;
 
@@ -631,45 +504,6 @@ function produkDetail(props) {
                         )
                         }
                     })}
-
-                    
-                    {/* { (dataDetail.variation_data.size != null && dataDetail.variation.length.size > 0) &&
-                    <View>
-                        <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
-                        
-                        <View style={{width:'90%', alignSelf:'center',flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                            <Title>Ukuran</Title>
-                            <View style={{flexDirection:'row', alignItems:'center', flexWrap:'wrap', justifyContent:'flex-end', width:'50%'}}>
-                                { dataDetail.variation_data.size.map((size,i) => (
-                                    <View style={{flexDirection:'row', marginTop:height*0.02}}>
-                                        <TouchableOpacity onPress={() => changeSize(i, size)}>
-                                            <View style={{padding:10, backgroundColor: (pressColor === i ? '#D5D5D5' : '#555555'), marginRight:5,}}>
-                                                <Text style={{fontSize:12}}>{size}</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                ))}
-                            </View>
-                        </View>
-                    </View>
-                    } */}
-                    
-                    {/* { (dataDetail.variation_data.color != null && dataDetail.variation.color.length > 0) &&
-                    <View>
-                        <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
-                        
-                        <View style={{width:'90%', alignSelf:'center',flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                            <Title>Warna</Title>
-                            <View style={{flexDirection:'row', alignItems:'center', flexWrap:'wrap', justifyContent:'flex-end', width:'50%'}}>
-                                { dataDetail.variation_data.color.map((color,i) => (
-                                    <TouchableOpacity onPress={() => changeColor(i, color)}>
-                                        <View key={i} style={{backgroundColor:'white', borderWidth:1, borderColor: (pressColor === i ? 'red' : 'gray'), padding:5, marginBottom:height*0.005, marginHorizontal:5, borderRadius:5}}><Text>{color}</Text></View>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
-                    </View>
-                    } */}
 
                     <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 

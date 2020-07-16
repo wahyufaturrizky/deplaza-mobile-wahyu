@@ -4,6 +4,7 @@ import React from 'react';
 import { createStackNavigator, } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
+// Screen
 import Login from './src/screens/login/Login'
 import Home from './src/screens/home/Home'
 import JualanAnda from './src/screens/jualanAnda/jualanAnda'
@@ -34,6 +35,7 @@ import CaraPembayaran from './src/screens/bantuanFaq/caraPembayaran';
 import LacakKomisi from './src/screens/bantuanFaq/lacakKomisi';
 import BagikanProduk from './src/screens/bantuanFaq/bagikanProduk';
 import ReturKembali from './src/screens/bantuanFaq/returKembali';
+import Transaksi from './src/screens/tarik/Transaksi';
 
 const Stack = createStackNavigator();
 
@@ -71,6 +73,7 @@ function StackNav(props) {
         <Stack.Screen name="LacakKomisi" component={LacakKomisi} />
         <Stack.Screen name="BagikanProduk" component={BagikanProduk} />
         <Stack.Screen name="ReturKembali" component={ReturKembali} />
+        <Stack.Screen name="Transaksi" component={Transaksi} />
       </Stack.Navigator>
     </NavigationContainer>
   );

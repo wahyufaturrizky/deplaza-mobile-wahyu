@@ -15,7 +15,6 @@ import Loading from '../../components/loading'
 
 function Pesan(props) {
     const totalHarga = props.route.params.data.totalHarga
-    // console.log(props.route.params.data.variation)
 
     const [fullname, setFullname] = useState('')
     const [dataDetail, setDataDetail] = useState([])
@@ -42,7 +41,7 @@ function Pesan(props) {
     const [kecamatanDetail, setKecamatanDetail] = useState({})
 
     const [totalKomisi, setTotalKomisi] = useState("0");
-    const [metode, setMetode] = useState(true); //True = Metode Bank
+    const [metode, setMetode] = useState(true); 
     const [qty, setQty] = useState(props.route.params.data.qty)
     const [provinces, setProvinces] = useState([])
     const [cities, setCities] = useState([])
@@ -54,7 +53,6 @@ function Pesan(props) {
 
     const metodeCOD = props.route.params.data.metodeCOD
     const id_produk = props.route.params.data.id_produk
-    // const variation = props.route.params.data.variation
     const totalOngkir = props.route.params.data.totalOngkir
     const imageDetail = props.route.params.data.imageDetail
 
@@ -118,10 +116,6 @@ function Pesan(props) {
         });
 
       }
-
-    const ubahPembayaran = () => {
-        // setMetode(!metodeCOD)
-    }
 
     const metodeTrue = () => {
         setMetode(true)
@@ -192,6 +186,7 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setDataDetail(responseData.data)
+                console.log(responseData.data)
                 setTotalPendapatan(responseData.data.price_commission*qty)
                 setTotalKomisi(responseData.data.price_commission*qty)
                 setJudul(responseData.data.name)
@@ -229,10 +224,7 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProvinces(responseData.rajaongkir.results)
-                // if(priceBasic>0){
-                    setLoading(false)
-                // }
-                // console.log(responseData.rajaongkir.results)
+                setLoading(false)
             })
     }
 
@@ -304,17 +296,13 @@ function Pesan(props) {
         })
     }
 
-    // Fungsi untuk get mengorder
     const postProduct = async() => {
         
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
         
-        
+        //metode = false kalo untuk bank 
         let id_metode = 3
-        // if(metodeCOD){
-        //     id_metode=1
-        // }
 
         if(!metode){
             id_metode=1
@@ -399,8 +387,6 @@ function Pesan(props) {
                         gotoPesanan()
                     }
                 }
-                
-                //    gotoPesanan()
             })
         }
 
@@ -444,21 +430,6 @@ function Pesan(props) {
                                 />
                             </View>
                             }
-
-                            {/* {!metodeCOD ?
-                                <View>
-                                    <Text style={{fontWeight:'bold', fontSize:18}}>Transfer Bank</Text>
-                                    <Text>DePlaza</Text>
-                                    <Text>BCA / 20202033</Text>
-                                </View>
-                            :
-                                <Text style={{fontWeight:'bold', fontSize:18}}>COD</Text>
-                            }
-                            {metodeCOD &&
-                                <TouchableOpacity style={{backgroundColor:'#E6E6E6', padding:10}} onPress={ubahPembayaran}>
-                                    <Text>Ubah Metode Pembayaran</Text>
-                                </TouchableOpacity>
-                            } */}
                         </View>
                     </View>
 
@@ -514,19 +485,6 @@ function Pesan(props) {
 
                     <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                         
-                    {/* {(!metodeCOD && metode) &&
-                        <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={handleChoosePhoto}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                style={{padding:15, justifyContent:'center', alignItems:'center', borderRadius:10, flexDirection:'row'}}
-                            >
-                                <Icon name="cloud-upload" size={32} color="#fff"/>
-                                <Text style={{fontSize:20, textAlign:'center', color:'white', marginLeft:width*0.04}}>
-                                    Upload Bukti Transfer
-                                </Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    } */}
-
                     {photo != 0 && (
                         <Image
                             source={{ uri: photo.path }}
@@ -618,18 +576,16 @@ function Pesan(props) {
                                     </Picker>
                                 </View>
 
-                                {/* <View style={{borderWidth:1, borderColor:'gray', paddingTop:height*0.003, width:'100%', borderRadius:10 , height:height*0.055}}> */}
-                                    <TextInput
-                                        label='Kode Pos'
-                                        disabled={pesan ? true : false}
-                                        mode="outlined"
-                                        value={pos}
-                                        keyboardType="numeric"
-                                        onChangeText={(val)=> setPos(val)}
-                                        style={{width:'100%', backgroundColor:'white', marginBottom:height*0.01, borderRadius:10}}
-                                        theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
-                                    />
-                                {/* </View> */}
+                                <TextInput
+                                    label='Kode Pos'
+                                    disabled={pesan ? true : false}
+                                    mode="outlined"
+                                    value={pos}
+                                    keyboardType="numeric"
+                                    onChangeText={(val)=> setPos(val)}
+                                    style={{width:'100%', backgroundColor:'white', marginBottom:height*0.01, borderRadius:10}}
+                                    theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
+                                />
                             </View>
 
                             <TextInput

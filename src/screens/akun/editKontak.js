@@ -39,7 +39,8 @@ function editKontak(props) {
     const urlProvincesDetail = URL+'v1/shipment/province/'
     const urlKotaDetail = URL+'v1/shipment/city/'
     const urlUpdateUser = URL+'v1/user/'
-
+    const urlUpdateAddress = URL+'v1/address'
+    
     // let data = props.data
     // console.log(props)
 
@@ -91,7 +92,7 @@ function editKontak(props) {
                     .then(response => response.json())
                     .then(async(responseData) => {
                         await setProvinsiDetail(responseData.rajaongkir.results)
-                        
+                        console.log("Provinsi Detail" , responseData.rajaongkir.results)
                         setLoading(false)
                     })
             })
@@ -120,7 +121,7 @@ function editKontak(props) {
                     .then(response => response.json())
                     .then(async(responseData) => {
                         await setKotaDetail(responseData.rajaongkir.results)
-                        
+                        console.log("Kota Detail" , responseData.rajaongkir.results)
                         setLoading(false)
                     })
             })
@@ -128,7 +129,7 @@ function editKontak(props) {
 
     // Fungsi untuk get data kota
     const updateAkun = async() => {
-        setLoading(true)
+        // setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
@@ -138,38 +139,59 @@ function editKontak(props) {
             'Content-Type' : 'application/json'
         }
         
-        // var formdata = new FormData();
-        // formdata.append("username", email);
-        // formdata.append("fullname", fullname);
-        // formdata.append("email", email);
-        // formdata.append("phone", phone);
-        // formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
-        // formdata.append("_method", "put");
+        var formdata = new FormData();
+        formdata.append("username", email);
+        formdata.append("fullname", fullname);
+        formdata.append("email", email);
+        formdata.append("phone", phone);
+        formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
+        formdata.append("_method", "put");
 
-        let dataBody = {
-            "username": email,
-            "fullname": fullname, 
-            "email": email, 
-            "phone": phone, 
-            "_method": "put"
-        }
+        // let dataBody = {
+        //     "username": email,
+        //     "fullname": fullname, 
+        //     "email": email, 
+        //     "phone": phone, 
+        //     "_method": "put"
+        // }
 
         // console.log(formdata)
 
-        var requestOptions = {
+        fetch(urlUpdateUser+data.id, {
             headers,
-            method: 'POST',
-            body: JSON.stringify(dataBody),
-        };
-
-        console.log(urlUpdateUser+data.id)
-
-        fetch(urlUpdateUser+data.id, requestOptions)
+            method: 'PUT',
+            body: formdata,
+        })
         .then(response => response.text())
         .then(result => {
             console.log(result)
             setLoading(false)
             alert("Data Berhasil Dirubah")
+        })
+        .catch(error => console.log('error', error));
+
+        let formdataAddress = new FormData();
+        formdataAddress.append("prov_id", provinsiDetail.province_id);
+        formdataAddress.append("prov_name", provinsiDetail.province);
+        formdataAddress.append("city_id", kotaDetail.city_id);
+        formdataAddress.append("city_name", kotaDetail.city_name);
+        formdataAddress.append("label", "Rumah");
+        formdataAddress.append("receiver", fullname);
+        formdataAddress.append("phone", phone);
+        formdataAddress.append("address", alamat);
+        formdataAddress.append("is_main", 1);
+
+
+        console.log(formdataAddress)
+
+        fetch(urlUpdateAddress, {
+            headers,
+            method: 'POST',
+            body: formdataAddress,
+        })
+        .then(response => response.text())
+        .then(result => {
+            console.log(result)
         })
         .catch(error => console.log('error', error));
     }
@@ -234,7 +256,7 @@ function editKontak(props) {
                 >
                         <Picker.Item label={"Pilih Kota"} value={"kosong"} />
                     {cities.map((city,i) => (
-                        <Picker.Item key={i} label={city.city_name} value={city.city_id} />
+                        <Picker.Item key={i} label={city.type+" "+city.city_name} value={city.city_id} />
                     ))}
                 </Picker>
             </View>

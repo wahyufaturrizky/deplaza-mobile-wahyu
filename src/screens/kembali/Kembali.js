@@ -7,9 +7,6 @@ import LinearGradient from 'react-native-linear-gradient'
 import AsyncStorage from '@react-native-community/async-storage'
 import {Picker} from '@react-native-community/picker'
 import ImagePicker from 'react-native-image-crop-picker';
-import RNFetchBlob from 'rn-fetch-blob';
-// import axios from 'axios'
-// import ImagePicker from 'react-native-image-picker';
 
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal'
@@ -19,37 +16,19 @@ import Loading from '../../components/loading'
 function Kembali(props) {
     const [checked, setChecked] = useState('penukaran');
     const [check, setCheck] = useState(false);
-    const [alasan, setAlasan] = useState("");
     const [alasanDetail, setAlasanDetail] = useState("");
     const [qty, setQty] = useState("0");
     const [selectQty, setSelectQty] = useState("0");
     const [files, setFiles] = useState([]);
 
-    const [copy, setCopy] = useState(false)
-    const [dataDetail, setDataDetail] = useState([])
-    const [productDetail, setProductDetail] = useState([])
-    const [modal, setModal] = useState(false)
     const [loading, setLoading] = useState(true)
-    const [methodId, setMethodId] = useState(0)
-    const [invoice, setInvoice] = useState("0")
     const [receiver_name, setReceiver_name] = useState("")
     const [receiver_address, setReceiver_address] = useState("")
     const [phone, setPhone] = useState("")
-    const [color, setColor] = useState("")
-    const [total_price, setTotal_price] = useState(0)
-    const [ammount, setAmmount] = useState(0)
-    const [commission, setCommission] = useState(0)
-    const [custom_commission, setCustom_commission] = useState(0)
-    const [buktiBayar, setBuktiBayar] = useState(0)
-    const [lengthBukti, setLengthBukti] = useState(0)
-    const [trackingId, setTrackingId] = useState("")
-    const [photo, setPhoto] = useState(0)
 
     const [video, setVideo] = useState([])
     const [image, setImage] = useState([])
 
-    const [productImages, setProductImages] = useState("https://via.placeholder.com/150")
-    const [productName, setProductName] = useState("0")
     const [reasonComplaint, setReasonComplaint] = useState([])
     const [selectReason, setSelectReason] = useState("kosong")
 
@@ -83,25 +62,10 @@ function Kembali(props) {
             .then(async(responseData) => {
                 console.log(responseData.data)
 
-                setDataDetail(responseData.data)
-
-                setMethodId(responseData.data.payment.method_id)
-                setTrackingId(responseData.data.delivery.tracking_id)
-                setInvoice(responseData.data.invoice)
                 setReceiver_name(responseData.data.delivery.receiver_name)
                 setReceiver_address(responseData.data.delivery.receiver_address)
                 setPhone(responseData.data.customer.phone)
                 setQty(responseData.data.details[0].qty)
-                setTotal_price(responseData.data.total_price)
-                setAmmount(responseData.data.payment.ammount)
-                setCommission(responseData.data.details[0].commission)
-                setCustom_commission(responseData.data.details[0].custom_commission)
-                
-                setLengthBukti(responseData.data.payment.metadata_decode.length)
-                
-                if(responseData.data.payment.metadata_decode.length>0){
-                    setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
-                }
 
                 let id_produk = responseData.data.details[0].product_id
 
@@ -109,9 +73,6 @@ function Kembali(props) {
                     .then(response => response.json())
                     .then(responseData => {
                         setLoading(false)
-                        setProductDetail(responseData.data)
-                        setProductName(responseData.data.name)
-                        setProductImages(responseData.data.images[0].image_url)
                 })
                 
             })
@@ -156,29 +117,22 @@ function Kembali(props) {
     }
 
     const handleChoosePhoto = () => {
-        let date = new Date(); //To add the time suffix in filename
+        let date = new Date(); 
         ImagePicker.openPicker({
             multiple: true,
-            // includeBase64:true,\
         }).then(image => {
             console.log(image)
             setImage(image)
-            // let image64 = `data:${image.mime};base64,${image.data}`;
-            // setFiles(image64)
-            // console.log(image)
         });
 
     }
 
     const handleChooseVideo = () => {
-        let date = new Date(); //To add the time suffix in filename
+        let date = new Date(); 
         ImagePicker.openPicker({
             mediaType: "video",
         }).then((video) => {
             setVideo(video)
-            // let image64 = `data:${image.mime};base64,${image.data}`;
-            // setFiles(image64)
-            // console.log(image)
         });
 
     }
@@ -204,17 +158,7 @@ function Kembali(props) {
         formData.append("description", checked+" : "+alasanDetail)
         formData.append("qty", qty)
         formData.append("address_id", 1)
-
-        // let filename = image[0].path.substr(8)
-        // let fileUrl = (!filename.match(/^file:/) ? 'file://' : '') + filename
-        // let fileMeta = {
-        //     uri: fileUrl,
-        //     type: 'image/jpeg',
-        //     name: fileUrl.split(/[\\/]/).pop() // basename
-        // }
-        // formData.append('files[]', fileMeta)
         
-
         const photos = image
         photos.forEach((photo) => {
                 formData.append('files[]', {
@@ -225,7 +169,6 @@ function Kembali(props) {
         });
 
         console.log(JSON.stringify(formData))
-        // // setLoading(true)
         fetch(urlComplaint, {method: 'POST', headers,
             body:formData
         })
@@ -313,21 +256,6 @@ function Kembali(props) {
                                     ))}
                                 </View>
                             }
-
-                            {/* {video.length < 1 ?
-                                <View style={{borderStyle:'dashed', padding:10, width:'45%', borderRadius:10, borderWidth:1, borderColor:'gray', justifyContent:'center', alignItems:'center'}}>
-                                    <TouchableOpacity onPress={handleChooseVideo} style={{justifyContent:'center', alignItems:'center'}}>
-                                        <Icon name="video" size={32} color="gray"/>
-                                        <Text style={{fontSize:14, textAlign:'center', color:'gray'}}>
-                                            Tambahkan Video 
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            :
-                                <View>
-                                    <Text>Video Proses Upload</Text>
-                                </View>
-                            } */}
                         </View>
 
                         <View style={{backgroundColor:'#F8F8F8', padding:10}}>
