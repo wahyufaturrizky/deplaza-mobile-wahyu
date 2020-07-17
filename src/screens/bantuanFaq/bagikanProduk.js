@@ -3,7 +3,8 @@ import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 
 import Appbar from '../../components/appbarHome';
 import { ScrollView } from 'react-native-gesture-handler';
-function mulaiBerjualan(props) {
+
+function bagikanProduk(props) {
     
     const { height, width } = Dimensions.get("window");
     return (
@@ -60,7 +61,7 @@ function mulaiBerjualan(props) {
     );
 }
 
-export default mulaiBerjualan;
+export default bagikanProduk;
 
 const styles=StyleSheet.create({
     shadow : {

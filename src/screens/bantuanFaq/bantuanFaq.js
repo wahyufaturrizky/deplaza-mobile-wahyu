@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, Dimensions, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Animated from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient'
-
-// import { TabView, SceneMap } from 'react-native-tab-view';
 
 // import Appbar from '../../components/appbarHome'
 import BantuanFaqDetail from './bantuanFaqDetail'
@@ -16,10 +13,6 @@ const { height, width } = Dimensions.get("window");
 
 
 function MyTabBar(props) {
-    // console.log(props.navigation)
-    
-
-      
 
     const gotoAkun = () => {
         props.navigation.navigate("Akun", {title:"Akun Saya", ...props})
@@ -77,6 +70,7 @@ function MyTabBar(props) {
                     target: route.key,
                 });
             };
+
             // modify inputRange for custom behavior
             const inputRange = props.state.routes.map((_, i) => i);
             const opacity = Animated.interpolate(props.position, {
@@ -106,7 +100,7 @@ function MyTabBar(props) {
 
 const Tab = createMaterialTopTabNavigator();
 
-function editAkun(props) {
+function bantuanFaq(props) {
     const initialLayout = { width: Dimensions.get('window').width };
 
     let data = props.route.params.data
@@ -120,7 +114,7 @@ function editAkun(props) {
     );
 }
 
-export default editAkun;
+export default bantuanFaq;
 
 const styles=StyleSheet.create({
     shadow : {

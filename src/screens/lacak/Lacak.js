@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Clipboard from "@react-native-community/clipboard";
-import { TextInput, Snackbar } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage'
 import moment from "moment";
 
@@ -14,22 +14,10 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 function Lacak(props) {
     const [copy, setCopy] = useState(false)
-    const [dataDetail, setDataDetail] = useState([])
-    const [productDetail, setProductDetail] = useState([])
     const [loading, setLoading] = useState(true)
     const [methodId, setMethodId] = useState(0)
-    const [invoice, setInvoice] = useState("0")
-    const [receiver_name, setReceiver_name] = useState("")
-    const [receiver_address, setReceiver_address] = useState("")
-    const [phone, setPhone] = useState("")
-    const [color, setColor] = useState("")
     const [qty, setQty] = useState("")
     const [total_price, setTotal_price] = useState(0)
-    const [ammount, setAmmount] = useState(0)
-    const [commission, setCommission] = useState(0)
-    const [custom_commission, setCustom_commission] = useState(0)
-    const [buktiBayar, setBuktiBayar] = useState(0)
-    const [lengthBukti, setLengthBukti] = useState(0)
     const [trackingId, setTrackingId] = useState("")
     const [trackingName, setTrackingName] = useState("")
     const [manifest, setManifest] = useState([])
@@ -63,43 +51,20 @@ function Lacak(props) {
         fetch(urlRincianPesanan+id_order, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
-                // console.log(id_order)
                 let logs = responseData.data.logs
                 logs.reverse();
-
-                setDataDetail(responseData.data)
                 setLogs(logs)
                 setMethodId(responseData.data.payment.method_id)
                 setTrackingId(responseData.data.delivery.tracking_id)
-                setInvoice(responseData.data.invoice)
-                setReceiver_name(responseData.data.delivery.receiver_name)
-                setReceiver_address(responseData.data.delivery.receiver_address)
-                setPhone(responseData.data.customer.phone)
-                // setColor(JSON.parse(responseData.data.details[0].variation).color[0])
                 setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
-                setAmmount(responseData.data.payment.ammount)
-                setCommission(responseData.data.details[0].commission)
-                setCustom_commission(responseData.data.details[0].custom_commission)
-                // setLogs(responseData.data.logs)
-                // console.log(responseData.data.logs)
                 
-                setLengthBukti(responseData.data.payment.metadata_decode.length)
-                
-                if(responseData.data.payment.metadata_decode.length>0){
-                    setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
-                }
-
                 let id_produk = responseData.data.details[0].product_id
-                // console.log(responseData.data.details[0].product_id)
 
                 fetch(urlProdukDetail+id_produk, {headers})
                     .then(response => response.json())
                     .then(responseData => {
-                        // console.log(responseData.data.images[0].file_upload)
                         setLoading(false)
-                        // console.log(responseData.data.id)
-                        setProductDetail(responseData.data)
                         setProductName(responseData.data.name)
                         setProductImages(responseData.data.images[0].image_url)
                 })
@@ -107,16 +72,13 @@ function Lacak(props) {
                 fetch(urlCourir+responseData.data.delivery.courier_id, {headers})
                     .then(response => response.json())
                     .then(responseData => {
-                        // console.log(responseData.data)
                         setTrackingName(responseData.data.name)
 
                         let nameTracking= responseData.data.name
 
-                        var formdata = new FormData();
+                        let formdata = new FormData();
                         formdata.append("resi", trackingId);
                         formdata.append("courier", nameTracking.toLowerCase());
-                        // formdata.append("resi", "0114782000003307");
-                        // formdata.append("courier", "jne");
 
                         fetch(urlCourirTracing, {method: 'POST', headers,
                             body:formdata
@@ -124,13 +86,7 @@ function Lacak(props) {
                             .then(response => response.json())
                             .then(async(responseData) => {
                                 let manifest = responseData.rajaongkir.result.manifest
-                                // console.log(responseData.rajaongkir.result.manifest)
-                                // let logs = responseData.data.logs 
-                                // logs.push(manifest);
-                                // console.log(manifest)
-                                // setLogs(responseData.data.logs)
                                 setManifest(manifest)
-                                
                             })
                 })
 
@@ -202,8 +158,6 @@ function Lacak(props) {
             </View>
             ))}
 
-            
-
             <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
             <View style={{padding:20, marginTop:height*0.01}}>
@@ -243,18 +197,10 @@ function Lacak(props) {
 
                         <View style={{width:'60%', justifyContent:'space-between', height:'100%', flexDirection:'column'}}>
                             <View>
-                                <Text style={{fontSize:14}}>{productName}</Text>
-                                <Text>Rp. {formatRupiah(total_price)}</Text>
-                                <View style={{flexDirection:'row'}}>
-                                    <View style={{flexDirection:'row', justifyContent:'space-between', width:'50%', alignItems:'center'}}>
-                                        {color !="" &&
-                                            <View style={{width:'50%'}}>
-                                                {/* <Text style={{fontSize:14, color:'gray'}}>Ukuran: XL</Text> */}
-                                                {color !="" &&
-                                                    <Text style={{fontSize:14, color:'gray'}}>Warna: {color}</Text>
-                                                }
-                                            </View>
-                                        }
+                                <View>
+                                    <Text style={{fontSize:14}}>{productName}</Text>
+                                    <Text>Rp. {formatRupiah(total_price)}</Text>
+                                    <View style={{flexDirection:'row'}}>
                                         <Text style={{fontSize:14, color:'gray', marginTop:height*0.01}}>Jumlah: {qty}</Text>
                                     </View>
                                 </View>

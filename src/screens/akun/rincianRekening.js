@@ -110,11 +110,6 @@ function rincianRekening(props) {
         <View style={{backgroundColor:'white', flex:1}}>
             <Appbar params={props} />
 
-            {/* <View style={{justifyContent:"center", alignItems:'center', backgroundColor:'#9FB4BE', padding:20, marginBottom:height*0.02}}>
-                <Icon name="image" size={32} color="gray"/>
-                <Text style={{color:'white'}}>Tambahkan Foto Buku Tabungan/Cek</Text>
-            </View> */}
-
             <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.01 }}>
                 <Text>Nomor Rekening</Text>
                 <TextInput

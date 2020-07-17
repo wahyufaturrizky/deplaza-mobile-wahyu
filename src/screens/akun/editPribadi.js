@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, Dimensions, Picker, TouchableOpacity } from 'react-native';
-import { TextInput } from 'react-native-paper';
 import DatePicker from 'react-native-datepicker'
 import LinearGradient from 'react-native-linear-gradient'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -9,7 +8,6 @@ import Loading from '../../components/loading'
 import { URL } from '../../utils/global';
 
 function editKontak(props) {
-    const [fullname,setFullName] = useState("")
     const [tanggal,setTanggal] = useState("")
     const [jenisKelamin,setjenisKelamin] = useState("kosong")
     const [pendidikan,setPendidikan] = useState("")
@@ -74,7 +72,6 @@ function editKontak(props) {
                 dateInput: {
                     marginLeft: 36, borderRadius:10, height:50
                 },
-                // ... You can check the source to find the other keys.
                 }}
                 onDateChange={(date) => {setTanggal(date)}}
             />

@@ -50,9 +50,7 @@ function bantuanLokasi(props) {
                         <View>
                             <TouchableOpacity onPress={() => changeBantu(1)}>
                                 <ImageBackground source={require('../../assets/images/aplikasiFoto.png')} style={{justifyContent:'flex-end', padding:20, alignItems:'center', marginVertical:height*0.005, height:height*0.2}}>
-                                    {/* <View style={{width:'90%', alignSelf:'center'}}> */}
-                                        <Text style={{color:'white', marginVertical:5, fontSize:14, textAlign:'center'}}>Klik Trik Disini</Text>
-                                    {/* </View> */}
+                                    <Text style={{color:'white', marginVertical:5, fontSize:14, textAlign:'center'}}>Klik Trik Disini</Text>
                                 </ImageBackground>
                             </TouchableOpacity>
                         </View>

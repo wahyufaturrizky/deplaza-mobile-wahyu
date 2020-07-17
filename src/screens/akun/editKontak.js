@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import Loading from '../../components/loading'
 
-import {URL, formatRupiah} from '../../utils/global'
+import {URL} from '../../utils/global'
 
 function editKontak(props) {
     const [fullname,setFullName] = useState(props.fullname)
@@ -21,12 +21,10 @@ function editKontak(props) {
     const [subdistricts, setSubdistrict] = useState([])
 
     const [provinsi, setProvinsi] = useState("kosong");
-    const [kecamatan, setKecamatan] = useState("kosong");
     const [kota, setKota] = useState("kosong");
 
     const [provinsiDetail, setProvinsiDetail] = useState({})
     const [kotaDetail, setKotaDetail] = useState({})
-    const [kecamatanDetail, setKecamatanDetail] = useState({})
 
     const [loading, setLoading] = useState(true)
 
@@ -40,9 +38,6 @@ function editKontak(props) {
     const urlKotaDetail = URL+'v1/shipment/city/'
     const urlUpdateUser = URL+'v1/user/'
     const urlUpdateAddress = URL+'v1/address'
-    
-    // let data = props.data
-    // console.log(props)
 
     useEffect(() => {
         getProvinsi()
@@ -62,10 +57,7 @@ function editKontak(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProvinces(responseData.rajaongkir.results)
-                // if(priceBasic>0){
                     setLoading(false)
-                // }
-                // console.log(responseData.rajaongkir.results)
             })
     }
 
@@ -129,7 +121,6 @@ function editKontak(props) {
 
     // Fungsi untuk get data kota
     const updateAkun = async() => {
-        // setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
@@ -147,16 +138,7 @@ function editKontak(props) {
         formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
         formdata.append("_method", "put");
 
-        // let dataBody = {
-        //     "username": email,
-        //     "fullname": fullname, 
-        //     "email": email, 
-        //     "phone": phone, 
-        //     "_method": "put"
-        // }
-
-        // console.log(formdata)
-
+        // Update User
         fetch(urlUpdateUser+data.id, {
             headers,
             method: 'PUT',
@@ -181,9 +163,7 @@ function editKontak(props) {
         formdataAddress.append("address", alamat);
         formdataAddress.append("is_main", 1);
 
-
-        console.log(formdataAddress)
-
+        //Update Address User
         fetch(urlUpdateAddress, {
             headers,
             method: 'POST',

@@ -4,7 +4,6 @@ import {URL, formatRupiah} from '../../utils/global'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import Appbar from '../../components/appbarHome'
-import BottomTab from '../../components/bottomTab'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Loading from '../../components/loading'
 

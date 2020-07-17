@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Image, ImageBackground, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 
 import Appbar from '../../components/appbarHome';

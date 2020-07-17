@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import React, from 'react';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Animated from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import LinearGradient from 'react-native-linear-gradient'
 
-// import { TabView, SceneMap } from 'react-native-tab-view';
-
-// import Appbar from '../../components/appbarHome'
 import Kontak from './editKontak'
 import Pribadi from './editPribadi'
 
@@ -16,18 +11,12 @@ const { height, width } = Dimensions.get("window");
 
 
 function MyTabBar(props) {
-    // console.log(props.navigation)
-    
-
-      
-
     const gotoAkun = () => {
         props.navigation.navigate("Akun", {title:"Akun Saya", ...props})
     }
 
     return (
     <View>
-        {/* <Appbar params={props}/> */}
         <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'center', backgroundColor:'white', padding:10}}>
             <View style={{flexDirection:'row', alignItems:'center', width:'70%'}}>
                 <TouchableOpacity onPress={gotoAkun}>
@@ -107,10 +96,7 @@ function MyTabBar(props) {
 const Tab = createMaterialTopTabNavigator();
 
 function editAkun(props) {
-    const initialLayout = { width: Dimensions.get('window').width };
-
     let data = props.route.params.data
-    // console.log(props) 
 
     return (
         <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>

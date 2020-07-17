@@ -87,15 +87,6 @@ function penarikan(props) {
                         />
                     </View>
                     <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
-                    {/* <View style={{width:'90%', alignSelf:'center', flexDirection:'row', alignItems:'center', marginVertical:height*0.01}}>
-                        <Checkbox
-                            status={check ? 'checked' : 'unchecked'}
-                            onPress={() => {
-                                setCheck(!check);
-                            }}
-                        />
-                        <Text> Saya Setuju untuk Mengembalikan Sesuai Kondisi Semula.</Text>
-                    </View> */}
                 </View>
 
                 <View style={{backgroundColor:'white', marginTop:height*0.01}}>

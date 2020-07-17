@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Dimensions, Image, StyleSheet } from 'react-native';
-import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-
-import Loading from '../../components/loading'
-
-import {URL, formatRupiah} from '../../utils/global'
 import InputNormal from '../../components/inputNormal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function editKontak(props) {
+function bantuanFaqDetail(props) {
 
-    const [loading, setLoading] = useState(false)
     const { height, width } = Dimensions.get("window");
-
-    useEffect(() => {
-        console.log(props)
-    },[])
 
     const gotoMulaiJualan = () => {
         props.navigation.navigate("MulaiBerjualan", {title:"Bantuan Mulai Jualan"})
@@ -106,7 +96,7 @@ function editKontak(props) {
     );
 }
 
-export default editKontak;
+export default bantuanFaqDetail;
 
 const styles=StyleSheet.create({
     shadow : {

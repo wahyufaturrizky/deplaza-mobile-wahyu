@@ -1,18 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, Dimensions, Picker, Image, StyleSheet } from 'react-native';
-import { TextInput } from 'react-native-paper';
-import DatePicker from 'react-native-datepicker'
+import React from 'react';
+import { View, Text, Dimensions, Image, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
-function editKontak(props) {
-    const [fullname,setFullName] = useState("")
-    const [tanggal,setTanggal] = useState("")
-    const [jenisKelamin,setjenisKelamin] = useState("kosong")
-    const [pendidikan,setPendidikan] = useState("")
-
+function hubungiKami(props) {
 
     const { height, width } = Dimensions.get("window");
+
     return (
     <View style={{padding:15, flex:1, marginTop:height*0.02}}>
 
@@ -34,7 +28,7 @@ function editKontak(props) {
     );
 }
 
-export default editKontak;
+export default hubungiKami;
 
 const styles=StyleSheet.create({
     shadow : {
