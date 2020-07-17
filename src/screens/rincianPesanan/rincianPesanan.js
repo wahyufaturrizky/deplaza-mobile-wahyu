@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
 import ImagePicker from 'react-native-image-crop-picker';
+import moment from "moment";
 
 import Appbar from '../../components/appbarHome';
 import produkDetail from '../produkDetail/produkDetail';
@@ -24,7 +25,6 @@ function Pesan(props) {
     const [receiver_name, setReceiver_name] = useState("")
     const [receiver_address, setReceiver_address] = useState("")
     const [phone, setPhone] = useState("")
-    const [color, setColor] = useState("")
     const [qty, setQty] = useState("")
     const [total_price, setTotal_price] = useState(0)
     const [ammount, setAmmount] = useState(0)
@@ -38,6 +38,8 @@ function Pesan(props) {
     const [label, setLabel] = useState("")
     const [modalPesanan, setModalPesanan] = useState(false)
     const [statusOrder, setStatusOrder] = useState("")
+    const [updateDate, setUpdateDate] = useState("")
+    const [expired, setExpired] = useState(false)
 
     const [variation,setVariation] = useState([])
 
@@ -49,8 +51,6 @@ function Pesan(props) {
     const urlOrder = URL+'v1/orders/'
     const urlCourir = URL+'v1/courier/'
     const urlFinishOrder = URL+'v1/orders/'
-    
-    // const statusPesanan = "Pesanan Diterima"
     
     const id_order = props.route.params.id
     const { height, width } = Dimensions.get("window");
@@ -89,17 +89,11 @@ function Pesan(props) {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
-        const options = {
-          noData: true,
-        }
-
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data',
         }
-
-        let date = new Date(); //To add the time suffix in filename
 
         ImagePicker.openPicker({
             includeBase64:true,
@@ -110,26 +104,21 @@ function Pesan(props) {
             console.log(urlOrder+id_order+"/pay-base");
             setPhoto(image)
             let image64 = `data:${image.mime};base64,${image.data}`;
-            // console.log(image)
 
             let formdata = new FormData();
             formdata.append("proof_payment", image64)
             setLoading(true)
             console.log(id_order)
-            // console.log(image64)
             fetch(urlOrder+id_order+"/pay-base", {method: 'POST', headers,
                 body:formdata
             })
             .then(response => response.json())
             .then(async(responseData) => {
                 console.log(responseData)
-                // console.log(responseData.data.payment.metadata_decode[0].bukti_bayar)
-                // setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
                 setLoading(false)
                 setLengthBukti(1)
                 gotoPesanan()
                 alert("Bukti Transfer Berhasil Terupload")
-                // gotoPesanan()
             })
         });
     }
@@ -147,7 +136,6 @@ function Pesan(props) {
         fetch(urlRincianPesanan+id_order, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
-                console.log(JSON.parse(responseData.data.details[0].variation))
 
                 setDataDetail(responseData.data.details[0])
                 setVariation(JSON.parse(responseData.data.details[0].variation))
@@ -160,33 +148,38 @@ function Pesan(props) {
 
                 setLabel(responseData.data.payment.status_label)
                 setStatusOrder(responseData.data.status_label)
-                // setColor(JSON.parse(responseData.data.details[0].variation).color[0])
                 setQty(responseData.data.details[0].qty)
                 setTotal_price(responseData.data.total_price)
                 setAmmount(responseData.data.payment.ammount)
                 setCommission(responseData.data.details[0].commission)
                 setCustom_commission(responseData.data.details[0].custom_commission)
-                
+                setUpdateDate(responseData.data.updated_at)
                 
                 if(responseData.data.payment.metadata_decode.length>0){
                     setBuktiBayar(responseData.data.payment.metadata_decode[0].bukti_bayar)
                     setLengthBukti(responseData.data.payment.metadata_decode.length)
                 }
 
+                let now_date = moment(new Date);
+                let new_date = moment(updateDate, "DD-MM-YYYY").add(2, 'days');
+
+                if(now_date > new_date){
+                    setExpired(true)
+                }else{
+                    setExpired(true)
+                }
+
                 fetch(urlCourir+responseData.data.delivery.courier_id, {headers})
                     .then(response => response.json())
                     .then(responseData => {
-                        // console.log(responseData.data)
                         setTrackingName(responseData.data.name)
                     })
 
                 let id_produk = responseData.data.details[0].product_id
-                // console.log(responseData.data.details[0].product_id)
 
                 fetch(urlProdukDetail+id_produk, {headers})
                     .then(response => response.json())
                     .then(responseData => {
-                        // console.log(responseData.data.images[0].file_upload)
                         setLoading(false)
                         setProductDetail(responseData.data)
                         setProductName(responseData.data.name)
@@ -211,17 +204,6 @@ function Pesan(props) {
             'Access-Control-Allow-Origin': '*',
             'Content-Length' : 0
         }
-        // console.log(urlFinishOrder+id_order+"/done")
-        // fetch(urlFinishOrder+id_order+"/done", {method: 'POST', headers, bodi : JSON.stringify([])})
-        //     .then(response => console.log(response))
-        //     .then(async(responseData) => {
-        //         console.log(responseData)
-        //         setLoading(false)
-        //         // setLengthBukti(1)
-        //         // gotoPesanan()
-        //         alert("Pesanan Selesai")
-        //         // gotoPesanan()
-        //     })
 
         var requestOptions = {
             headers,
@@ -257,7 +239,7 @@ function Pesan(props) {
                                 source={require('../../assets/images/Solid.png')}
                                 style={{width:width*0.1, height:width*0.1, resizeMode:'cover'}}
                             />
-                            <Text style={{marginTop:height*0.01, fontSize:14}}>Pesanan Diterima!</Text>
+                            <Text style={{marginTop:height*0.01, fontSize:14}}>Pesanan Selesai  </Text>
                         </View>
                     }
 
@@ -337,15 +319,16 @@ function Pesan(props) {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-
-                                {(trackingId != "" && label != "Dibayar") &&
+                                
+                                {   }
+                                {(statusOrder == "Pesanan Selesai" && !expired) &&
                                 <View>
                                     <TouchableOpacity style={{width:'90%', alignSelf:'center', marginTop:height*0.01}} onPress={modalPesananTrigger}>
                                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                             style={{padding:5, justifyContent:'center', alignItems:'center',borderRadius:10,}}
                                         >
                                             <Text style={{fontSize:14, textAlign:'center', color:'white'}}>
-                                                Pesanan Selesai
+                                                Konfirmasi
                                             </Text>
                                         </LinearGradient>
                                     </TouchableOpacity>
