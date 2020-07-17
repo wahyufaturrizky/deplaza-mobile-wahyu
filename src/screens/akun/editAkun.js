@@ -100,7 +100,7 @@ function editAkun(props) {
 
     return (
         <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>
-            <Tab.Screen name="Kontak" component={() => Kontak(data)}/>
+            <Tab.Screen name="Kontak" component={Kontak}/>
             <Tab.Screen name="Pribadi" component={Pribadi}/>
         </Tab.Navigator>
     );

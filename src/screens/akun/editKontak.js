@@ -10,11 +10,12 @@ import Loading from '../../components/loading'
 import {URL} from '../../utils/global'
 
 function editKontak(props) {
-    const [fullname,setFullName] = useState(props.fullname)
-    const [phone,setPhone] = useState(props.phone)
+    const [fullname,setFullName] = useState("")
+    const [phone,setPhone] = useState("")
     const [alamat,setAlamat] = useState("")
-    const [email,setEmail] = useState(props.email)
+    const [email,setEmail] = useState("")
     const [pos,setPos] = useState("")
+    const [allAlamat,setAllAlamat] = useState([])
 
     const [provinces, setProvinces] = useState([])
     const [cities, setCities] = useState([])
@@ -38,10 +39,55 @@ function editKontak(props) {
     const urlKotaDetail = URL+'v1/shipment/city/'
     const urlUpdateUser = URL+'v1/user/'
     const urlUpdateAddress = URL+'v1/address'
-
+    const urlGetAddress = URL+'v1/address/me'
+    const urlProfile = URL+'v1/my-profile'
+    
     useEffect(() => {
         getProvinsi()
+        getAlamat()
+        getProfile()
     },[])
+
+    const getProfile = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlProfile, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                setFullName(responseData.data.fullname)
+                setPhone(responseData.data.phone)
+                setEmail(responseData.data.email)
+            })
+    }
+
+    const getAlamat = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlGetAddress, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                let data = responseData.data
+                data.reverse()
+                await setAllAlamat(data[0])
+                setAlamat(data[0].address)
+                setKota(data[0].city_id)
+                setProvinsi(data[0].prov_id)
+                setPos(data[0].zip_code)
+                console.log(data[0].zip_code)
+            })
+    }
 
     // Fungsi untuk get data provinsi
     const getProvinsi = async() => {
@@ -127,7 +173,7 @@ function editKontak(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
-            'Content-Type' : 'application/json'
+            'Content-Type' : 'multipart/form-data'
         }
         
         var formdata = new FormData();
@@ -135,13 +181,13 @@ function editKontak(props) {
         formdata.append("fullname", fullname);
         formdata.append("email", email);
         formdata.append("phone", phone);
-        formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
+        // formdata.append("avatar", "Screenshot from 2020-06-20 17-45-54.png");
         formdata.append("_method", "put");
-
+        console.log(urlUpdateUser+data.id)
         // Update User
         fetch(urlUpdateUser+data.id, {
             headers,
-            method: 'PUT',
+            method: 'POST',
             body: formdata,
         })
         .then(response => response.text())
@@ -161,6 +207,7 @@ function editKontak(props) {
         formdataAddress.append("receiver", fullname);
         formdataAddress.append("phone", phone);
         formdataAddress.append("address", alamat);
+        formdataAddress.append("zip_code", pos);
         formdataAddress.append("is_main", 1);
 
         //Update Address User
@@ -240,16 +287,14 @@ function editKontak(props) {
                     ))}
                 </Picker>
             </View>
-
             <TextInput
                 label='Kode Pos'
-                value={pos}
+                value={pos.toString()}
                 mode = "outlined"
                 onChangeText={(val)=> setPos(val)}
                 style={{width:'90%', alignSelf:'center',  backgroundColor:'white', borderRadius:10, marginBottom:height*0.01}}
                 theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
             />
-
 
         </View>
         {loading &&

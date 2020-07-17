@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Dimensions, Picker, TouchableOpacity } from 'react-native';
 import DatePicker from 'react-native-datepicker'
 import LinearGradient from 'react-native-linear-gradient'
@@ -14,8 +14,33 @@ function editKontak(props) {
     const [loading,setLoading] = useState(false)
 
     const urlUpdateUser = URL+'v1/user/'
+    const urlProfile = URL+'v1/my-profile'
 
     const { height, width } = Dimensions.get("window");
+
+    useEffect(() => {
+        getProfile()
+    },[])
+
+    const getProfile = async() => {
+        setLoading(true)
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlProfile, {headers})
+            .then(response => response.json())
+            .then(async(responseData) => {
+                setLoading(false)
+                setTanggal(responseData.data.birth_date)
+                setjenisKelamin(responseData.data.gender)
+                setPendidikan(responseData.data.educational_stage)
+            })
+    }
 
     const updateAkun = async() => {
         setLoading(true)
