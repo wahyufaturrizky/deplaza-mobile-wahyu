@@ -123,6 +123,9 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+ aaptOptions {
+        cruncherEnabled = false
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -144,6 +147,12 @@ android {
         }
     }
     signingConfigs {
+         release {
+      storeFile file('my-upload-key.keystore')
+      storePassword '123456'
+      keyAlias 'my-key-alias'
+      keyPassword '123456'
+    }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -158,7 +167,8 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            // signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

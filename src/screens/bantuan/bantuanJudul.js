@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from 'react';
 import { Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
@@ -18,7 +20,7 @@ function bantuanJudul(props) {
 
                         <Image
                             source={require('../../assets/images/newspaper.png')}
-                            style={{width:width*0.2, height:width*0.2, resizeMode:'stretch', marginBottom:height*0.02}}
+                            style={{width:width*0.2, height:width*0.2, resizeMode:'contain', marginBottom:height*0.02, marginTop: 20}}
                         />
                         <View style={{alignItems:'center', width:'90%', alignSelf:'center'}}>
                             <Text style={{fontSize:26, fontWeight:'bold', marginBottom:height*0.02, textAlign:'center'}}>Judul postingan Anda Kurang Menarik ?</Text>  
@@ -27,14 +29,14 @@ function bantuanJudul(props) {
                         <View>
                             <Image 
                                 source={require('../../assets/images/caraJudul.png')}
-                                style={{width:width*0.5, alignSelf:'center', }}
+                                style={{width:width*0.8, resizeMode: 'contain', alignSelf:'center', }}
                             />
                         </View>
 
                         <View>
                             <TouchableOpacity>
                                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                    style={{padding:height*0.01, flexDirection:'row', justifyContent:'space-between', alignItems:'center', borderRadius:10}}
+                                    style={{padding:height*0.01, flexDirection:'row', justifyContent:'space-between', alignItems:'center', borderRadius:10, marginBottom: 20}}
                                 >
                                     <Image 
                                         source={require('../../assets/images/aplikasi.png')}

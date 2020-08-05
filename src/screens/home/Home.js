@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React,{useEffect, useRef, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, Dimensions} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'

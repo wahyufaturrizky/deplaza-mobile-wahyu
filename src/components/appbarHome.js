@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, {useEffect, useState} from 'react';
 import { Appbar } from 'react-native-paper';
 import { Image, View, StyleSheet, Dimensions } from 'react-native';
@@ -48,7 +50,7 @@ function appbarHome(props) {
             { (title==="Home" || title==="Jualan Anda") &&
                 <Image 
                     source={require(logoHorizontal)}
-                    style={{width:170, height:45}}
+                    style={{width:170, height:45, resizeMode: 'contain', marginBottom: 10}}
                     width={180}
                     height={45}
                 />

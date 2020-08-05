@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React,{useState,useEffect} from 'react';
 import { View, Text, Dimensions, Image } from 'react-native';
 import { Avatar } from 'react-native-paper';
@@ -93,7 +95,7 @@ function Akun(props) {
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
                         <Image
                             source={require('../../assets/images/wallet.png')}
-                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'contain'}}
                         />
                         <Text style={{fontSize:18}}>Rincian Rekening Saya</Text>
                     </View>
@@ -105,7 +107,7 @@ function Akun(props) {
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
                         <Image
                             source={require('../../assets/images/bill.png')}
-                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'contain'}}
                         />
                         <Text style={{fontSize:18}}>Pembayaran Saya</Text>
                     </View>
@@ -117,7 +119,7 @@ function Akun(props) {
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
                         <Image
                             source={require('../../assets/images/box.png')}
-                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'contain'}}
                         />
                         <Text style={{fontSize:18}}>Produk Saya</Text>
                     </View>
@@ -129,7 +131,7 @@ function Akun(props) {
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
                         <Image
                             source={require('../../assets/images/megaphone.png')}
-                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'contain'}}
                         />
                         <Text style={{fontSize:18}}>Notifikasi</Text>
                     </View>
@@ -141,7 +143,7 @@ function Akun(props) {
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
                         <Image
                             source={require('../../assets/images/penarikan.png')}
-                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'cover'}}
+                            style={{width:width*0.1, height:width*0.1, marginRight:width*0.04, resizeMode:'contain'}}
                         />
                         <Text style={{fontSize:18}}>Tarik Dana</Text>
                     </View>

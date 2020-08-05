@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Dimensions, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
@@ -31,7 +33,7 @@ function produk(props) {
     const getProduct = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
-        console.log(data.token)
+
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
@@ -44,13 +46,12 @@ function produk(props) {
             .then(response => response.json())
             .then(responseData => {
                 setOrders(responseData.data)
-                console.log(responseData.data[0].payment.method_id)
                 setLoading(false)
                 
             })
     }
 
-
+console.log(orders);
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             <Appbar params={props}/>

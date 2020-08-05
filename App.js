@@ -1,14 +1,14 @@
 import React from 'react';
 
 //Navigation V.5
-import { createStackNavigator, } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
 
 // Screen
-import Login from './src/screens/login/Login'
-import Home from './src/screens/home/Home'
-import JualanAnda from './src/screens/jualanAnda/jualanAnda'
-import Produk from './src/screens/produk/Produk'
+import Login from './src/screens/login/Login';
+import Home from './src/screens/home/Home';
+import JualanAnda from './src/screens/jualanAnda/jualanAnda';
+import Produk from './src/screens/produk/Produk';
 import produkDetail from './src/screens/produkDetail/produkDetail';
 import Pesan from './src/screens/pesan/Pesan';
 import PesananSaya from './src/screens/pesananSaya/pesananSaya';
@@ -36,14 +36,19 @@ import LacakKomisi from './src/screens/bantuanFaq/lacakKomisi';
 import BagikanProduk from './src/screens/bantuanFaq/bagikanProduk';
 import ReturKembali from './src/screens/bantuanFaq/returKembali';
 import Transaksi from './src/screens/tarik/Transaksi';
+import Chat from './src/screens/chat';
+import Sync from './src/screens/chat/Sync';
+import ListChat from './src/screens/chat/ListChat';
+import DetailChat from './src/screens/chat/DetailChat';
+import ChatScreen from './src/screens/chat/Chat';
 
 const Stack = createStackNavigator();
 
 function StackNav(props) {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" headerMode={"none"}>
-        <Stack.Screen name="Login" component={Login}/>
+      <Stack.Navigator initialRouteName="Login" headerMode={'none'}>
+        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="JualanAnda" component={JualanAnda} />
         <Stack.Screen name="Produk" component={Produk} />
@@ -74,6 +79,11 @@ function StackNav(props) {
         <Stack.Screen name="BagikanProduk" component={BagikanProduk} />
         <Stack.Screen name="ReturKembali" component={ReturKembali} />
         <Stack.Screen name="Transaksi" component={Transaksi} />
+        <Stack.Screen name="Chat" component={Chat} />
+        <Stack.Screen name="Sync" component={Sync} />
+        <Stack.Screen name="ListChat" component={ListChat} />
+        <Stack.Screen name="DetailChat" component={DetailChat} />
+        <Stack.Screen name="ChatScreen" component={ChatScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

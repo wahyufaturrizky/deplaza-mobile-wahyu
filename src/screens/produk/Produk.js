@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, {useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
@@ -37,7 +39,7 @@ function produk(props) {
     }
 
     const gotoWishlist = () => {
-        props.params.navigation.navigate("Wishlist", {title:"Produk Saya"})
+        props.navigation.navigate("Wishlist", {title:"Produk Saya"})
     }
 
     const getProduct = async() => {
