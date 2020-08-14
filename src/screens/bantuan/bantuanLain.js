@@ -1,15 +1,44 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Text, View, Image, ImageBackground, TouchableOpacity, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 import {TextInput} from 'react-native-paper'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import Appbar from '../../components/appbarHome';
 import { ScrollView } from 'react-native-gesture-handler';
+import {URL, formatRupiah} from '../../utils/global'
 
 function bantuanLain(props) {
     const [masalah, setMasalah] = useState("")
-
+    const [changeBantu, setChangeBantu] = useState(0)
     const { height, width } = Dimensions.get("window");
+
+    const handleProblem = async() => {
+        let formdata = new FormData();
+        formdata.append("problem", masalah)
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        let requestOptions = {
+            method: 'POST',
+            body: formdata,
+            headers: {
+                Authorization: `Bearer ${data.token}`,
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+
+        fetch(URL+"/v1/helpdesk", requestOptions)
+            .then((response) => response.json())
+            .then( async(responseData) => {
+               if(responseData.message === "Success"){
+                   alert('Berhasil kirim data')
+               }else{
+                   alert('Ada kesalahan, mohon ulang')
+               }
+            })
+            .done();
+    }
     return (
         <View style={{flex:1}}>
            <Appbar params={props}/>
@@ -20,7 +49,7 @@ function bantuanLain(props) {
 
                         <Image
                             source={require('../../assets/images/ask.png')}
-                            style={{width:width*0.2, height:width*0.2, resizeMode:'stretch', marginBottom:height*0.02}}
+                            style={{width:width*0.2, height:width*0.2, resizeMode:'contain', marginBottom:height*0.02, marginTop: 20}}
                         />
 
                         <View style={{alignItems:'center', width:'90%', alignSelf:'center'}}>
@@ -45,7 +74,7 @@ function bantuanLain(props) {
                     </View>
 
                     <View style={{alignItems:'center'}}>
-                        <TouchableOpacity style={{width:'90%', alignSelf:'center'}}>
+                        <TouchableOpacity style={{width:'90%', alignSelf:'center'}} onPress={() => handleProblem()}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{padding:height*0.02, justifyContent:'center', alignItems:'center', borderRadius:10}}
                             >
@@ -55,20 +84,7 @@ function bantuanLain(props) {
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
-
-                    <View>
-                        <TouchableOpacity onPress={() => changeBantu(1)}>
-                            <ImageBackground source={require('../../assets/images/aplikasiFoto.png')} style={{justifyContent:'flex-end', padding:20, alignItems:'center', marginVertical:height*0.005, height:height*0.2}}>
-                                {/* <View style={{width:'90%', alignSelf:'center'}}> */}
-                                    <Text style={{color:'white', marginVertical:5, fontSize:14, textAlign:'center'}}>Klik Trik Disini</Text>
-                                {/* </View> */}
-                            </ImageBackground>
-                        </TouchableOpacity>
-                    </View>
-                    
-                    
                 </ScrollView>
-
         </View>
     );
 }

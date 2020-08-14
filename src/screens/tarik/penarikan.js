@@ -1,4 +1,5 @@
-import React,{useState} from 'react';
+/* eslint-disable */
+import React,{useState, useEffect} from 'react';
 import { View, Text, Image, Dimensions, TouchableOpacity, TextInput } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -13,10 +14,38 @@ function penarikan(props) {
     const [check, setCheck] = useState(false);
     const [ammount, setAmmount] = useState("");
     const [loading,setLoading] = useState(false)
-
+    const [rek, setRek] = useState([])
+    const [norek, setNoRek] = useState("")
+    const [bank, setBank] = useState([])
 
     const { height, width } = Dimensions.get("window");
     const urlSaldo = URL+"v1/withdrawal" 
+    const urlListRekeing = URL+'v1/account/me'
+
+    useEffect(() => {
+        getRekening()
+    },[])
+
+
+    const getRekening = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        fetch(urlListRekeing, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                setNoRek(responseData.data[0].number)
+                setBank(responseData.data[0].bank)
+                setLoading(false)
+            })
+    }
+
+    console.log(bank);
 
     const postWithDraw = async() => {
         setLoading(true)
@@ -43,7 +72,7 @@ function penarikan(props) {
             .then(result => {
                 console.log(result)
                 setLoading(false)
-                alert("Penarikan Dana Berhasil")
+                alert("Penarikan Dana Berhasil diajukan, proses peninjauan paling lambat 1 x 24 jam")
             })
             .catch(error => console.log('error', error));
     }
@@ -61,14 +90,14 @@ function penarikan(props) {
                     <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.01, justifyContent:'space-between', flexDirection:'row'}}>
                         <View>
                             <Image 
-                                source={require('../../assets/images/Logo_BCA.png')}
+                                source={{uri: bank.image_url}}
                                 style={{width:width*0.12, height:width*0.05, resizeMode:'stretch'}}
                                 width={width*0.12}
                                 height={width*0.05}
                             />
-                            <Text>Bank BCA</Text>
+                            <Text>Bank {bank.name}</Text>
                         </View>
-                        <Text>20202033</Text>
+                        <Text>{norek}</Text>
                     </View>
                 </View>
 

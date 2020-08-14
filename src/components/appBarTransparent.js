@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, {useEffect, useState} from 'react';
 import { Appbar } from 'react-native-paper';
 import { Image, View, StyleSheet, Dimensions } from 'react-native';
@@ -30,7 +32,6 @@ function appbarHome(props) {
     },[])
 
     const gotoPesanan = () => {
-        alert("ok")
         props.params.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
     }
 

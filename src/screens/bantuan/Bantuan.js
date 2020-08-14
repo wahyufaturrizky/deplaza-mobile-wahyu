@@ -98,7 +98,7 @@ function Bantuan(props) {
               <View
                 style={{
                   alignItems: 'center',
-                  width: '90%',
+                  width: '100%',
                   alignSelf: 'center',
                 }}>
                 <Text
@@ -117,11 +117,17 @@ function Bantuan(props) {
                     alignItems: 'center',
                     borderRadius: 100,
                     backgroundColor: '#0956C6',
-                    width: width * 0.2,
-                    height: width * 0.2,
+                    width: 100,
+                    height: 100,
                   }}>
                   <Text
-                    style={{fontSize: 17, fontWeight: 'bold', color: 'white'}}>
+                    style={{
+                      fontSize: 17,
+                      fontWeight: 'bold',
+                      color: 'white',
+                      width: 100,
+                      textAlign: 'center',
+                    }}>
                     YA
                   </Text>
                 </TouchableOpacity>
@@ -278,7 +284,7 @@ function Bantuan(props) {
               <View
                 style={{
                   alignItems: 'center',
-                  width: '90%',
+                  width: '100%',
                   alignSelf: 'center',
                 }}>
                 <Text
@@ -296,6 +302,8 @@ function Bantuan(props) {
                     alignItems: 'center',
                     flexDirection: 'row',
                     width: '100%',
+                    marginRight: 10,
+                    marginLeft: 10,
                   }}>
                   <TouchableOpacity
                     onPress={() => setSubBantu(3)}
@@ -304,14 +312,17 @@ function Bantuan(props) {
                       alignItems: 'center',
                       borderRadius: 100,
                       backgroundColor: '#0956C6',
-                      width: width * 0.2,
-                      height: width * 0.2,
+                      width: 100,
+                      height: 100,
+                      marginLeft: 20,
                     }}>
                     <Text
                       style={{
                         fontSize: 17,
                         fontWeight: 'bold',
                         color: 'white',
+                        width: 100,
+                        textAlign: 'center',
                       }}>
                       Sudah
                     </Text>
@@ -323,14 +334,17 @@ function Bantuan(props) {
                       alignItems: 'center',
                       borderRadius: 100,
                       backgroundColor: '#D5D5D5',
-                      width: width * 0.2,
-                      height: width * 0.2,
+                      width: 100,
+                      height: 100,
+                      marginRight: 20,
                     }}>
                     <Text
                       style={{
                         fontSize: 17,
                         fontWeight: 'bold',
                         color: 'black',
+                        width: 100,
+                        textAlign: 'center',
                       }}>
                       Belum
                     </Text>

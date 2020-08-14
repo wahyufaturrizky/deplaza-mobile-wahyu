@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Dimensions, Image, ScrollView } from 'react-native';
 import { TextInput, RadioButton } from 'react-native-paper';
@@ -279,12 +280,15 @@ function Pesan(props) {
                 fetch(urlKotaDetail+id_kota, {headers})
                     .then(response => response.json())
                     .then(async(responseData) => {
+                        console.log(responseData.rajaongkir.results.postal_code);
                         await setKotaDetail(responseData.rajaongkir.results)
                         setPos(responseData.rajaongkir.results.postal_code)
                         setLoading(false)
                     })
             })
     }
+
+    console.log('subdistricts', subdistricts);
 
     const _setKecamatan = (id_kec) => {
         fetch(urlKecamatanDetail+id_kec, {headers})
@@ -391,6 +395,8 @@ function Pesan(props) {
         }
 
     }
+
+    console.log('metodeCOD', metodeCOD);
 
     return (
         <View style={{backgroundColor:'white', flex:1}}>

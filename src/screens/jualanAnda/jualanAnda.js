@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React,{useEffect, useState} from 'react';
 import { View, Image, Dimensions, ImageBackground, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import {Text, Card, } from 'react-native-paper';
@@ -143,7 +144,7 @@ function jualanAnda(props) {
                         <Text style={{color:'white', marginVertical:5}}>Saldo Komisi dan Margin</Text>
                         <View style={{flexDirection:'row', marginVertical:5}}>
                             <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}>Rp </Text>
-                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> {saldo} / {totalOrder} Produk</Text>
+                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> {saldo} / {totalOrder - 1} Produk</Text>
                         </View>
                     </View>
                 </ImageBackground>

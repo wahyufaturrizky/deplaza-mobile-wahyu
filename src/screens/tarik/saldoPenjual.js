@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useState, useEffect} from 'react';
 import { View, Text, Dimensions, Image } from 'react-native'
 import {URL, formatRupiah} from '../../utils/global'
@@ -52,7 +53,7 @@ function saldoPenjual(props) {
             <Appbar params={props}/>
             <View style={{justifyContent:'center', alignItems:'center', padding:30, backgroundColor:'#93DCFC'}}>
                 <Text style={{marginBottom:height*0.01}}>Saldo</Text>
-                <Text style={{marginBottom:height*0.01, fontSize:width*0.05, fontWeight:'bold', color:'#0A56C3'}}>Rp. {formatRupiah(saldo)}</Text>
+                <Text style={{marginBottom:10, fontSize:20, fontWeight:'bold', color:'#0A56C3', width: '100%', alignSelf:'center', textAlign:'center'}}>Rp. {formatRupiah(saldo)}</Text>
             </View>
 
             <View style={{flex:1, flexDirection:'row', justifyContent:'space-around', padding:15}}>

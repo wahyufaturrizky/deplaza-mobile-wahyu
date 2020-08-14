@@ -1,5 +1,6 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage'
 import {Picker} from '@react-native-community/picker'
@@ -224,7 +225,8 @@ function editKontak(props) {
     }
     
     return (
-    <View style={{flex:1}}>
+        <View style={{flex:1, height: '100%'}}>
+    <ScrollView>
         <View style={{padding:15, backgroundColor:'#F8F8F8', marginTop:height*0.01, flex:1}}>
             <TextInput
                 label='Nama Lengkap'
@@ -301,7 +303,10 @@ function editKontak(props) {
             <Loading />
         }
 
-        <TouchableOpacity onPress={updateAkun}>
+      
+
+    </ScrollView>
+    <TouchableOpacity onPress={updateAkun}>
             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                 style={{padding:10,justifyContent:'center', alignItems:'center'}}
             >
@@ -310,7 +315,6 @@ function editKontak(props) {
                 </Text>
             </LinearGradient>
         </TouchableOpacity>
-
     </View>
     );
 }

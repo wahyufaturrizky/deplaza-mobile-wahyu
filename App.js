@@ -41,6 +41,7 @@ import Sync from './src/screens/chat/Sync';
 import ListChat from './src/screens/chat/ListChat';
 import DetailChat from './src/screens/chat/DetailChat';
 import ChatScreen from './src/screens/chat/Chat';
+import Canva from './src/screens/canva';
 
 const Stack = createStackNavigator();
 
@@ -84,6 +85,7 @@ function StackNav(props) {
         <Stack.Screen name="ListChat" component={ListChat} />
         <Stack.Screen name="DetailChat" component={DetailChat} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
+        <Stack.Screen name="Canva" component={Canva} />
       </Stack.Navigator>
     </NavigationContainer>
   );

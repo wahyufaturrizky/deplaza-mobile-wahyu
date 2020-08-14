@@ -34,7 +34,7 @@ function bantuanFoto(props) {
                         </View>
 
                         <View>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('Canva')}>
                                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                     style={{padding:height*0.01, flexDirection:'row', justifyContent:'space-between', alignItems:'center', borderRadius:10}}
                                 >
@@ -50,7 +50,7 @@ function bantuanFoto(props) {
                         </View>
 
                         <View>
-                            <TouchableOpacity onPress={() => changeBantu(1)}>
+                            <TouchableOpacity  onPress={() => props.navigation.navigate('Canva')}>
                                 <ImageBackground source={require('../../assets/images/aplikasiFoto.png')} style={{justifyContent:'flex-end', padding:20, alignItems:'center', marginVertical:height*0.005, height:height*0.2, marginTop: 10, marginBottom: 10}}>
                                     <Text style={{color:'white', marginVertical:5, fontSize:14, textAlign:'center'}}>Tutorial Edit Foto di Aplikasi Canva</Text>
                                 </ImageBackground>

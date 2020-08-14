@@ -154,6 +154,8 @@ function produk(props) {
             .catch(e => console.log(e))
     }
 
+    console.log('product', products);
+
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             
@@ -211,7 +213,7 @@ function produk(props) {
                     
                     <View style={{width:'68%'}}>
                         <Title style={{fontSize:14, lineHeight:18}}>{product.name}</Title>
-                        <Text style={{fontSize:14, marginBottom:height*0.01}}>Mulai Dari Rp {formatRupiah(product.price_basic)}</Text>
+                        <Text style={{fontSize:14, marginBottom:height*0.01}}>Mulai Dari Rp {formatRupiah(product.price_basic+product.price_benefit+product.price_commission)}</Text>
                         <Text style={{color:'#949494', fontSize:12}}>Stok {product.stock}</Text>
                         <TouchableOpacity style={{alignItems:'flex-end', justifyContent:'flex-end', flex:1, paddingVertical:10}}  onPress={() => detailProduk(product.id, product.name)}>
                             <Text style={{color:'#07A9F0'}}>Lihat Produk</Text>

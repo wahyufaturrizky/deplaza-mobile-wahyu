@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React,{useState,useEffect} from 'react';
-import { View, Text, Dimensions, Image } from 'react-native';
+import { View, Text, Dimensions, Image, Alert } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -71,6 +71,24 @@ function Akun(props) {
 
     const gotoNotifikasi = () => {
         props.navigation.navigate('Notifikasi',{title:"Notifikasi"})      
+    }
+
+    const handleLogout = async () => {
+        Alert.alert(
+            '',
+            'Apakah anda yakin untuk logout?',
+            [
+                { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                { text: 'Ok', onPress: () => logout() },
+            ],
+            { cancelable: false }
+        )
+
+    }
+
+    const logout =  async () => {
+        await AsyncStorage.removeItem('data');
+        props.navigation.navigate('Login')
     }
 
     return (
@@ -151,6 +169,13 @@ function Akun(props) {
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
+                <TouchableOpacity onPress={handleLogout}>
+                    <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
+                        <Text style={{fontSize:18}}>Logout</Text>
+                    </View>
+                </TouchableOpacity>
+
+                <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
             </View>
 
             {loading &&

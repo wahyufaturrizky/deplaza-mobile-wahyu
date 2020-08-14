@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useState,useEffect} from 'react';
 import { View, Image, TouchableOpacity, Text, Dimensions, StyleSheet, PermissionsAndroid } from 'react-native';
 import Clipboard from "@react-native-community/clipboard";
@@ -36,6 +37,9 @@ function produkDetail(props) {
     const [varian, setVarian] = useState([])
 
     const [kota, setKota] = useState([])
+    const [kecamatan, setKecamatan] = useState([])
+    const [idCity, setIdCity] = useState(0)
+    const [est, setEst] = useState("")
     const [totalOngkir, setTotalOngkir] = useState(0)
     const [totalHarga, setTotalHarga] = useState(0)
     const [metodeCOD, setmetodeCOD] = useState(false) //false kalo untuk bank 
@@ -44,7 +48,8 @@ function produkDetail(props) {
 
     const urlProdukDetail = URL+'v1/product/'
     const urlKota = URL+"v1/shipment/cities"
-    const urlOngkir = URL+"v1/shipment/cost"
+    const urlKecamatan = URL+"v1/shipment/subdistrict/city"
+    const urlOngkir = URL+"v1/shipment/cost/subdistrict"
     const urlWishlistMe = URL+"v1/wishlist/me"
     const urlWishlist = URL+"v1/wishlist"
     const urlKotaDetail = URL+"v1/shipment/city/"
@@ -93,7 +98,7 @@ function produkDetail(props) {
     }
  
     const changeQty = (simbol) => {
-        let hargaProduk = parseInt(dataDetail.price_basic)
+        let hargaProduk = parseInt(dataDetail.price_basic+dataDetail.price_commission+dataDetail.price_benefit)
         let totalOngkirNow = parseInt(totalOngkir)
         let stock = parseInt(dataDetail.stock)
 
@@ -254,8 +259,7 @@ function produkDetail(props) {
             .catch(e => console.log(e))
     }
 
-    const _selectKota = async(data_kota) => {
-        setLoading(true)
+    const getKecamatan = async(idKec) => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
@@ -263,22 +267,107 @@ function produkDetail(props) {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
         }
+        
+        fetch(urlKecamatan+idKec, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                const mapKota = responseData.rajaongkir.results
+                let data = mapKota.map( s => ({id:s.subdistrict_id, name:"Kecamatan"+" "+s.subdistrict_name}) );
+                setKecamatan(data)
+            })
+            .catch(e => console.log(e))
+    }
 
+    const _selectKota = async(data_kota) => {
+        await setLoading(true)
+        await setIdCity(data_kota.id)
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+        
+        await fetch(`${urlKecamatan}/${data_kota.id}`, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                console.log('sfsdf', responseData.rajaongkir.results);
+                const mapKota = responseData.rajaongkir.results
+                let data = mapKota.map( s => ({id:s.subdistrict_id,  name:"Kecamatan"+" "+s.subdistrict_name}) );
+                setKecamatan(data)
+            })
+            .catch(e => console.log(e))
+        setLoading(false)
+        // const value = await AsyncStorage.getItem('data');
+        // const data = JSON.parse(value)
+
+        // let headers = {
+        //     Authorization: `Bearer ${data.token}`,
+        //     'Access-Control-Allow-Origin': '*',
+        // }
+
+        // fetch(urlKotaDetail+data_kota.id, {headers})
+        //     .then(response => response.json())
+        //     .then(responseData => {
+        //         console.log(responseData)
+
+        //         var cod_city = JSON.parse(dataDetail.cod_city_id)
+        //         var n = cod_city.includes(data_kota.id);
+
+        //         if(n) {
+        //             setmetodeCOD(true)
+        //         }else{
+        //             setmetodeCOD(false)
+        //         }
+        //     })
+        //     .catch(e => console.log(e))        
+
+        // let formdata = new FormData();
+        // formdata.append("origin", dataDetail.city_id)
+        // formdata.append("destination", parseInt(data_kota.id))
+        // formdata.append("weight", dataDetail.weight)
+        // formdata.append("courier", 'jne')
+
+        // fetch(urlOngkir, {method: 'POST', headers,
+        //     body: formdata
+        // })
+        // .then(response => response.json())
+        // .then(async(responseData) => {
+        //     let tipe= await responseData.rajaongkir.results[0].costs
+        //     setLoading(false)
+        //     tipe.map((type) => {
+        //         if(type.service === "REG"){
+        //             setPilihKota(true)
+        //             setTotalOngkir(type.cost[0].value, setTotalHarga(dataDetail.price_basic+dataDetail.price_commission+dataDetail.price_benefit+type.cost[0].value))
+        //         }
+        //     })
+        // })
+    }
+
+    console.log('sfsdf', dataDetail);
+    const _selectKecamatan = async(data_kota) => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
         fetch(urlKotaDetail+data_kota.id, {headers})
             .then(response => response.json())
             .then(responseData => {
-                console.log(responseData)
-
                 var cod_city = JSON.parse(dataDetail.cod_city_id)
+                console.log(cod_city)
                 var n = cod_city.includes(data_kota.id);
-
+                console.log('codiii', data_kota.id);
                 if(n) {
                     setmetodeCOD(true)
                 }else{
                     setmetodeCOD(false)
                 }
             })
-            .catch(e => console.log(e))        
+            .catch(e => console.log(e.response))        
 
         let formdata = new FormData();
         formdata.append("origin", dataDetail.city_id)
@@ -291,16 +380,22 @@ function produkDetail(props) {
         })
         .then(response => response.json())
         .then(async(responseData) => {
+            console.log('uuu', responseData);
             let tipe= await responseData.rajaongkir.results[0].costs
             setLoading(false)
             tipe.map((type) => {
+                console.log('tipe', type);
                 if(type.service === "REG"){
                     setPilihKota(true)
-                    setTotalOngkir(type.cost[0].value, setTotalHarga(dataDetail.price_basic+type.cost[0].value))
+                    setEst(type.cost[0].etd)
+                    setTotalOngkir(type.cost[0].value)
+                    setTotalHarga(dataDetail.price_basic+dataDetail.price_commission+dataDetail.price_benefit+type.cost[0].value)
                 }
             })
         })
     }
+
+    console.log('est', est);
 
     const postWishlist = async(id) => {
         setLoading(true)
@@ -349,6 +444,8 @@ function produkDetail(props) {
         
     }
 
+    console.log('Kecamatan', totalHarga);
+
     return (
         <View style={{backgroundColor:'white', flex:1}}>
                 <Appbar params={props}/>
@@ -358,8 +455,8 @@ function produkDetail(props) {
                         <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
                         <Text style={{fontSize:14}}>{dataDetail.name}</Text>
 
-                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start', marginVertical:height*0.01}}>
-                            
+                        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start'}}>
+                            <View style={{width: '100%'}}>
                             <SearchableDropdown
                                 onItemSelect={(item) => {
                                     const items = selectKota;
@@ -404,8 +501,53 @@ function produkDetail(props) {
                                     }
                                 }
                             />
-
-                            <TouchableOpacity style={{width:'34%'}}>
+                              
+                              <SearchableDropdown
+                                onItemSelect={(item) => {
+                                    const items = selectKota;
+                                    items.push(item)
+                                    setSelectKota(items)
+                                    _selectKecamatan(item)
+                                }}
+                                containerStyle={{width:'60%', borderRadius:10}}
+                                onRemoveItem={(item, index) => {
+                                    const items = selectKota.filter((sitem) => sitem.id !== item.id);
+                                    setSelectKota(items)
+                                }}
+                                itemStyle={{
+                                    padding: 10,
+                                    marginTop: 2,
+                                    backgroundColor: '#ddd',
+                                    borderColor: '#bbb',
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                    width:'100%',
+                                }}
+                                itemTextStyle={{ color: '#222' }}
+                                itemsContainerStyle={{borderRadius:10 }}
+                                items={kecamatan}
+                                defaultIndex={2}
+                                resetValue={false}
+                                textInputProps={
+                                {
+                                    placeholder: "Pilih Kecamatan",
+                                    underlineColorAndroid: "transparent",
+                                    style: {
+                                        padding: 12,
+                                        borderWidth: 1,
+                                        borderColor: '#ccc',
+                                        borderRadius: 5,
+                                    },
+                                }
+                                }
+                                    listProps={
+                                    {
+                                        nestedScrollEnabled: true,
+                                    }
+                                }
+                            />
+                        </View>
+                            <TouchableOpacity style={{width:'34%', right: 120}} >
                                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                     style={{padding:15, borderRadius:10}}
                                 >
@@ -441,7 +583,7 @@ function produkDetail(props) {
 
                         <View style={{backgroundColor:'#D5D5D5', paddingVertical:5, width:'60%', flexDirection:'row', alignItems:'center', paddingHorizontal:20, marginTop:height*0.01, justifyContent:'flex-start'}}>
                             <Icon name="calendar" size={16} color="#000" />
-                            <Text style={{fontSize:12}}> Akan Dikirimkan 2 - 3 hari</Text>
+                            <Text style={{fontSize:12}}> Akan Dikirimkan {est} hari</Text>
                         </View>
 
                     </View>

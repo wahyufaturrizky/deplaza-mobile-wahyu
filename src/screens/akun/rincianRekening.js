@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,7 +19,7 @@ function rincianRekening(props) {
     const [loading,setLoading] = useState(true)
     const [allBank, setAllBank] = useState([])
     const [allRek, setAllRek] = useState([])
-
+    const [id, setId] = useState(0)
     const { height, width } = Dimensions.get("window");
     const urlBank = URL+'v1/bank'
     const urlRekening = URL+'v1/account'
@@ -59,10 +60,10 @@ function rincianRekening(props) {
         fetch(urlListRekeing, {headers})
             .then(response => response.json())
             .then(responseData => {
-                console.log(responseData.data[0])
+                setId(responseData.data[0].id)
                 setAllRek(responseData.data)
                 setNoRek(responseData.data[0].number)
-                setNamaRekening(responseData.data[0].number)
+                setNamaRekening(responseData.data[0].name)
                 setBank(responseData.data[0].bank.id)
                 setLoading(false)
             })
@@ -97,13 +98,52 @@ function rincianRekening(props) {
             .then((response) => response.json())
             .then( async(responseData) => {
                     setLoading(false)
-                    alert("Data Sudah Di Update")
+                    alert("Rekening Berhasil di Tambahkan")
                     console.log(responseData)
             })
             .done();
         }
     }
 
+    const editRek = async() => {
+        
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+        console.log(data);
+        const id_user = data.id
+        if(noRek!=konfnoRek){
+            alert("Nomor Rekening Tidak Sama")
+        }else{
+            setLoading(true)
+            let formdata = new FormData();
+            formdata.append("bank_id", bank);
+            formdata.append("number", noRek);
+            formdata.append("name", namaRekening);
+            formdata.append("branch", "branch");
+            formdata.append("_method", "put");
+
+            let headers = {
+                Authorization: `Bearer ${data.token}`,
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type' : 'multipart/form-data'
+            }
+
+            fetch(`${urlRekening}/${id}`, {
+                method: 'POST',
+                headers,
+                body: formdata
+            })
+            .then((response) => response.json())
+            .then( async(responseData) => {
+                    setLoading(false)
+                    alert("Rekening Berhasil di Update")
+                    console.log(responseData)
+            })
+            .done();
+        }
+    }
+
+    console.log('allRek', allRek);
     
 
     return (
@@ -178,12 +218,12 @@ function rincianRekening(props) {
                 <Loading />
             }
 
-            <TouchableOpacity onPress={postRekening}>
+            <TouchableOpacity onPress={allRek.length < 1 ? postRekening : editRek}>
                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                     style={{padding:20, borderRadius:10, width:'90%', marginBottom:height*0.02, alignSelf:'center', flexDirection:"row", justifyContent:'center', alignItems:'center'}}
                 >
                     <Text style={{fontSize:18, textAlign:'center', color:'white'}}>
-                        Simpan
+                        {allRek.length < 1 ? 'Simpan' : 'Ubah'}
                     </Text>
                 </LinearGradient>
             </TouchableOpacity>

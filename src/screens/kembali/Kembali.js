@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React,{useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Dimensions, Image, Platform } from 'react-native';
 import { RadioButton, TextInput, Checkbox, Title } from 'react-native-paper';
@@ -149,6 +150,7 @@ function Kembali(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
+            'Accept': 'multipart/form-data',
             "content-type": 'multipart/form-data'
         }
 
@@ -294,29 +296,15 @@ function Kembali(props) {
                 </View>
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
-
-                <View style={{width:'90%', alignSelf:'center', marginVertical:height*0.01}}>
-                    <View style={{padding:5}}>
-                        <Title>Alamat Pengiriman</Title>
-
-                        <View style={{marginTop:height*0.02}}>
-                            <Text style={{fontSize:16}}>{receiver_name}</Text>
-                            <Text style={{fontSize:14}}>{receiver_address}</Text>
-                            <Text style={{fontSize:16}}>{phone}</Text>
-                        </View>
-                    </View>
-                </View>
-
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
-
-                <View style={{flexDirection:'row', justifyContent:'flex-start', width:'90%', alignSelf:'center', alignItems:'center'}}>
+                <View style={{flexDirection:'row', width:'100%', alignSelf:'center', alignItems:'center', marginTop: 20}}>
                     <Checkbox
                         status={check ? 'checked' : 'unchecked'}
                         onPress={() => {
                             setCheck(!check);
                         }}
                     />
-                    <Text> Saya Setuju untuk Mengembalikan Sesuai Kondisi Semula.</Text>
+                    <Text style={{width: 300, textAlign:'left'}}>Saya Setuju untuk Mengembalikan Sesuai Kondisi Semula.</Text>
                 </View>
 
             </ScrollView>

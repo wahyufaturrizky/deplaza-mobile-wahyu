@@ -1,5 +1,6 @@
+/* eslint-disable */
 import React from 'react';
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Animated from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';

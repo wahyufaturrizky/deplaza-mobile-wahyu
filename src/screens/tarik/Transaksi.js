@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React,{useState, useEffect} from 'react';
 import { View, Text, Dimensions, StyleSheet, } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
@@ -48,6 +49,7 @@ function pembayaranSaya(props) {
             })
     }
     
+    console.log(history);
     return (
         <View style={{flex:1}}>
             <Appbar params={props}/>
@@ -56,12 +58,15 @@ function pembayaranSaya(props) {
                     <View key={i}>
                         <View style={{width:'90%', alignSelf:'center', paddingVertical:10}}>
                             <Text style={{fontWeight:'bold', marginBottom:height*0.01}}>{moment(data.created_at).format("D MMMM YYYY, H:mm A")}</Text>
-                            <Text style={{marginBottom:height*0.02}}>
-                                Penarikan Nomor {data.withdrawal_no}
+                            <Text style={{marginBottom:5}}>
+                                Penarikan Nomor <Text style={{fontWeight: 'bold'}}>{data.withdrawal_no}</Text> 
                             </Text>
-                            <TouchableOpacity onPress={() => modalTrigger(data)} style={{justifyContent:'flex-end', alignItems:'flex-end'}}>
-                                <Text style={{color:'#07A9F0'}}>Lihat Lebih Banyak</Text>
-                            </TouchableOpacity>
+                            <Text style={{marginBottom:5}}>
+                                Jumlah <Text style={{fontWeight: 'bold'}}>Rp.{formatRupiah(data.amount)}</Text>
+                            </Text>
+                            <Text style={{marginBottom:5}}>
+                Status <Text style={{fontWeight: 'bold'}}>{data.approval === 0 ? 'Menunggu Persetujuan' : `Telah disetujui pada tanggal ${data.updated_at}`}</Text>
+                            </Text>
                         </View>
 
                         <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
