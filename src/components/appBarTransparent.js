@@ -35,8 +35,8 @@ function appbarHome(props) {
         props.params.navigation.navigate("PesananSaya", {title:"Pesanan Saya"})
     }
 
-    const gotoWishlist = () => {
-        props.params.navigation.navigate("Wishlist", {title:"Produk Saya"})
+    const gotoNotifikasi = () => {
+        props.params.navigation.navigate("Notifikasi", {title:"Notifikasi"})
     }
 
     const { height, width } = Dimensions.get("window");
@@ -57,7 +57,9 @@ function appbarHome(props) {
                     <TouchableOpacity onPress={gotoPesanan}>
                         <Appbar.Action size={30} icon="cart" color={'white'}/>
                     </TouchableOpacity>
-                    <Appbar.Action size={30} icon="bell-ring-outline" color={'white'}/>
+                    <TouchableOpacity onPress={gotoNotifikasi}>
+                        <Appbar.Action size={30} icon="bell-ring-outline" color={'white'}/>
+                    </TouchableOpacity>
                 </View>
 
         </Appbar.Header>

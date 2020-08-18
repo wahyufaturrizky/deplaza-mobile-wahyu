@@ -47,7 +47,7 @@ function Kategori(props) {
     return (
        <View style={{flex:1}}>
            <Appbar params={props}/>
-           <View style={{backgroundColor:'white', padding:15, flexWrap:"wrap", justifyContent:'space-between',  flex:1, alignItems:'center', flexDirection:'row'}}>
+           <View style={{backgroundColor:'white', padding:10, flexWrap:"wrap", justifyContent:'space-between',  flex:1, alignItems:'center', flexDirection:'row'}}>
                
                {kategori.map((data,i) => (
                 <View key={i} style={[styles.shadow,{width:'30%', height:height*0.2, marginVertical:height*0.01, borderRadius:10, padding:2, }]}>
@@ -56,7 +56,7 @@ function Kategori(props) {
                             source={{uri:data.image_url}}
                             style={{width:'100%', resizeMode:'cover', height:height*0.17, borderBottomRightRadius:0, borderBottomLeftRadius:0, borderTopLeftRadius:10, borderTopRightRadius:10}}
                         />
-                        <Text style={{textAlign:'center'}}>{data.name}</Text>
+                        <Text style={{textAlign:'center', marginVertical:5}}>{data.name}</Text>
                     </TouchableOpacity>
                 </View>
                ))}
@@ -77,13 +77,13 @@ export default Kategori;
 const styles=StyleSheet.create({
     shadow : {
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 0.2,
+        // },
+        // shadowOpacity: 0.20,
+        // shadowRadius: 0.41,
 
-        elevation: 2,
+        // elevation: 0.2,
     }
 })

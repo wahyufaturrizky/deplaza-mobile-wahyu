@@ -145,7 +145,7 @@ function Akun(props) {
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
-                {/* <TouchableOpacity onPress={gotoNotifikasi}>
+                <TouchableOpacity onPress={gotoNotifikasi}>
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>
                         <Image
                             source={require('../../assets/images/megaphone.png')}
@@ -153,9 +153,9 @@ function Akun(props) {
                         />
                         <Text style={{fontSize:18}}>Notifikasi</Text>
                     </View>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
 
-                {/* <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View> */}
+                <View style={{borderTopWidth:1, borderColor:'#D5D5D5'}}></View>
 
                 <TouchableOpacity onPress={gotoTarikDana}>
                     <View style={{justifyContent:'flex-start', flexDirection:'row', alignItems:'center', padding:20}}>

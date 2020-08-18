@@ -136,7 +136,7 @@ function penarikan(props) {
                 <View style={{backgroundColor:'#E0F5FE',}}>
                     <View style={{width:'90%', alignSelf:'center', flexDirection:'row', flexWrap:'wrap', alignItems:'center', marginVertical:height*0.01}}>
                         <Icon name="alert" size={20} color="#07A9F0" />
-                        <Text> Kamu hanya dapat melakukan penarikan 1x/hari</Text>
+                        <Text> Kamu hanya dapat melakukan penarikan 2x/Minggu</Text>
                     </View> 
                 </View>
             </View>

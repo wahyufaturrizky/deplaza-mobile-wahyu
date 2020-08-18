@@ -107,10 +107,13 @@ function jualanAnda(props) {
             .then(response => response.json())
             .then(responseData => {
                 setLoading(false)
+                console.log(responseData.data.length)
                 let order = responseData.data
                 let a = 0
                 order.map((data,i) => {
-                    a++
+                    if(data.status_label === "Pesanan Selesai"){
+                        a++
+                    }
                 })
                 setTotalOrder(a)
             })
@@ -144,7 +147,7 @@ function jualanAnda(props) {
                         <Text style={{color:'white', marginVertical:5}}>Saldo Komisi dan Margin</Text>
                         <View style={{flexDirection:'row', marginVertical:5}}>
                             <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}>Rp </Text>
-                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> {saldo} / {totalOrder - 1} Produk</Text>
+                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> {saldo} / {totalOrder} Produk</Text>
                         </View>
                     </View>
                 </ImageBackground>

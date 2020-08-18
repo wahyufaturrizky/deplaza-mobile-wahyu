@@ -67,7 +67,7 @@ function produk(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProducts(responseData.data)
-                console.log(products.data)
+                // console.log(products.data)
                 setPage(1)
                 setLoading(false)
             })
@@ -104,7 +104,7 @@ function produk(props) {
                 await setProducts(products.concat(responseData.data))
                 setPage(pageNow++)
                 setLoading(false)
-                setLoad(true)
+                // setLoad(true)
                 if(responseData.data.length == 0){
                     setAny(false)
                 }
@@ -148,13 +148,13 @@ function produk(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProducts(responseData.data)
-                setPage(2)
+                setPage(1)
                 setLoading(false)
             })
             .catch(e => console.log(e))
     }
 
-    console.log('product', products);
+    // console.log('product', products);
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
@@ -163,8 +163,6 @@ function produk(props) {
             <Appbar.Header style={[styles.shadow,{backgroundColor:'white', width:'100%', height: 70}]}>
 
                     <Appbar.BackAction onPress={() => {props.navigation.goBack()}} />
-
-                   
 
                     {search ?
                         <View style={{borderBottomColor:'gray', borderBottomWidth:1, width:width*0.4}}>

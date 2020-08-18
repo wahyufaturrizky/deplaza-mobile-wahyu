@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import { Appbar } from 'react-native-paper';
 import { Image, View, StyleSheet, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { color } from 'react-native-reanimated';
 
 function appbarHome(props) {
     const [haveProduk, setHaveProduk] = useState(false)
@@ -11,10 +12,16 @@ function appbarHome(props) {
 
     const logoHorizontal = '../assets/images/dplaza2.png'
     let title =""
+    let likeProduk=""
     
 
     if(props.params.route!=null){
         title = props.params.route.params.title
+    }
+
+    if(props.like!=null){
+        likeProduk = props.like
+        console.log(likeProduk)
     }
 
 
@@ -36,6 +43,10 @@ function appbarHome(props) {
 
     const gotoWishlist = () => {
         props.params.navigation.navigate("Wishlist", {title:"Produk Saya"})
+    }
+
+    const gotoNotifikasi = () => {
+        props.params.navigation.navigate("Notifikasi", {title:"Notifikasi"})
     }
 
     const { height, width } = Dimensions.get("window");
@@ -63,27 +74,39 @@ function appbarHome(props) {
             }
 
             {title==="Home" &&
-                <Appbar.Action size={30} icon="bell-ring-outline"/>
+                <TouchableOpacity onPress={gotoNotifikasi}>
+                    <Appbar.Action size={30} icon="bell-ring-outline"/>
+                </TouchableOpacity>
             }
 
          
 
             {title!=="Home" && 
-                ((title==="Jualan Anda" && haveProduk) ?
+                (title==="Jualan Anda" && haveProduk ?
                     <View style={{flexDirection:'row'}}>
                         <TouchableOpacity onPress={gotoPesanan}>
                             <Appbar.Action size={30} icon="cart" color={(haveProduk) ? 'white' :'black'}/>
                         </TouchableOpacity>
-                        <Appbar.Action size={30} icon="bell-ring-outline" color={(haveProduk) ? 'white' :'black'}/>
+                        <TouchableOpacity onPress={gotoNotifikasi}>
+                            <Appbar.Action size={30} icon="bell-ring-outline" color={(haveProduk) ? 'white' :'black'}/>
+                        </TouchableOpacity>
                     </View>
                 :
                     <View style={{flexDirection:'row'}}>
-                        <Appbar.Action size={30} icon="magnify"/>
                         <TouchableOpacity onPress={gotoWishlist}>
-                            <Appbar.Action size={30} icon="heart"/>
+                            <Appbar.Action size={30} icon="heart" color={likeProduk ? "red" : "gray"}/>
                         </TouchableOpacity>
                     </View>
                 )
+
+                // (title==="Jualan Anda" && haveProduk && 
+                    // <View style={{flexDirection:'row'}}>
+                    //     <Appbar.Action size={30} icon="magnify"/>
+                    //     <TouchableOpacity onPress={gotoWishlist}>
+                    //         <Appbar.Action size={30} icon="heart"/>
+                    //     </TouchableOpacity>
+                    // </View>
+                // )
             }
 
         </Appbar.Header>

@@ -107,13 +107,16 @@ function produkDetail(props) {
             if(qtynow>1){
                 if(qtynow>stock){
                     alert("Maksimal Quantity adalah "+stock)
-                    setQty(stock)
+                    qtynow=stock
+                    setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
+
                 }else{
                     setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
                 }
             }else{
+                let qtynow = 1
                 alert("Minimal Quantity adalah 1")
-                setQty(1)
+                setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
             }
 
         }else if(simbol === "-"){
@@ -121,13 +124,15 @@ function produkDetail(props) {
             if(qtynow>1){
                 if(qtynow>stock){
                     alert("Maksimal Quantity adalah "+stock)
-                    setQty(stock)
+                    qtynow = stock
+                    setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
                 }else{
                     setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
                 }
             }else{
+                qtynow = 1
                 alert("Minimal Quantity adalah 1")
-                setQty(1)
+                setQty(qtynow, setTotalHarga((hargaProduk*qtynow)+totalOngkirNow),setTotalKomisi(dataDetail.price_commission*qtynow))
             }
         }
     }
@@ -292,7 +297,7 @@ function produkDetail(props) {
         await fetch(`${urlKecamatan}/${data_kota.id}`, {headers})
             .then(response => response.json())
             .then(responseData => {
-                console.log('sfsdf', responseData.rajaongkir.results);
+                // console.log('sfsdf', responseData.rajaongkir.results);
                 const mapKota = responseData.rajaongkir.results
                 let data = mapKota.map( s => ({id:s.subdistrict_id,  name:"Kecamatan"+" "+s.subdistrict_name}) );
                 setKecamatan(data)
@@ -307,21 +312,26 @@ function produkDetail(props) {
         //     'Access-Control-Allow-Origin': '*',
         // }
 
-        // fetch(urlKotaDetail+data_kota.id, {headers})
-        //     .then(response => response.json())
-        //     .then(responseData => {
-        //         console.log(responseData)
+        fetch(urlKotaDetail+data_kota.id, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                // console.log('response_city',responseData)
+                // console.log('dataDetail',dataDetail.cod_city_id)
 
-        //         var cod_city = JSON.parse(dataDetail.cod_city_id)
-        //         var n = cod_city.includes(data_kota.id);
+                var cod_city = JSON.parse(dataDetail.cod_city_id)
+                var n = cod_city.includes(data_kota.id);
 
-        //         if(n) {
-        //             setmetodeCOD(true)
-        //         }else{
-        //             setmetodeCOD(false)
-        //         }
-        //     })
-        //     .catch(e => console.log(e))        
+                // console.log('metodeCod', n)
+                // console.log('cityselect', data_kota.id)
+
+                if(n) {
+                    setmetodeCOD(true)
+                }else{
+                    setmetodeCOD(false)
+                }
+                setPilihKota(true)
+            })
+            .catch(e => console.log(e))        
 
         // let formdata = new FormData();
         // formdata.append("origin", dataDetail.city_id)
@@ -345,8 +355,10 @@ function produkDetail(props) {
         // })
     }
 
-    console.log('sfsdf', dataDetail);
+    // console.log('sfsdf', dataDetail);
     const _selectKecamatan = async(data_kota) => {
+        setLoading(true)
+
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
@@ -357,15 +369,15 @@ function produkDetail(props) {
         fetch(urlKotaDetail+data_kota.id, {headers})
             .then(response => response.json())
             .then(responseData => {
-                var cod_city = JSON.parse(dataDetail.cod_city_id)
+                // var cod_city = JSON.parse(dataDetail.cod_city_id)
                 console.log(cod_city)
-                var n = cod_city.includes(data_kota.id);
-                console.log('codiii', data_kota.id);
-                if(n) {
-                    setmetodeCOD(true)
-                }else{
-                    setmetodeCOD(false)
-                }
+                // var n = cod_city.includes(data_kota.id);
+                // console.log('codiii', data_kota.id);
+                // if(n) {
+                //     setmetodeCOD(true)
+                // }else{
+                //     setmetodeCOD(false)
+                // }
             })
             .catch(e => console.log(e.response))        
 
@@ -380,12 +392,13 @@ function produkDetail(props) {
         })
         .then(response => response.json())
         .then(async(responseData) => {
-            console.log('uuu', responseData);
+            // console.log('uuu', responseData);
             let tipe= await responseData.rajaongkir.results[0].costs
             setLoading(false)
             tipe.map((type) => {
-                console.log('tipe', type);
+                // console.log('tipe', type);
                 if(type.service === "REG"){
+                    setLoading(false)
                     setPilihKota(true)
                     setEst(type.cost[0].etd)
                     setTotalOngkir(type.cost[0].value)
@@ -395,7 +408,7 @@ function produkDetail(props) {
         })
     }
 
-    console.log('est', est);
+    // console.log('est', est);
 
     const postWishlist = async(id) => {
         setLoading(true)
@@ -444,16 +457,16 @@ function produkDetail(props) {
         
     }
 
-    console.log('Kecamatan', totalHarga);
+    // console.log('Kecamatan', totalHarga);
 
     return (
         <View style={{backgroundColor:'white', flex:1}}>
-                <Appbar params={props}/>
+                <Appbar params={props} like={(likeProduk<1) ? false : true}/>
             
                 <ScrollView keyboardShouldPersistTaps = 'always' >
                     <View style={{width:'90%', alignSelf:'center', marginBottom:height*0.02 ,flex:1}}>
                         <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
-                        <Text style={{fontSize:14}}>{dataDetail.name}</Text>
+                        <Text style={{fontSize:16, marginVertical:10, textAlign:'center', fontWeight:'bold'}}>{dataDetail.name}</Text>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start'}}>
                             <View style={{width: '100%'}}>
