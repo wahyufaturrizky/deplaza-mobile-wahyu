@@ -33,7 +33,7 @@ export default class Sync extends Component {
         ? 'https://www.instagram.com/'
         : 'https://m.facebook.com/';
     const select =
-      `document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > div").style.color = 'white'; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > ol > li:nth-child(1)").style.color = 'white';`;
+      `document.querySelector("#app > div > div").style.minWidth = '350px'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#pane-side > div:nth-child(1) > div > div > div:nth-child(18) > div > div").addEventListener("click", () => {document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'none'}); document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > div").innerHTML = ""; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > ol").innerHTML = "Cara Scan QR Code: Aktifkan WA Chat kamu di handphone selain handphone yang terinstall Deplaza, Kemudian scan QR code dengan handphone tersebut."; document.querySelector("#app > div > div > div.landing-header").style.display = 'none'; document.querySelector("#app > div > div > div.landing-window > div._3pdvT").style.display = 'none';`;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -64,11 +64,11 @@ export default class Sync extends Component {
           source={{uri: url}}
           injectedJavaScript={select}
         />
-        {  content.title === 'Whatsapp' ?
+        {/* {  content.title === 'Whatsapp' ?
           <View style={{width: '100%', height: 350, backgroundColor: 'white', position: 'absolute', top: 60, alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{textTransform: 'capitalize', textAlign: 'center', width: 300}}>Cara Scan QR Code :
 Aktifkan WA Chat kamu di handphone selain handphone yang terinstall Deplaza, Kemudian scan QR code dengan handphone tersebut.</Text>
-            </View> : null }
+            </View> : null } */}
 
         {/* <View style={styles.content}>
             <Image style={styles.icon} source={content.icon} />
