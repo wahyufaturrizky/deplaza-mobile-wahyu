@@ -3,6 +3,8 @@
 import React,{useEffect, useRef, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, Dimensions} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
+import {name as app_name, version as app_version}  from '../../../package.json';
+import VersionCheck from 'react-native-version-check';
 
 //Untuk Linear Gradient
 import LinearGradient from 'react-native-linear-gradient'
@@ -14,6 +16,9 @@ import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab'
 
 function Home(props) {
+    useEffect(() => {
+        getVersion()
+    }, [])
     const logoStore = '../../assets/images/store.png'
     const { height, width } = Dimensions.get("window");
     
@@ -21,7 +26,14 @@ function Home(props) {
     const mulaiJualan = () => {
         props.navigation.navigate('JualanAnda',{title:'Jualan Anda'})      
     }
-
+    const getVersion = () => {
+        VersionCheck.getLatestVersion({
+            provider: 'playStore'  // for Android
+          })
+          .then(latestVersion => {
+            console.log(latestVersion);    // 0.1.2
+          });
+  }
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             <Appbar params={props}/>

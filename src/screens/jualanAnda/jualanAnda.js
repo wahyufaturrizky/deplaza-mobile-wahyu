@@ -6,12 +6,13 @@ import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient'
 import {URL} from '../../utils/global'
-
+import {name as app_name, version as app_version}  from '../../../package.json';
 
 import Appbar from '../../components/appbarHome'
 import AppbarT from '../../components/appBarTransparent'
 import BottomTab from '../../components/bottomTab'
 import Loading from '../../components/loading'
+import VersionCheck from 'react-native-version-check';
 
 
 function jualanAnda(props) {
@@ -28,6 +29,7 @@ function jualanAnda(props) {
     const urlTotalOrder = URL+"v1/saldo/my-history" 
 
     useEffect(() => {
+        getVersion()
         getListWishlist()
         getSaldo()
         getTotalOrder()
@@ -37,6 +39,13 @@ function jualanAnda(props) {
     const listProduk = (title) => {
         props.navigation.navigate('Produk',{title})      
     }
+
+    const getVersion = () => {
+        VersionCheck.getLatestVersion()
+        .then(latestVersion => {
+          console.log(latestVersion);    // 0.1.2
+        });
+      }
 
     //Pergi ke Hal Pesanan
     const gotoPesanan = () => {
