@@ -7,6 +7,7 @@ import {
   Switch,
   TouchableOpacity,
   Image,
+  BackHandler
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TextInput} from 'react-native-paper';
@@ -24,14 +25,16 @@ export default class Sync extends Component {
     };
   }
 
-  getVersion = () => {
-    VersionCheck.getLatestVersion({
-      provider: 'playStore'  // for Android
-    })
-    .then(latestVersion => {
-      console.log(latestVersion);    // 0.1.2
-    });
-  }
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+}
+
+
+handleBackButton = () => {
+  alert('asdasd')
+   this.setState({home: true})
+    return true;
+}
   
 
   render() {
@@ -44,10 +47,8 @@ export default class Sync extends Component {
         : content.title === 'Instagram'
         ? 'https://www.instagram.com/'
         : 'https://m.facebook.com/';
-    const inject =
-      `document.querySelector("#app > div > div").style.minWidth = '350px'; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > div").innerHTML = ""; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > ol").innerHTML = "Cara Scan QR Code: Aktifkan WA Chat kamu di handphone selain handphone yang terinstall Deplaza, Kemudian scan QR code dengan handphone tersebut."; document.querySelector("#app > div > div > div.landing-header").style.display = 'none'; document.querySelector("#app > div > div > div.landing-window > div._3pdvT").style.display = 'none';`;
-      const injectHome =
-      `document.querySelector("#app > div > div").style.minWidth = '350px'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#pane-side > div:nth-child(1) > div > div > div:nth-child(18) > div > div").addEventListener("click", () => {document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'none'}); document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > div").innerHTML = ""; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > ol").innerHTML = "Cara Scan QR Code: Aktifkan WA Chat kamu di handphone selain handphone yang terinstall Deplaza, Kemudian scan QR code dengan handphone tersebut."; document.querySelector("#app > div > div > div.landing-header").style.display = 'none'; document.querySelector("#app > div > div > div.landing-window > div._3pdvT").style.display = 'none';`;
+    const inject = `document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'block';`
+      const injectHome = `document.querySelector("#app > div > div").style.minWidth = '350px'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#pane-side").addEventListener("click", () => {document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'none'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'block';}); document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > div").innerHTML = ""; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > ol").innerHTML = "Cara Scan QR Code: Aktifkan WA Chat kamu di handphone selain handphone yang terinstall Deplaza, Kemudian scan QR code dengan handphone tersebut."; document.querySelector("#app > div > div > div.landing-header").style.display = 'none'; document.querySelector("#app > div > div > div.landing-window > div._3pdvT").style.display = 'none';`
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -76,21 +77,7 @@ export default class Sync extends Component {
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3714.0 Mobile Safari/537.36'
           }
           source={{uri: url}}
-          onLoadEnd={syntheticEvent => {
-            // update component to be aware of loading status
-            const { nativeEvent } = syntheticEvent;
-            this.isLoading = nativeEvent.loading;
-            this.isLoading === false ? injectHome : inject
-          }}
-          injectedJavaScript={this.state.home ? injectHome : inject}
-          onNavigationStateChange={navState => {
-            // Keep track of going back navigation within component
-           if(navState.canGoBack === true){
-             this.setState({home: true})
-           } else {
-            this.setState({home: false})
-           }
-          }}
+          injectedJavaScript={this.state.home === true ? inject : injectHome}
         />
         {/* {  content.title === 'Whatsapp' ?
           <View style={{width: '100%', height: 350, backgroundColor: 'white', position: 'absolute', top: 60, alignItems: 'center', justifyContent: 'center'}}>
