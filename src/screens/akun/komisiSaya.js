@@ -16,7 +16,6 @@ function pembayaranSaya(props) {
     const { height, width } = Dimensions.get("window");
     let str = ""
     let n = 0
-
     const urlHistory = URL+'v1/saldo/my-history'
 
     useEffect(() => {
@@ -54,9 +53,9 @@ function pembayaranSaya(props) {
         <View style={{flex:1}}>
             {/* <Appbar params={props}/> */}
             <ScrollView style={{backgroundColor:'white'}}>
-                {history.map((data, i) => {
+            {history.map((data, i) => {
                     str = data.description
-                    n = str.search("Pembayaran")
+                    n = str.search("Pembagian")
                     if(n > -1){ return(
                     <View key={i}>
                         <View style={{width:'90%', alignSelf:'center', paddingVertical:10}}>

@@ -46,7 +46,7 @@ function Login(props) {
         props.navigation.dispatch(CommonActions.reset({
             index: 0,
             routes: [
-                        { name: 'Home', params:{title:'Home'} },
+                        { name: 'JualanAnda', params:{title:'Jualan Anda', pop:1} },
                     ]
         }));  
     }

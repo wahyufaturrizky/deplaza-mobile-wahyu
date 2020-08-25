@@ -11,7 +11,8 @@ function notifikasi(props) {
     const [notif, setNotif] = useState([])
     const { height, width } = Dimensions.get("window");
 
-    const urlNotif = URL+'v1/notification'
+    const urlNotif = URL+'v1/notification/me'
+    const urlUpdateNotif = URL+'v1/notification/'
 
     useEffect(() => {
         getNotif()
@@ -24,14 +25,22 @@ function notifikasi(props) {
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
+            'Content-Type' : 'multipart/form-data'
         }
 
-        fetch(urlNotif, {headers})
+        fetch(urlNotif+"?order_direction=desc", {headers})
             .then(response => response.json())
             .then(responseData => {
                 let data = responseData.data
-                console.log(responseData.data)
-                data.reverse()
+                data.map((val,i) => (
+
+                    fetch(urlUpdateNotif+val.id+"/read", {headers})
+                    .then(responseData => console.log(val.id))
+
+                ))
+
+                // console.log(responseData.data)
+                // data.reverse()
                 setNotif(data)
             })
     }

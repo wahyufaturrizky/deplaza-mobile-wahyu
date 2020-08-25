@@ -136,7 +136,7 @@ function penarikan(props) {
                 <View style={{backgroundColor:'#E0F5FE',}}>
                     <View style={{width:'90%', alignSelf:'center', flexDirection:'row', flexWrap:'wrap', alignItems:'center', marginVertical:height*0.01}}>
                         <Icon name="alert" size={20} color="#07A9F0" />
-                        <Text> Kamu hanya dapat melakukan penarikan 2x/Minggu</Text>
+                        <Text>Dana yang kamu tarik akan di transfer 1 x / 2 minggu. Setiap tanggal 1 dan tanggal 16</Text>
                     </View> 
                 </View>
             </View>

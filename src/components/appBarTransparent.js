@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from 'react';
 import { Appbar } from 'react-native-paper';
-import { Image, View, StyleSheet, Dimensions } from 'react-native';
+import { Image, View, StyleSheet, Dimensions, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -12,10 +12,17 @@ function appbarHome(props) {
 
     const logoHorizontal = '../assets/images/dplaza2.png'
     let title =""
+    let notif =0
     
 
     if(props.params.route!=null){
         title = props.params.route.params.title
+    }
+
+
+    if(props.notif!=null){
+        notif = props.notif
+        console.log(props)
     }
 
 
@@ -58,7 +65,10 @@ function appbarHome(props) {
                         <Appbar.Action size={30} icon="cart" color={'white'}/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={gotoNotifikasi}>
-                        <Appbar.Action size={30} icon="bell-ring-outline" color={'white'}/>
+                        <View style={{flexDirection:'row'}}>
+                            <Appbar.Action size={30} icon="bell-ring-outline" color={'white'}/>
+                            <Text style={{color:'white', fontSize:10, marginLeft:-25, height:25, opacity:0.8, borderRadius:20, fontWeight:'bold', padding:5, backgroundColor:'red'}}>{notif}</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
 

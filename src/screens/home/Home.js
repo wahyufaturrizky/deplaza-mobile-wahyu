@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React,{useEffect, useRef, useState} from 'react';
-import {View, Text, Image, TouchableOpacity, Dimensions} from 'react-native'
+import {View, Text, Image, TouchableOpacity, Dimensions, StyleSheet} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 
 //Untuk Linear Gradient
@@ -16,12 +16,12 @@ import BottomTab from '../../components/bottomTab'
 function Home(props) {
     const logoStore = '../../assets/images/store.png'
     const { height, width } = Dimensions.get("window");
-    
+
     //Pergi ke Hal Jualan Anda
     const mulaiJualan = () => {
         props.navigation.navigate('JualanAnda',{title:'Jualan Anda'})      
     }
-
+    
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             <Appbar params={props}/>
@@ -56,6 +56,8 @@ function Home(props) {
             </TouchableOpacity>
 
             <BottomTab {...props}/>
+
+            
 
         </View>
     );

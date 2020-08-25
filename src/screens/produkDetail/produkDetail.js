@@ -465,11 +465,11 @@ function produkDetail(props) {
             
                 <ScrollView keyboardShouldPersistTaps = 'always' >
                     <View style={{width:'90%', alignSelf:'center', marginBottom:height*0.02 ,flex:1}}>
-                        <SliderBox images={dataGambar} style={{width:'100%', height:height*0.4,  resizeMode: 'contain',}}/>
+                        <SliderBox images={dataGambar} style={{width:'90%', height:height*0.4,  resizeMode: 'contain',}}/>
                         <Text style={{fontSize:16, marginVertical:10, textAlign:'center', fontWeight:'bold'}}>{dataDetail.name}</Text>
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start'}}>
-                            <View style={{width: '100%'}}>
+                            <View style={{width: '60%'}}>
                             <SearchableDropdown
                                 onItemSelect={(item) => {
                                     const items = selectKota;
@@ -477,7 +477,7 @@ function produkDetail(props) {
                                     setSelectKota(items)
                                     _selectKota(item)
                                 }}
-                                containerStyle={{width:'60%', borderRadius:10}}
+                                containerStyle={{width:'100%', borderRadius:10}}
                                 onRemoveItem={(item, index) => {
                                     const items = selectKota.filter((sitem) => sitem.id !== item.id);
                                     setSelectKota(items)
@@ -522,7 +522,7 @@ function produkDetail(props) {
                                     setSelectKota(items)
                                     _selectKecamatan(item)
                                 }}
-                                containerStyle={{width:'60%', borderRadius:10}}
+                                containerStyle={{width:'100%', borderRadius:10}}
                                 onRemoveItem={(item, index) => {
                                     const items = selectKota.filter((sitem) => sitem.id !== item.id);
                                     setSelectKota(items)
@@ -560,7 +560,7 @@ function produkDetail(props) {
                                 }
                             />
                         </View>
-                            <TouchableOpacity style={{width:'34%', right: 120}} >
+                            <TouchableOpacity style={{width:'34%',}} >
                                 <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                     style={{padding:15, borderRadius:10}}
                                 >

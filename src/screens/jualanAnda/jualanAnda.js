@@ -15,22 +15,35 @@ import Loading from '../../components/loading'
 
 
 function jualanAnda(props) {
+    
     const [wishlist,setWishlist] = useState(0)
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState("")
     const [saldo, setSaldo] = useState("0")
     const [totalOrder, setTotalOrder] = useState("0")
+    const [popup, setPopup] = useState([])
+    const [modal, setModal] = useState(true)
+    const [notif, setNotif] = useState(0)
  
     const { height, width } = Dimensions.get("window");
     const haveProduk = true
     const urlWishlist = URL+"v1/wishlist/me" 
     const urlSaldo = URL+"v1/saldo/my" 
     const urlTotalOrder = URL+"v1/saldo/my-history" 
+    const urlPopup = URL+"v1/popup" 
+    const urlNotif = URL+'v1/notification/me'
+
+    let pop = 0
+    if(props.route.params.pop!=null){
+        pop = props.route.params.pop
+    }
 
     useEffect(() => {
         getListWishlist()
         getSaldo()
         getTotalOrder()
+        getPopup()
+        getNotif()
     }, [])
 
     //Pergi ke Hal List Produk
@@ -51,6 +64,35 @@ function jualanAnda(props) {
     //Pergi ke Hal List Wishlist
     const gotoWishlist = () => {
         props.navigation.navigate('Wishlist',{title:"Produk Saya"})      
+    }
+
+
+    const getNotif = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+
+        console.log(urlNotif+"?order_direction=desc")
+
+        fetch(urlNotif+"?order_direction=desc", {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                let a=0
+                let data = responseData.data
+                // console.log(responseData.data)
+                // data.reverse()
+                data.map((val,i) => {
+                        console.log(val.id+"status = "+val.status)
+                    if(val.status==0){
+                        a++
+                    }
+                })
+                setNotif(a)
+            })
     }
 
     //Untuk Ngecek Berapa saldonya
@@ -87,7 +129,7 @@ function jualanAnda(props) {
             .then(responseData => {
                 setLoading(false)
                 let totalData = responseData.data.length
-                console.log(totalData)
+                // console.log(totalData)
                 setWishlist(totalData)
             })
             .catch(e => console.log(e))
@@ -107,15 +149,16 @@ function jualanAnda(props) {
             .then(response => response.json())
             .then(responseData => {
                 setLoading(false)
-                console.log(responseData.data.length)
+                // console.log(responseData.data[1].status_label)
                 let order = responseData.data
                 let a = 0
                 order.map((data,i) => {
-                    if(data.status_label === "Pesanan Selesai"){
+                    if(data.status_label === "Sudah dibayar"){
                         a++
+                        // console.log(data.status_label)
                     }
                 })
-                setTotalOrder(a)
+                setTotalOrder(a-1)
             })
             .catch(e => console.log(e))
     }
@@ -124,13 +167,40 @@ function jualanAnda(props) {
     const searchProduk = () => {
         props.navigation.navigate('Produk',{title:"Cari Produk", search:search})      
     }
+    
+    const getPopup = async() => {
+        const value = await AsyncStorage.getItem('data');
+        const data = JSON.parse(value)
+
+        let headers = {
+            Authorization: `Bearer ${data.token}`,
+            'Access-Control-Allow-Origin': '*',
+        }
+        
+        fetch(urlPopup, {headers})
+            .then(response => response.json())
+            .then(responseData => {
+                // console.log(responseData.data)
+                setPopup(responseData.data)
+                if(pop == 1)
+                    setModal(true)
+                else{
+                    setModal(false)
+                }
+            })
+            .catch(e => console.log(e))
+    }
+
+    const modalTrigger = async() =>{
+        setModal(!modal)
+    }
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
             {wishlist>0 ?
-                <AppbarT params={props} haveProduk={haveProduk} wishlist={wishlist}/>
+                <AppbarT params={props} haveProduk={haveProduk} notif={notif} wishlist={wishlist}/>
             :
-                <Appbar params={props} haveProduk={haveProduk} wishlist={wishlist}/>
+                <Appbar params={props} haveProduk={haveProduk} notif={notif} wishlist={wishlist}/>
             }
             
             {wishlist<1 ?
@@ -257,6 +327,7 @@ function jualanAnda(props) {
                             </ImageBackground>
                         </TouchableOpacity>
                     }
+                    
                 </View>
             </View>
             {loading &&
@@ -264,6 +335,23 @@ function jualanAnda(props) {
             }
 
             <BottomTab {...props}/>
+
+            {modal ? popup.map((data, i) => (
+                    <View style={{position:'absolute', flex:1, zIndex:2, width:width, height:height, bottom:0, backgroundColor:'rgba(0,0,0,0.5)', justifyContent:'center', alignItems:'center'}}>
+                        <View style={[styles.shadow,{alignSelf:'center', width:width*0.6, backgroundColor:'rgba(255,255,255,1)', padding:15}]}>
+                            <Text style={{textAlign:'center', marginBottom:10}}>{data.name}</Text>
+                            <Image source={{uri:data.image_url}} style={{width:'80%', alignSelf:'center', height:height*0.3, resizeMode:'contain'}}/>
+                            
+                            <TouchableOpacity style={{alignSelf:'flex-end'}} onPress={() => modalTrigger()}>
+                                <Text style={{fontSize:14, color:'#07A9F0'}}>Tutup</Text>
+                            </TouchableOpacity>
+                            
+                        </View>
+                    </View>
+                ))
+            : null }
+                
+            
 
         </View>
     );
@@ -293,5 +381,16 @@ const styles=StyleSheet.create({
         shadowRadius: 14.78,
         
         elevation: 22,
-    }
+    },
+    shadowModal : {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+    },
 })

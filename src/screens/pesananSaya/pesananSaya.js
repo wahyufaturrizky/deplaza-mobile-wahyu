@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, Dimensions, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, StyleSheet, ImageBackground, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
 import moment from "moment";
 // import Appbar from '../../components/appbarHome'
@@ -12,24 +12,36 @@ import {URL, formatRupiah} from '../../utils/global'
 import Loading from '../../components/loading'
 import InputNormal from '../../components/inputNormal';
 
+const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+}
 
 function pesananSaya(props) {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
-    const [page, setPage] = useState(1)
+    const [page, setPage] = useState(0)
     const [any, setAny] = useState(true)
     const [search, setSearch] = useState(false)
-
+    const [refreshing, setRefreshing] = useState(false);
 
     let halaman = props.route.params.title
 
     const { height, width } = Dimensions.get("window");
     const urlOrder = URL+"/v1/orders/my-order?details=1"
-    
 
     useEffect(() => {
         getProduct()
     },[])
+
+    
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getProduct()
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+
 
     //Pergi ke Hal List Produk
     const detailProduk = (id) => {
@@ -39,7 +51,7 @@ function pesananSaya(props) {
     const getProduct = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
-
+        console.log(data)
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
@@ -157,7 +169,7 @@ function pesananSaya(props) {
 
                 </Appbar.Header>
 
-            <ScrollView style={{flex:1, marginTop:10}}>
+            <ScrollView style={{flex:1, marginTop:10}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
                 {orders.map((data, index) => 
                     <View key={index} style={{flexDirection:'row', marginVertical:10, height:height*0.2, justifyContent:'space-between', borderWidth: 1, borderColor: '#ddd', width:'90%', paddingRight:5, alignSelf:'center', borderRadius:20, borderLeftWidth:0}}>
@@ -172,11 +184,11 @@ function pesananSaya(props) {
                         </View>
                         
                         <View style={{width:width*0.50}}>
-                            <Title style={{fontSize:14, lineHeight:18}}>{data.details[0].product && data.details[0].product.name}</Title>
+                            <Title style={{fontSize:14, lineHeight:18}}>{data.details[0].product && data.details[0].product.name.substring(0,100)}</Title>
                             <View style={{flexDirection:'row', alignItems:'center', marginBottom:height*0.01}}>
                                 <View style={{width:'60%'}}>
-                                    <Text style={{fontSize:14}}>Rp. {formatRupiah(data.total_price+data.total_commission)}</Text>
-                                    <Text style={{color:'#949494', fontSize:10}}>Margin Rp. {formatRupiah(data.total_commission)}</Text>
+                                    <Text style={{fontSize:14}}>Rp. {formatRupiah(data.delivery.sipping_cost+(data.details[0].price*data.details[0].qty)+(data.details[0].benefit*data.details[0].qty)+(data.details[0].qty*data.details[0].commission)+(data.details[0].qty*data.details[0].custom_commission))}</Text>
+                                    <Text style={{color:'#949494', fontSize:10}}>Margin Rp. {formatRupiah((data.details[0].qty*data.details[0].commission)+(data.details[0].qty*data.details[0].custom_commission))}</Text>
                                 </View>
                                 <View style={{width:'30%', borderWidth:1, borderColor:(data.payment.status_label=="Blm Dibayar" || data.payment.status_label=="Ditolak") ? 'red' :'green', padding:5, borderRadius:10}}>
                                     <Text style={{textAlign:'center', fontSize:8, color:(data.payment.status_label=="Blm Dibayar" || data.payment.status_label=="Ditolak") ? 'red' :'green'}}>{data.status_label}</Text>

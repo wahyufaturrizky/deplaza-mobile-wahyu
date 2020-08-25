@@ -16,7 +16,7 @@ import { URL, formatRupiah } from '../../utils/global'
 function wishlist(props) {
     const [wishlist, setWishlist] = useState([])
     const [loading, setLoading] = useState(true)
-    const [page, setPage] = useState(1)
+    const [page, setPage] = useState(0)
     const [any, setAny] = useState(true)
     const [search, setSearch] = useState(false)
 

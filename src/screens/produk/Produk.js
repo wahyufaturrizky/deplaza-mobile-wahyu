@@ -15,7 +15,7 @@ function produk(props) {
     
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(false)
-    const [page, setPage] = useState(1)
+    const [page, setPage] = useState(0)
     const [any, setAny] = useState(true)
     const [search, setSearch] = useState(false)
 
@@ -139,12 +139,14 @@ function produk(props) {
         }
         param +="&keyword="+search
 
+        console.log(urlProduk+"?limit=10&offset=0"+param)
+
         let headers = {
             Authorization: `Bearer ${data.token}`,
             'Access-Control-Allow-Origin': '*',
         }
 
-        fetch(urlProduk+"?limit=10&offset="+page+""+param, {headers})
+        fetch(urlProduk+"?limit=10&offset=0"+param, {headers})
             .then(response => response.json())
             .then(async(responseData) => {
                 await setProducts(responseData.data)

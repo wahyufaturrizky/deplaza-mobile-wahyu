@@ -42,6 +42,7 @@ import ListChat from './src/screens/chat/ListChat';
 import DetailChat from './src/screens/chat/DetailChat';
 import ChatScreen from './src/screens/chat/Chat';
 import Canva from './src/screens/canva';
+import Pembayaran from './src/screens/akun/pembayaran';
 
 const Stack = createStackNavigator();
 
@@ -71,7 +72,7 @@ function StackNav(props) {
         <Stack.Screen name="Lacak" component={Lacak} />
         <Stack.Screen name="SaldoPenjual" component={SaldoPenjual} />
         <Stack.Screen name="Penarikan" component={Penarikan} />
-        <Stack.Screen name="PembayaranSaya" component={PembayaranSaya} />
+        <Stack.Screen name="PembayaranSaya" component={Pembayaran} />
         <Stack.Screen name="Notifikasi" component={Notifikasi} />
         <Stack.Screen name="BantuanFaq" component={BantuanFaq} />
         <Stack.Screen name="MulaiBerjualan" component={MulaiBerjualan} />

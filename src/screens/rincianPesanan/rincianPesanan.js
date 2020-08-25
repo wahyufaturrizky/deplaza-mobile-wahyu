@@ -223,6 +223,7 @@ function Pesan(props) {
                 console.log(result)
                 setModalPesanan(false)
                 alert(result.message)
+                getRincianPesanan()
             })
             .catch(error => console.log('error', error));
     }
@@ -263,7 +264,7 @@ function Pesan(props) {
     }
 
 
-    const totalPrice =(dataDetail.price*dataDetail.qty)+(dataDetail.benefit*dataDetail.qty)+(dataDetail.commission*dataDetail.qty)+dataDetail.custom_commission+delivery
+    const totalPrice =(dataDetail.price*dataDetail.qty)+(dataDetail.benefit*dataDetail.qty)+(dataDetail.commission*dataDetail.qty)+(dataDetail.custom_commission*dataDetail.qty)+delivery
 
     return (
         <View style={{ backgroundColor: 'white', flex: 1 }}>
@@ -315,7 +316,7 @@ function Pesan(props) {
                     <View>
                         <Text style={{ fontSize: 18 }}>Alamat Pengiriman</Text>
                         <View style={{ marginTop: height * 0.02 }}>
-                            <Text style={{ fontSize: 14 }}>{receiver_name}</Text>
+                            <Text style={{ fontSize: 14 }}>Nama Penerima : {receiver_name}</Text>
                             <Text style={{ fontSize: 14 }}>{receiver_address}</Text>
                             <Text style={{ fontSize: 16 }}>{phone}</Text>
                         </View>
@@ -432,8 +433,8 @@ function Pesan(props) {
                             <Text style={{ color: 'gray', fontSize: 12 }}>(Komisi + Tambahan Margin)</Text>
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
-                            <Text style={{ fontSize: 12 }}>Rp. {formatRupiah(dataDetail.commission*dataDetail.qty)} + Rp. {formatRupiah(custom_commission)}</Text>
-                            <Text>Rp. {formatRupiah(parseInt(dataDetail.commission*dataDetail.qty)+custom_commission).toString()}</Text>
+                            <Text style={{ fontSize: 12 }}>Rp. {formatRupiah(dataDetail.commission*dataDetail.qty)} + Rp. {formatRupiah(custom_commission*dataDetail.qty)}</Text>
+                            <Text>Rp. {formatRupiah(parseInt(dataDetail.commission*dataDetail.qty)+(custom_commission*dataDetail.qty)).toString()}</Text>
                         </View>
                     </View>
                 </View>
@@ -512,23 +513,13 @@ function Pesan(props) {
                         </TouchableOpacity> 
                     :
                         <View style={{ flexDirection: 'row', justifyContent:'center' }}>
-                            {(statusOrder === 'Sedang di Proses' ?
+                            {(statusOrder === 'Sedang di Proses' &&
                             <TouchableOpacity onPress={modalTrigger} style={{width:'50%'}}>
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                     style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}
                                 >
                                     <Text style={{ fontSize: 14, textAlign: 'center', color: 'white', marginLeft: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10, marginRight: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10 }}>
                                         Bukti Transfer Bank
-                                    </Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                            :
-                            <TouchableOpacity style={{width:'50%'}}>
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                    style={{ padding: 10, justifyContent: 'center', alignItems: 'center', }}
-                                >
-                                    <Text style={{ fontSize: 14, textAlign: 'center', color: 'white', marginLeft: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10, marginRight: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10 }}>
-                                        Pembayaran di Setujui
                                     </Text>
                                 </LinearGradient>
                             </TouchableOpacity>
@@ -570,7 +561,17 @@ function Pesan(props) {
                         </TouchableOpacity>
                     </View>
             :
-                <View></View>
+                <View style={{ flexDirection: 'row', alignItems:'center'}}>
+                    <TouchableOpacity onPress={handleCancel} style={{width:'100%'}}>
+                        <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#FF5976', '#FF5976', '#FF5976']}
+                            style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}
+                        >
+                            <Text style={{ fontSize: 15, textAlign: 'center', color: 'white' }}>
+                                Batalkan Order
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
             }
         </View>
     );

@@ -16,3 +16,7 @@ export const formatRupiah = (bilangan) => {
 
     return(rupiah)
 }
+export const capitalLetters = (s) => {
+    let word = s.toLowerCase()
+    return word.trim().split(" ").map(i => i[0].toUpperCase() + i.substr(1)).reduce((ac, i) => `${ac} ${i}`);
+}
