@@ -50,12 +50,13 @@ function produkDetail(props) {
     const urlKota = URL+"v1/shipment/cities"
     const urlKecamatan = URL+"v1/shipment/subdistrict/city"
     const urlOngkir = URL+"v1/shipment/cost/subdistrict"
-    const urlWishlistMe = URL+"v1/wishlist/me"
+    const urlWishlistMe = URL+"v1/wishlist/me?limit=1000000"
     const urlWishlist = URL+"v1/wishlist"
     const urlKotaDetail = URL+"v1/shipment/city/"
 
     const { height, width } = Dimensions.get("window");
     let id = props.route.params.id
+    console.log('id', id);
 
     useEffect(() => {
         getDetailProduct()
@@ -76,6 +77,7 @@ function produkDetail(props) {
     const CekTandai = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
+        console.log('token', data.token);
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
@@ -86,16 +88,20 @@ function produkDetail(props) {
             .then(response => response.json())
             .then(responseData => {
                 let res = responseData.data
-                let row = 0
+                console.log('dfdsf', id, data.product_id);
+                let row = 1
                 res.map((data,i) => {
-                    if(data.product_id == id){
-                        row++
+                    console.log('okok', data.product_id);
+                    if(data.product_id === id){
+                        setLikeProduk(1)
                     }
                 })
-                setLikeProduk(row)
+                
             })
             .catch(e => console.log(e))
     }
+
+    console.log('kkk', likeProduk);
  
     const changeQty = (simbol) => {
         let hargaProduk = parseInt(dataDetail.price_basic+dataDetail.price_commission+dataDetail.price_benefit)
@@ -392,11 +398,12 @@ function produkDetail(props) {
         })
         .then(response => response.json())
         .then(async(responseData) => {
-            // console.log('uuu', responseData);
+            console.log('uuu', responseData);
             let tipe= await responseData.rajaongkir.results[0].costs
+            console.log('tipe', tipe);
             setLoading(false)
             tipe.map((type) => {
-                // console.log('tipe', type);
+                console.log('tipe', type.cost[0].value);
                 if(type.service === "REG"){
                     setLoading(false)
                     setPilihKota(true)
@@ -434,9 +441,10 @@ function produkDetail(props) {
     
         .then((response) => response.json())
         .then( async(responseData) => {
+            console.log(responseData);
                 setLoading(false)
                 gotoRincianProduk()
-        })
+        }).catch(e => console.log(e))
         .done();
     }
     
@@ -703,7 +711,23 @@ function produkDetail(props) {
                     Deskripsi Berhasil di Salin
                 </Snackbar>
 
-                {likeProduk<1 ?
+                {likeProduk === 1 ?
+                 <View style={[styles.shadow, {flexDirection:'row', height:height*0.06}]}>
+                 <TouchableOpacity style={{ width:'50%', height:height*0.06}} onPress={checkPermission}>
+                     <View style={{flexDirection:'row', padding:height*0.01, justifyContent:'space-around', alignItems:'center'}}>
+                         <Icon name="cloud-download" size={height*0.04} color="#07A9F0"/>
+                         <Text style={{fontSize:width*0.03, color:'#07A9F0'}}>Simpan Gambar</Text>
+                     </View>
+                 </TouchableOpacity>
+
+                 <TouchableOpacity style={{width:'50%', height:height*0.06}} onPress={gotoPesan}>
+                     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                         style={{flexDirection:'row', padding:height*0.01 ,  justifyContent:'space-around', alignItems:'center'}}>
+                             <Image source={require('../../assets/images/inbox.png')} style={{width:width*0.08, height:width*0.08}} />
+                             <Text style={{fontSize:width*0.03, color:'#fff'}}>Pesan {"&"} Kirim</Text>
+                     </LinearGradient>
+                 </TouchableOpacity>
+             </View> :
                     <TouchableOpacity  onPress={() => postWishlist(dataDetail.id)}>
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
                             style={{padding:15, flexDirection:"row", justifyContent:'center', alignItems:'center'}}
@@ -714,23 +738,7 @@ function produkDetail(props) {
                             </Text>
                         </LinearGradient>
                     </TouchableOpacity>
-                :
-                    <View style={[styles.shadow, {flexDirection:'row', height:height*0.06}]}>
-                        <TouchableOpacity style={{ width:'50%', height:height*0.06}} onPress={checkPermission}>
-                            <View style={{flexDirection:'row', padding:height*0.01, justifyContent:'space-around', alignItems:'center'}}>
-                                <Icon name="cloud-download" size={height*0.04} color="#07A9F0"/>
-                                <Text style={{fontSize:width*0.03, color:'#07A9F0'}}>Simpan Gambar</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={{width:'50%', height:height*0.06}} onPress={gotoPesan}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                style={{flexDirection:'row', padding:height*0.01 ,  justifyContent:'space-around', alignItems:'center'}}>
-                                    <Image source={require('../../assets/images/inbox.png')} style={{width:width*0.08, height:width*0.08}} />
-                                    <Text style={{fontSize:width*0.03, color:'#fff'}}>Pesan {"&"} Kirim</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    </View>
+              
                 }
             
         </View>

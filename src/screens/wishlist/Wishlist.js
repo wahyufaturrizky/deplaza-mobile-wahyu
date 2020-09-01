@@ -136,7 +136,7 @@ function wishlist(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlOrder + '?limit=10&offset=0&order_direction=desc' + param, {
+    fetch('https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=0&order_direction=desc' + param, {
       headers,
     })
       .then(response => response.json())
