@@ -139,10 +139,10 @@ function Kembali(props) {
     }
 
     const postTukar = async() => {
-        setLoading(false)
+        setLoading(true)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
-
+        console.log(data)
         const options = {
           noData: true,
         }
@@ -175,7 +175,7 @@ function Kembali(props) {
             body:formData
         })
 
-        .then(response => response.json())
+        .then(response => console.log(response.text()))
         .then(async(responseData) => {
             console.log(responseData)
             setLoading(false)
@@ -281,7 +281,7 @@ function Kembali(props) {
                         <View style={{borderWidth:1, borderColor:'#D5D5D5', width:'20%', height:height*0.065, justifyContent:'center', alignItems:'center'}}>
                             <InputNormal
                                 style={{borderColor:'rgb(18, 48, 92)', fontSize:10, color:'black', }}
-                                value={qty.toString()}
+                                value={selectQty.toString()}
                                 disabled
                                 editable={false}
                             />
@@ -297,14 +297,14 @@ function Kembali(props) {
 
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
                 <View style={{borderTopWidth:1, borderColor:'#D5D5D5', marginVertical:height*0.01}}></View>
-                <View style={{flexDirection:'row', width:'100%', alignSelf:'center', alignItems:'center', marginTop: 20}}>
+                <View style={{flexDirection:'row', width:'90%', alignSelf:'center', alignItems:'center', marginTop: 20}}>
                     <Checkbox
                         status={check ? 'checked' : 'unchecked'}
                         onPress={() => {
                             setCheck(!check);
                         }}
                     />
-                    <Text style={{width: 300, textAlign:'left'}}>Saya Setuju untuk Mengembalikan Sesuai Kondisi Semula.</Text>
+                    <Text style={{textAlign:'left'}}>Saya Setuju untuk Mengembalikan Sesuai Kondisi Semula.</Text>
                 </View>
 
             </ScrollView>

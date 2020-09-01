@@ -101,7 +101,7 @@ function Pesan(props) {
             // console.log(image);
             setPhoto(image)
             let image64 = `data:${image.mime};base64,${image.data}`;
-            console.log(image64)
+            // console.log(image64)
 
             let formdata = new FormData();
             formdata.append("proof_payment", image64)
@@ -111,7 +111,7 @@ function Pesan(props) {
             })
             .then(response => response.json())
             .then(async(responseData) => {
-                console.log(responseData)
+                // console.log(responseData)
                 setLoading(false)
                 gotoPesanan()
             })
@@ -137,7 +137,7 @@ function Pesan(props) {
         let hargaProduk = parseInt(priceBasic)
         let totalOngkirNow = parseInt(totalOngkir)
         let komisiDasar = parseInt(priceCommission)
-        let tmargin = parseInt(margin)
+        let tmargin = parseInt(margin/qty)
 
         if(simbol === "+"){
             let qtynow = parseInt(qty)+1
@@ -145,20 +145,24 @@ function Pesan(props) {
                 if(qtynow>stock){
                     alert("Maksimal Quantity adalah "+stock)
                     qtynow = stock
-                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+(tmargin*qtynow)), setTotalKomisi(komisiDasar*qtynow))
                     setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow))
-                    setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+                    setTotalPendapatan((tmargin*qtynow)+(komisiDasar*qtynow))
+                    setMargin(tmargin*qtynow)
                 }else{
-                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+(tmargin*qtynow)), setTotalKomisi(komisiDasar*qtynow))
                     setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow))
-                    setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+                    setTotalPendapatan((tmargin*qtynow)+(komisiDasar*qtynow))
+                    console.log(tmargin)
+                    setMargin(tmargin*qtynow)
                 }
             }else{
                 alert("Minimal Quantity adalah 1")
                 qtynow = 1
-                setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+(tmargin*qtynow)), setTotalKomisi(komisiDasar*qtynow))
                 setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow))
-                setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+                setTotalPendapatan((tmargin*qtynow)+(komisiDasar*qtynow))
+                setMargin(tmargin*qtynow)
             }
         }else if(simbol === "-"){
             let qtynow = parseInt(qty)-1
@@ -166,20 +170,24 @@ function Pesan(props) {
                 if(qtynow>stock){
                     alert("Maksimal Quantity adalah "+stock)
                     qtynow = stock
-                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+(tmargin*qtynow)), setTotalKomisi(komisiDasar*qtynow))
                     setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow))
-                    setTotalPendapatan(tmargin+(komisiDasar*qtynow))
+                    setTotalPendapatan((tmargin*qtynow)+(komisiDasar*qtynow))
+                    setMargin(tmargin*qtynow)
                 }else{
-                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                    setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+(tmargin*qtynow)), setTotalKomisi(komisiDasar*qtynow))
                     setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow))
-                    setTotalPendapatan(tmargin+(komisiDasar*qtynow))
-                }
+                    setTotalPendapatan((tmargin*qtynow)+(komisiDasar*qtynow))
+                    setMargin(tmargin*qtynow)
+            }
             }else{
                 alert("Minimal Quantity adalah 1")
                 qtynow = 1
-                setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+tmargin), setTotalKomisi(komisiDasar*qtynow))
+                setQty(qtynow, setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+(tmargin*qtynow)), setTotalKomisi(komisiDasar*qtynow))
                 setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow))
-                setTotalPendapatan(tmargin+(totalBiaya))
+                setTotalPendapatan((tmargin*qtynow)+(komisiDasar*qtynow))
+                setMargin(tmargin*qtynow)
+
             }
         }
     }
@@ -190,7 +198,7 @@ function Pesan(props) {
         const data = JSON.parse(value)
         // setFullname(data.fullname)
         // setPhone(data.phone)
-        console.log(data)
+        // console.log(data)
 
 
         let headers = {
@@ -202,7 +210,7 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async(responseData) => {
                 await setDataDetail(responseData.data)
-                console.log(responseData.data)
+                // console.log(responseData.data)
                 setTotalPendapatan(responseData.data.price_commission*qty)
                 setTotalKomisi(responseData.data.price_commission*qty)
                 setJudul(responseData.data.name)
@@ -218,9 +226,9 @@ function Pesan(props) {
     
     // Fungsi untuk mengganti margin
     const changeMargin = (text) => {
-        setMargin(text)
+        setMargin(qty*parseInt(text))
 
-        let tmargin = parseInt(text)
+        let tmargin = qty*parseInt(text)
         let tkomisi = parseInt(totalKomisi)
 
         setTotalKeseluruhan(totalBiaya+tmargin)
@@ -249,7 +257,7 @@ function Pesan(props) {
     const getKota = async(id_prov) => {
         setLoading(true)
         setProvinsi(id_prov)
-        console.log(id_prov)
+        // console.log(id_prov)
 
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -278,7 +286,7 @@ function Pesan(props) {
     const getKecamatan = async(id_kota) => {
         setLoading(true)
         setKota(id_kota)
-        console.log(id_kota)
+        // console.log(id_kota)
 
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
@@ -296,7 +304,7 @@ function Pesan(props) {
                 fetch(urlKotaDetail+id_kota, {headers})
                     .then(response => response.json())
                     .then(async(responseData) => {
-                        console.log(responseData.rajaongkir.results.postal_code);
+                        // console.log(responseData.rajaongkir.results.postal_code);
                         await setKotaDetail(responseData.rajaongkir.results)
                         setPos(responseData.rajaongkir.results.postal_code)
                         setLoading(false)
@@ -304,7 +312,7 @@ function Pesan(props) {
             })
     }
 
-    console.log('subdistricts', subdistricts);
+    // console.log('subdistricts', subdistricts);
 
     const _setKecamatan = (id_kec) => {
         fetch(urlKecamatanDetail+id_kec, {headers})
@@ -343,7 +351,7 @@ function Pesan(props) {
         }else if(alamat==""){
             alert("Anda Belum Mengisi Alamat")
         }else{
-            setLoading(true)
+            // setLoading(true)
             let headers = {
                 Authorization: `Bearer ${data.token}`,
                 'Access-Control-Allow-Origin': '*',
@@ -359,7 +367,7 @@ function Pesan(props) {
                         "product_qty": qty,
                         "product_variation": JSON.stringify(variation), // {"size" : ['red','blue'], "color" : ['xl','l']}
                         "product_note": "",
-                        "product_custom_commission" : margin //Margin yang ditambahkan manual
+                        "product_custom_commission" : margin/qty //Margin yang ditambahkan manual
                     }
                 ],
                 "customer": {
@@ -412,7 +420,7 @@ function Pesan(props) {
 
     }
 
-    console.log('metodeCOD', metodeCOD);
+    // console.log('metodeCOD', metodeCOD);
 
     return (
         <View style={{backgroundColor:'white', flex:1}}>
@@ -467,7 +475,7 @@ function Pesan(props) {
 
                         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                             <View>
-                                <Text>Tambahan Margin Jika Ada</Text>
+                                <Text>Tambahan Margin (Per Produk) Jika Ada</Text>
                                 <Text style={{color:'gray', fontSize:12}}>*Boleh Tidak Diisi</Text>
                             </View>
                             <View style={{flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}}>
@@ -481,6 +489,7 @@ function Pesan(props) {
                                         keyboardType = 'numeric'
                                     />
                                 </View>
+                                
                             </View>
                         </View>
 
@@ -638,7 +647,7 @@ function Pesan(props) {
                                 <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                                     <View style={{width:'50%'}}>
                                         
-                                        <Text>Rp. {formatRupiah(priceBasic+(totalKomisi/qty)+benefit)}</Text>
+                                        <Text>{formatRupiah(totalKeseluruhan)}</Text>
                                         <View>
                                             {variation.map((val,i) => (
                                                     <Text key={i} style={{fontSize:14, color:'gray'}}>{Object.keys(val)[0]}: {val[Object.keys(val)[0]]}</Text>

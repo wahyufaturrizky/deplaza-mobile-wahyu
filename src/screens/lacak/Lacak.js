@@ -18,6 +18,11 @@ function Lacak(props) {
     const [loading, setLoading] = useState(true)
     const [methodId, setMethodId] = useState(0)
     const [qty, setQty] = useState("")
+    const [komisi, setKomisi] = useState(0)
+    const [kustomKomisi, setKustomKimisi] = useState(0)
+    const [benefit, setBenefit] = useState(0)
+    const [shipCost, setShipCost] = useState(0)
+    const [price, setPrice] = useState(0)
     const [total_price, setTotal_price] = useState(0)
     const [trackingId, setTrackingId] = useState("")
     const [trackingName, setTrackingName] = useState("")
@@ -53,11 +58,16 @@ function Lacak(props) {
             .then(async (responseData) => {
                 let logs = responseData.data.logs
                 logs.reverse();
-               await setLogs(logs)
-                await setMethodId(responseData.data.payment.method_id)
-                await setTrackingId(responseData.data.delivery.tracking_id)
-                await setQty(responseData.data.details[0].qty)
-                await setTotal_price(responseData.data.total_price)
+                setLogs(logs)
+                setMethodId(responseData.data.payment.method_id)
+                setTrackingId(responseData.data.delivery.tracking_id)
+                setQty(responseData.data.details[0].qty)
+                setTotal_price(responseData.data.total_price)
+                setShipCost(responseData.data.delivery.sipping_cost)
+                setBenefit(responseData.data.details[0].benefit)
+                setKustomKimisi(responseData.data.details[0].custom_commission)
+                setKomisi(responseData.data.details[0].commission)
+                setPrice(responseData.data.details[0].price)
 
                 let id_produk = responseData.data.details[0].product_id
 
@@ -77,6 +87,7 @@ function Lacak(props) {
                             resi: responseData.data.delivery.tracking_id,
                             courier:  response.data.name.toLowerCase()
                         }
+                        setTrackingName(nameTracking)
                        await fetch(urlCourirTracing, {
                             method: 'POST', headers,
                             body: JSON.stringify(dataResi),
@@ -129,7 +140,7 @@ function Lacak(props) {
     const _onDismissSnackBar = () => setCopy(false)
 
   
-
+    const totalPrice =(price*qty)+(benefit*qty)+(komisi*qty)+(kustomKomisi*qty)+shipCost
     console.log('manifest', manifest);
 
     return (
@@ -224,7 +235,7 @@ function Lacak(props) {
                             <View>
                                 <View>
                                     <Text style={{ fontSize: 14 }}>{productName}</Text>
-                                    <Text>Rp. {formatRupiah(total_price)}</Text>
+                                    <Text>Rp. {formatRupiah(totalPrice)}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{ fontSize: 14, color: 'gray', marginTop: height * 0.01 }}>Jumlah: {qty}</Text>
                                     </View>

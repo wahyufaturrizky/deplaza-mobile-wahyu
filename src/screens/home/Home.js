@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React,{useEffect, useRef, useState} from 'react';
-import {View, Text, Image, TouchableOpacity, Dimensions} from 'react-native'
+import {View, Text, Image, TouchableOpacity, Dimensions, StyleSheet} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 import {name as app_name, version as app_version}  from '../../../package.json';
 import VersionCheck from 'react-native-version-check';
@@ -21,7 +21,7 @@ function Home(props) {
     }, [])
     const logoStore = '../../assets/images/store.png'
     const { height, width } = Dimensions.get("window");
-    
+
     //Pergi ke Hal Jualan Anda
     const mulaiJualan = () => {
         props.navigation.navigate('JualanAnda',{title:'Jualan Anda'})      
@@ -68,6 +68,8 @@ function Home(props) {
             </TouchableOpacity>
 
             <BottomTab {...props}/>
+
+            
 
         </View>
     );

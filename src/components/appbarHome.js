@@ -92,11 +92,13 @@ function appbarHome(props) {
                         </TouchableOpacity>
                     </View>
                 :
+                    ((title !== "Bantuan Jualan" && title !== "Bantuan Foto" && title !== "Bantuan Judul" && title!=="Bantuan Lain") &&
                     <View style={{flexDirection:'row'}}>
                         <TouchableOpacity onPress={gotoWishlist}>
-                            <Appbar.Action size={30} icon="heart" color={likeProduk ? "red" : "gray"}/>
+                            <Appbar.Action size={30} icon="heart" color={(likeProduk || title==="Produk Saya") ? "red" : "gray"}/>
                         </TouchableOpacity>
                     </View>
+                    )
                 )
 
                 // (title==="Jualan Anda" && haveProduk && 
