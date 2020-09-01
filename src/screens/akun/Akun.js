@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React,{useState,useEffect} from 'react';
-import { View, Text, Dimensions, Image, Alert } from 'react-native';
+import { View, Text, Dimensions, Image, Alert, ScrollView } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -94,7 +94,7 @@ function Akun(props) {
     return (
         <View style={{flex:1}}>
             <Appbar params={props}/>
-
+<ScrollView>
             <View style={{flex:1, backgroundColor:'white'}}>
 
                 <View style={{flexDirection:'row', padding:25, backgroundColor:'#F8F8F8', justifyContent:'flex-start', alignItems:'center'}}>
@@ -182,6 +182,7 @@ function Akun(props) {
                 <Loading/>
             }
             
+            </ScrollView>
             <BottomTab {...props}/>
 
         </View>

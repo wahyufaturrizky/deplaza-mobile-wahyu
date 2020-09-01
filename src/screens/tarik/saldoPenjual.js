@@ -61,7 +61,7 @@ function saldoPenjual(props) {
                     <TouchableOpacity onPress={gotoPenarikan} style={{justifyContent:'center', alignItems:'center'}}>
                         <Image 
                             source={require('../../assets/images/penarikan.png')}
-                            style={{width:width*0.15, height:width*0.2,marginBottom:height*0.01}}
+                            style={{width:50,height:50,marginBottom:height*0.01, resizeMode:"contain"}}
                         />
                         <Text>Penarikan</Text>
                     </TouchableOpacity>
@@ -71,7 +71,7 @@ function saldoPenjual(props) {
                     <TouchableOpacity onPress={gotoPembayaran} style={{justifyContent:'center', alignItems:'center'}}>
                         <Image 
                             source={require('../../assets/images/transaksi.png')}
-                            style={{width:width*0.2,height:width*0.2,marginBottom:height*0.01}}
+                            style={{width:50,height:50,marginBottom:height*0.01, resizeMode:"contain"}}
                         />
                         <Text>Transaksi</Text>
                     </TouchableOpacity>
