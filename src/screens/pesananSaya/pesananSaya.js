@@ -116,7 +116,7 @@ function pesananSaya(props) {
     setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
-    let param = '&invoice=' + search;
+    let param = '&invoice=' + search + '&name_customer=' + search;
     // console.log(urlOrder+"?limit=10&offset="+page+""+param)
 
     let headers = {
