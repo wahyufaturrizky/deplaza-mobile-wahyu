@@ -21,7 +21,7 @@ function jualanAnda(props) {
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState("")
     const [saldo, setSaldo] = useState("0")
-    const [totalOrder, setTotalOrder] = useState("0")
+    const [totalOrder, setTotalOrder] = useState([])
     const [popup, setPopup] = useState([])
     const [modal, setModal] = useState(true)
     const [notif, setNotif] = useState(0)
@@ -30,7 +30,7 @@ function jualanAnda(props) {
     const haveProduk = true
     const urlWishlist = URL+"v1/wishlist/me" 
     const urlSaldo = URL+"v1/saldo/my" 
-    const urlTotalOrder = URL+"v1/saldo/my-history" 
+    const urlTotalOrder = URL+"v1/orders/my-order?status=5" 
     const urlPopup = URL+"v1/popup" 
     const urlNotif = URL+'v1/notification/me'
 
@@ -79,6 +79,7 @@ function jualanAnda(props) {
     const getNotif = async() => {
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
+        console.log(data.token);
 
         let headers = {
             Authorization: `Bearer ${data.token}`,
@@ -157,20 +158,14 @@ function jualanAnda(props) {
         fetch(urlTotalOrder, {headers})
             .then(response => response.json())
             .then(responseData => {
+                console.log('yyyy', responseData);
                 setLoading(false)
-                // console.log(responseData.data[1].status_label)
-                let order = responseData.data
-                let a = 0
-                order.map((data,i) => {
-                    if(data.status_label === "Sudah dibayar"){
-                        a++
-                        // console.log(data.status_label)
-                    }
-                })
-                setTotalOrder(a-1)
+                setTotalOrder(responseData.data)
             })
             .catch(e => console.log(e))
     }
+
+    console.log('sfsdfs', totalOrder);
 
     //Pergi ke Hal Cari Produk
     const searchProduk = () => {
@@ -226,7 +221,7 @@ function jualanAnda(props) {
                         <Text style={{color:'white', marginVertical:5}}>Saldo Komisi dan Margin</Text>
                         <View style={{flexDirection:'row', marginVertical:5}}>
                             <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}>Rp </Text>
-                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> {saldo} / {totalOrder} Produk</Text>
+                            <Text style={{color:'white', fontSize:16, fontWeight:'bold'}}> {saldo} / {totalOrder.length} Produk</Text>
                         </View>
                     </View>
                 </ImageBackground>

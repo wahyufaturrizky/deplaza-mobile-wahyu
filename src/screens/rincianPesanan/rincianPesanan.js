@@ -43,7 +43,6 @@ function Pesan(props) {
     const [expired, setExpired] = useState(false)
     const [delivery, setDelivery] = useState("")
     const [variation, setVariation] = useState([])
-    const [dataAll, setDataAll] = useState({})
 
     const [productImages, setProductImages] = useState("https://via.placeholder.com/150")
     const [productName, setProductName] = useState("0")
@@ -140,7 +139,6 @@ function Pesan(props) {
             .then(response => response.json())
             .then(async (responseData) => {
                 console.log(responseData);
-                setDataAll(responseData.data)
                 setDataDetail(responseData.data.details[0])
                 setVariation(JSON.parse(responseData.data.details[0].variation))
                 setMethodId(responseData.data.payment.method_id)
@@ -223,7 +221,7 @@ function Pesan(props) {
                 console.log(result)
                 setModalPesanan(false)
                 alert(result.message)
-                getRincianPesanan()
+                props.navigation.goBack()
             })
             .catch(error => console.log('error', error));
     }
@@ -264,7 +262,7 @@ function Pesan(props) {
     }
 
 
-    const totalPrice =(dataDetail.price*dataDetail.qty)+(dataDetail.benefit*dataDetail.qty)+(dataDetail.commission*dataDetail.qty)+(dataDetail.custom_commission*dataDetail.qty)+delivery
+    const totalPrice = dataDetail.benefit + dataDetail.commission + dataDetail.discount + dataDetail.custom_commission + dataDetail.price + delivery
 
     return (
         <View style={{ backgroundColor: 'white', flex: 1 }}>
@@ -279,7 +277,7 @@ function Pesan(props) {
                     </View>
                 }
 
-                {(statusOrder == "Pesanan Selesai") &&
+                {statusOrder == "Pesanan Selesai" &&
                     <View style={{ backgroundColor: '#93DCFC', padding: 15, justifyContent: 'center', alignItems: 'center' }}>
                         <Image
                             source={require('../../assets/images/Solid.png')}
@@ -316,7 +314,7 @@ function Pesan(props) {
                     <View>
                         <Text style={{ fontSize: 18 }}>Alamat Pengiriman</Text>
                         <View style={{ marginTop: height * 0.02 }}>
-                            <Text style={{ fontSize: 14 }}>Nama Penerima : {receiver_name}</Text>
+                            <Text style={{ fontSize: 14 }}>{receiver_name}</Text>
                             <Text style={{ fontSize: 14 }}>{receiver_address}</Text>
                             <Text style={{ fontSize: 16 }}>{phone}</Text>
                         </View>
@@ -386,7 +384,7 @@ function Pesan(props) {
 
                     </View>
                 </View>
-                {(statusOrder === 'Pesanan dibatalkan') ? null :
+                {statusOrder === 'Pesanan dibatalkan' ? null :
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginLeft: 20, marginRight: 20, marginTop: 10 }}>
                         {statusOrder === 'Pesanan Selesai' ? null :
                             <TouchableOpacity style={{ width: '40%' }} onPress={gotoKembali}>
@@ -395,18 +393,19 @@ function Pesan(props) {
                                 >
                                     <Text style={{ fontSize: 12, textAlign: 'center', color: 'white' }}>
                                         Komplain
-                                    </Text>
+                    </Text>
                                 </LinearGradient>
                             </TouchableOpacity>}
+                            {statusOrder === 'Pesanan Selesai'  ? null :
                         <TouchableOpacity style={{ width: '40%' }} onPress={submitFinisOrder}>
                             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{ padding: 5, justifyContent: 'center', alignItems: 'center', padding: 8, borderRadius: 5, }}
                             >
                                 <Text style={{ fontSize: 12, textAlign: 'center', color: 'white' }}>
                                     Pesanan Selesai
-                                </Text>
+                    </Text>
                             </LinearGradient>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
                     </View>}
                 <View style={{ borderTopWidth: 1, borderColor: '#D5D5D5', marginTop: height * 0.03, marginBottom: height * 0.01 }}></View>
 
@@ -416,7 +415,7 @@ function Pesan(props) {
                             <Text>Biaya Produk</Text>
                             <Text style={{ color: 'gray', fontSize: 12 }}>*Harga Sudah Termasuk Ongkir</Text>
                         </View>
-                        <Text>Rp. {formatRupiah(totalPrice-custom_commission)}</Text>
+                        <Text>Rp. {formatRupiah(dataDetail.benefit + dataDetail.commission + dataDetail.discount + dataDetail.price + delivery)}</Text>
                     </View>
 
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -433,8 +432,8 @@ function Pesan(props) {
                             <Text style={{ color: 'gray', fontSize: 12 }}>(Komisi + Tambahan Margin)</Text>
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
-                            <Text style={{ fontSize: 12 }}>Rp. {formatRupiah(dataDetail.commission*dataDetail.qty)} + Rp. {formatRupiah(custom_commission*dataDetail.qty)}</Text>
-                            <Text>Rp. {formatRupiah(parseInt(dataDetail.commission*dataDetail.qty)+(custom_commission*dataDetail.qty)).toString()}</Text>
+                            <Text style={{ fontSize: 12 }}>Rp. {formatRupiah(commission)} + Rp. {formatRupiah(custom_commission)}</Text>
+                            <Text>Rp. {formatRupiah(parseInt(commission) + parseInt(custom_commission)).toString()}</Text>
                         </View>
                     </View>
                 </View>
@@ -474,7 +473,7 @@ function Pesan(props) {
                                 </Text>
                             </LinearGradient>
                         </TouchableOpacity>
-
+{statusOrder === 'Pesanan Selesai'  ? null :
                         <TouchableOpacity style={{ width: '60%', alignSelf: 'center', }} onPress={submitFinisOrder}>
                             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{ padding: 5, justifyContent: 'center', alignItems: 'center', padding: 8, borderRadius: 10, }}
@@ -484,7 +483,7 @@ function Pesan(props) {
                                 </Text>
                             </LinearGradient>
                         </TouchableOpacity>
-
+}
                         <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={modalPesananTrigger}>
                             <Text style={{ fontSize: 14, color: '#07A9F0' }}>Tutup</Text>
                         </TouchableOpacity>
@@ -508,38 +507,36 @@ function Pesan(props) {
                             >
                                 <Text style={{ fontSize: 18, textAlign: 'center', color: 'white', marginLeft: 30, marginRight: 30 }}>
                                     Pesanan Telah dibatalkan
-                                </Text>
+                    </Text>
                             </LinearGradient>
-                        </TouchableOpacity> 
-                    :
-                        <View style={{ flexDirection: 'row', justifyContent:'center' }}>
-                            {(statusOrder === 'Sedang di Proses' &&
-                            <TouchableOpacity onPress={modalTrigger} style={{width:'50%'}}>
+                        </TouchableOpacity> :
+                        <View style={{ flexDirection: 'row' }}>
+                             {statusOrder === 'Sedang di Dikirim' || statusOrder === 'Pesanan Selesai'  ? null :
+                            <TouchableOpacity onPress={modalTrigger}>
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                    style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}
+                                    style={{ padding: 15, justifyContent: 'center', alignItems: 'center' }}
                                 >
-                                    <Text style={{ fontSize: 14, textAlign: 'center', color: 'white', marginLeft: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10, marginRight: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10 }}>
+                                    <Text style={{ fontSize: 18, textAlign: 'center', color: 'white', marginLeft: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10, marginRight: statusOrder === 'Pesanan Selesai' || statusOrder === 'Sedang di Dikirim' ? 112.5 : 10 }}>
                                         Bukti Transfer Bank
-                                    </Text>
+                            </Text>
                                 </LinearGradient>
-                            </TouchableOpacity>
-                            )}
+                            </TouchableOpacity>}
                             {statusOrder === 'Pesanan Selesai' ? null :
                             statusOrder === 'Sedang di Dikirim'? null :
-                                <TouchableOpacity onPress={handleCancel} style={{width:'50%'}}>
+                                <TouchableOpacity onPress={handleCancel}>
                                     <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#FF5976', '#FF5976', '#FF5976']}
-                                        style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}
+                                        style={{ padding: 15, justifyContent: 'center', alignItems: 'center' }}
                                     >
-                                        <Text style={{ fontSize: 14, textAlign: 'center', color: 'white', marginLeft: 30, marginRight: 30 }}>
+                                        <Text style={{ fontSize: 18, textAlign: 'center', color: 'white', marginLeft: 30, marginRight: 30 }}>
                                             Batalkan Order
-                                        </Text>
+                         </Text>
                                     </LinearGradient>
                                 </TouchableOpacity>}
 
                         </View>
-                :
-                    <View style={{ flexDirection: 'row', alignItems:'center'}}>
-                        <TouchableOpacity onPress={handleChoosePhoto} style={{width:'50%'}}>
+                    :
+                    <View style={{ flexDirection: 'row', bottom: 0 }}>
+                        <TouchableOpacity onPress={handleChoosePhoto}>
                             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#0956C6', '#0879D8', '#07A9F0']}
                                 style={{ height: 50, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}
                             >
@@ -549,29 +546,18 @@ function Pesan(props) {
                             </Text>
                             </LinearGradient>
                         </TouchableOpacity>
-
-                        <TouchableOpacity onPress={handleCancel} style={{width:'50%'}}>
+                        <TouchableOpacity onPress={handleCancel} style={{ width: '100%' }}>
                             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#FF5976', '#FF5976', '#FF5976']}
-                                style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}
+                                style={{ height: 50, width: '55%', justifyContent: 'center', alignItems: 'center' }}
                             >
                                 <Text style={{ fontSize: 15, textAlign: 'center', color: 'white' }}>
                                     Batalkan Order
-                                </Text>
+                        </Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
-            :
-                <View style={{ flexDirection: 'row', alignItems:'center'}}>
-                    <TouchableOpacity onPress={handleCancel} style={{width:'100%'}}>
-                        <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#FF5976', '#FF5976', '#FF5976']}
-                            style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}
-                        >
-                            <Text style={{ fontSize: 15, textAlign: 'center', color: 'white' }}>
-                                Batalkan Order
-                            </Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-                </View>
+                :
+                <View></View>
             }
         </View>
     );
