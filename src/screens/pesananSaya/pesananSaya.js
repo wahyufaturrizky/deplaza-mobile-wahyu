@@ -57,21 +57,21 @@ function pesananSaya(props) {
   const getProduct = async () => {
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
-    console.log('data pesanan saya', data);
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlOrder + '?limit=10&offset=0&order_direction=desc', {headers})
+    fetch(urlOrder + '&limit=10&offset=0&order_direction=desc', {headers})
       .then(response => response.json())
       .then(responseData => {
         setOrders(responseData.data);
         setLoading(false);
-        setPage(1);
       });
   };
+
+  console.log('oo', orders.length);
 
   const loadMore = async hal => {
     setLoading(true);
@@ -88,7 +88,7 @@ function pesananSaya(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlOrder + '?limit=10&offset=' + off + '&order_direction=desc', {
+    fetch(urlOrder + '&limit=10&offset=' + off + '&order_direction=desc', {
       headers,
     })
       .then(response => response.json())
@@ -124,7 +124,7 @@ function pesananSaya(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlOrder + '?limit=10&offset=0&order_direction=desc' + param, {
+    fetch(urlOrder + '&limit=10&offset=0&order_direction=desc' + param, {
       headers,
     })
       .then(response => response.json())
@@ -192,7 +192,6 @@ function pesananSaya(props) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-        {console.log('check data', orders)}
         {orders.map((data, index) => (
           <View
             key={index}
