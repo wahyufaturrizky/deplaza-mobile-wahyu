@@ -480,9 +480,9 @@ function Pesan(props) {
                             </View>
                             <View style={{flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}}>
                                 <Text>Rp. </Text>
-                                <View style={{backgroundColor:'#d5d5d5', width:'35%'}}>
+                                <View style={{backgroundColor:'#d5d5d5'}}>
                                     <InputNormal
-                                        style={{borderColor:'rgb(18, 48, 92)',fontSize:10, borderBottomWidth:1, borderBottomColor:'gray'}}
+                                        style={{borderColor:'rgb(18, 48, 92)',fontSize:12, borderBottomWidth:1, borderBottomColor:'gray', width: 100, height: 40}}
                                         value={margin}
                                         onChangeText={(text) => changeMargin(text)}
                                         disabled={pesan ? true : false}
@@ -546,7 +546,7 @@ function Pesan(props) {
                                         <Image
                                             source={require(indonesia)}
                                             style={{ width: 40, height: 40, alignSelf: 'center'}}
-                                            resizeMode='cover'
+                                            resizeMode='contain'
                                             width={40}
                                             height={40} />
                                         <Text style={{fontSize:14}}> +62</Text>

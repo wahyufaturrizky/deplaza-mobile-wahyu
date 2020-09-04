@@ -69,7 +69,7 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlProduk + '?limit=10&offset=0' + param, {headers})
+    fetch(urlProduk + '?limit=10&offset=0&order_direction=desc' + param, {headers})
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(responseData.data);
@@ -104,7 +104,7 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlProduk + '?limit=10&offset=' + off + '' + param, {headers})
+    fetch(urlProduk + '?order_direction=desc&limit=10&offset=' + off + '' + param, {headers})
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(products.concat(responseData.data));
@@ -151,7 +151,7 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlProduk + '?limit=10&offset=0' + param, {headers})
+    fetch(urlProduk + '?order_direction=desc&limit=10&offset=0' + param, {headers})
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(responseData.data);
