@@ -70,7 +70,7 @@ function wishlist(props) {
       'Access-Control-Allow-Origin': '*',
     };
     axios
-      .delete(`${URL}v1/product/${id}/delete`, {
+      .delete(`${URL}v1/wishlist/${id}/delete`, {
         headers,
       })
       .then(result => {
@@ -136,9 +136,13 @@ function wishlist(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch('https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=0&order_direction=desc' + param, {
-      headers,
-    })
+    fetch(
+      'https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=0&order_direction=desc' +
+        param,
+      {
+        headers,
+      },
+    )
       .then(response => response.json())
       .then(async responseData => {
         await setOrders(responseData.data);
