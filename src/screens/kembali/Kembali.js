@@ -124,10 +124,10 @@ function Kembali(props) {
   const handleChoosePhoto = () => {
     let date = new Date();
     ImagePicker.openPicker({
-      multiple: true,
-    }).then(image => {
-      console.log('handleChoosePhoto', image);
-      setImage(image);
+      // multiple: true,
+      // cropping: true,
+    }).then(value => {
+      setImage([...image, value]);
     });
   };
 
@@ -182,6 +182,7 @@ function Kembali(props) {
         gotoPesanan();
       });
   };
+  console.log('images', image);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
@@ -271,24 +272,22 @@ function Kembali(props) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              {console.log('image.length', image.length)}
-              {image.length === 3 ? (
+              {image[0] !== undefined ? (
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  {image.map((data, i) => (
-                    <View key={i} style={{marginHorizontal: width * 0.01}}>
-                      <Image
-                        source={{uri: data.path}}
-                        style={{width: width * 0.2, height: width * 0.2}}
-                      />
-                    </View>
-                  ))}
+                  <View style={{marginHorizontal: width * 0.01}}>
+                    <Image
+                      source={{uri: image[0].path}}
+                      style={{width: width * 0.2, height: width * 0.2}}
+                    />
+                  </View>
                 </View>
               ) : (
                 <View
                   style={{
                     borderStyle: 'dashed',
                     padding: 10,
-                    width: '100%',
+                    width: width * 0.2,
+                    height: width * 0.2,
                     borderRadius: 10,
                     borderWidth: 1,
                     borderColor: 'gray',
@@ -302,11 +301,87 @@ function Kembali(props) {
                     <Icon name="image" size={32} color="gray" />
                     <Text
                       style={{
-                        fontSize: 12,
+                        fontSize: 9,
                         textAlign: 'center',
                         color: 'gray',
                       }}>
-                      Tambahkan Gambar (Maksimal 3 Gambar)
+                      Tambahkan Gambar
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              {image[1] !== undefined ? (
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{marginHorizontal: width * 0.01}}>
+                    <Image
+                      source={{uri: image[1].path}}
+                      style={{width: width * 0.2, height: width * 0.2}}
+                    />
+                  </View>
+                </View>
+              ) : (
+                <View
+                  style={{
+                    borderStyle: 'dashed',
+                    padding: 10,
+                    width: width * 0.2,
+                    height: width * 0.2,
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: 'gray',
+                  }}>
+                  <TouchableOpacity
+                    onPress={handleChoosePhoto}
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon name="image" size={32} color="gray" />
+                    <Text
+                      style={{
+                        fontSize: 9,
+                        textAlign: 'center',
+                        color: 'gray',
+                      }}>
+                      Tambahkan Gambar
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              {image[2] !== undefined ? (
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{marginHorizontal: width * 0.01}}>
+                    <Image
+                      source={{uri: image[2].path}}
+                      style={{width: width * 0.2, height: width * 0.2}}
+                    />
+                  </View>
+                </View>
+              ) : (
+                <View
+                  style={{
+                    borderStyle: 'dashed',
+                    padding: 10,
+                    width: width * 0.2,
+                    height: width * 0.2,
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: 'gray',
+                  }}>
+                  <TouchableOpacity
+                    onPress={handleChoosePhoto}
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon name="image" size={32} color="gray" />
+                    <Text
+                      style={{
+                        fontSize: 9,
+                        textAlign: 'center',
+                        color: 'gray',
+                      }}>
+                      Tambahkan Gambar
                     </Text>
                   </TouchableOpacity>
                 </View>
