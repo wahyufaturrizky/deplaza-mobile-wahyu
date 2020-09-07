@@ -521,8 +521,8 @@ function Pesan(props) {
                             </Text>
                                 </LinearGradient>
                             </TouchableOpacity>}
-                            {statusOrder === 'Pesanan Selesai' ? null :
-                            statusOrder === 'Sedang di Dikirim'? null :
+                            {statusOrder === 'Pesanan Selesai' ||
+                            statusOrder === 'Sedang di Dikirim' ? null :
                                 <TouchableOpacity onPress={handleCancel}>
                                     <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#FF5976', '#FF5976', '#FF5976']}
                                         style={{ padding: 15, justifyContent: 'center', alignItems: 'center' }}
@@ -557,7 +557,17 @@ function Pesan(props) {
                         </TouchableOpacity>
                     </View>
                 :
-                <View></View>
+                statusOrder === 'Pesanan Selesai' ||
+                statusOrder === 'Sedang di Dikirim' ? null :
+                <TouchableOpacity onPress={handleCancel} style={{ width: '100%', justifyContent: "center", alignItems: 'center'}}>
+                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#FF5976', '#FF5976', '#FF5976']}
+                    style={{ height: 50, width: '100%', justifyContent: 'center', alignItems: 'center' }}
+                >
+                    <Text style={{ fontSize: 15, textAlign: 'center', color: 'white' }}>
+                        Batalkan Order
+            </Text>
+                </LinearGradient>
+            </TouchableOpacity>
             }
         </View>
     );
