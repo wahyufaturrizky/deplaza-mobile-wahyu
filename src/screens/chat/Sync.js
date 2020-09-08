@@ -7,7 +7,7 @@ import {
   Switch,
   TouchableOpacity,
   Image,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TextInput} from 'react-native-paper';
@@ -27,15 +27,13 @@ export default class Sync extends Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-}
+  }
 
-
-handleBackButton = () => {
-  alert('asdasd')
-   this.setState({home: true})
+  handleBackButton = () => {
+    // alert('asdasd')
+    this.setState({home: true});
     return true;
-}
-  
+  };
 
   render() {
     // get data sebelumnya
@@ -47,8 +45,8 @@ handleBackButton = () => {
         : content.title === 'Instagram'
         ? 'https://www.instagram.com/'
         : 'https://m.facebook.com/';
-    const inject = `document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'block';`
-      const injectHome = `document.querySelector("#app > div > div").style.minWidth = '350px'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#pane-side").addEventListener("click", () => {document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'none'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'block';}); document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > div").innerHTML = ""; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > ol").innerHTML = "Cara Scan QR Code: Aktifkan WA Chat kamu di handphone selain handphone yang terinstall Deplaza, Kemudian scan QR code dengan handphone tersebut."; document.querySelector("#app > div > div > div.landing-header").style.display = 'none'; document.querySelector("#app > div > div > div.landing-window > div._3pdvT").style.display = 'none';`
+    const inject = `document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'block';`;
+    const injectHome = `document.querySelector("#app > div > div").style.minWidth = '350px'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'none'; document.querySelector("#pane-side").addEventListener("click", () => {document.querySelector("#app > div > div > div._1-iDe._1xXdX").style.display = 'none'; document.querySelector("#app > div > div > div._1-iDe.Wu52Z").style.display = 'block';}); document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > div").innerHTML = ""; document.querySelector("#app > div > div > div.landing-window > div.landing-main > div > div._23IQH > ol").innerHTML = "Cara Scan QR Code: Aktifkan WA Chat kamu di handphone selain handphone yang terinstall Deplaza, Kemudian scan QR code dengan handphone tersebut."; document.querySelector("#app > div > div > div.landing-header").style.display = 'none'; document.querySelector("#app > div > div > div.landing-window > div._3pdvT").style.display = 'none';`;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
