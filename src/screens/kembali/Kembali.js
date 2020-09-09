@@ -7,6 +7,7 @@ import {
   Dimensions,
   Image,
   Platform,
+  ImageStore,
 } from 'react-native';
 import {RadioButton, TextInput, Checkbox, Title} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -141,48 +142,52 @@ function Kembali(props) {
   };
 
   const postTukar = async () => {
-    setLoading(true);
-    const value = await AsyncStorage.getItem('data');
-    const data = JSON.parse(value);
-    console.log(data);
-    const options = {
-      noData: true,
-    };
+    if(image.length<1){
+      alert("Harap Mengupload Gambar Komplain Terlebih Dahulu")
+    }else{
+      setLoading(true);
+      const value = await AsyncStorage.getItem('data');
+      const data = JSON.parse(value);
+      console.log(data);
+      const options = {
+        noData: true,
+      };
 
-    let headers = {
-      Authorization: `Bearer ${data.token}`,
-      'Access-Control-Allow-Origin': '*',
-      Accept: 'multipart/form-data',
-      'content-type': 'multipart/form-data',
-    };
+      let headers = {
+        Authorization: `Bearer ${data.token}`,
+        'Access-Control-Allow-Origin': '*',
+        Accept: 'multipart/form-data',
+        'content-type': 'multipart/form-data',
+      };
 
-    let formData = new FormData();
-    formData.append('reason_id', selectReason);
-    formData.append('order_id', id_order);
-    formData.append('description', checked + ' : ' + alasanDetail);
-    formData.append('qty', qty);
-    formData.append('address_id', 1);
+      let formData = new FormData();
+      formData.append('reason_id', selectReason);
+      formData.append('order_id', id_order);
+      formData.append('description', checked + ' : ' + alasanDetail);
+      formData.append('qty', qty);
+      formData.append('address_id', 1);
 
-    const photos = image;
-    photos.forEach(photo => {
-      formData.append('files[]', {
-        uri: photo.path,
-        type: 'image/jpeg', // or photo.type
-        name: 'avatar.jpg',
+      const photos = image;
+      photos.forEach(photo => {
+        formData.append('files[]', {
+          uri: photo.path,
+          type: 'image/jpeg', // or photo.type
+          name: 'avatar.jpg',
+        });
       });
-    });
 
-    console.log(JSON.stringify(formData));
-    fetch(urlComplaint, {method: 'POST', headers, body: formData})
-      .then(response => console.log(response.text()))
-      .then(async responseData => {
-        console.log(responseData);
-        setLoading(false);
-        alert('Komplain Berhasil di Kirim');
-        gotoPesanan();
-      });
-  };
-  console.log('images', image);
+      console.log(JSON.stringify(formData));
+      fetch(urlComplaint, {method: 'POST', headers, body: formData})
+        .then(response => console.log(response.text()))
+        .then(async responseData => {
+          console.log(responseData);
+          setLoading(false);
+          alert('Komplain Berhasil di Kirim');
+          gotoPesanan();
+        });
+    };
+  }
+  // console.log('images', image);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>

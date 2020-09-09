@@ -292,6 +292,7 @@ function produkDetail(props) {
     const _selectKota = async(data_kota) => {
         await setLoading(true)
         await setIdCity(data_kota.id)
+        setPilihKota(false)
         const value = await AsyncStorage.getItem('data');
         const data = JSON.parse(value)
 
@@ -403,12 +404,12 @@ function produkDetail(props) {
             console.log('tipe', tipe);
             setLoading(false)
             tipe.map((type) => {
-                console.log('tipe', type.cost[0].value);
-                if(type.service === "REG"){
+                if(type.service === "REG" || type.service === "CTC"){
                     setLoading(false)
                     setPilihKota(true)
                     setEst(type.cost[0].etd)
                     setTotalOngkir(type.cost[0].value)
+                    // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
                     setTotalHarga(dataDetail.price_basic+dataDetail.price_commission+dataDetail.price_benefit+type.cost[0].value)
                 }
             })
