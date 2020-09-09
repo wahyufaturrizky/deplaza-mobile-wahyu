@@ -35,6 +35,7 @@ function pesananSaya(props) {
   const [refreshing, setRefreshing] = useState(false);
 
   let halaman = props.route.params.title;
+  let stsComplain = props.route.params.stsComplain;
 
   const {height, width} = Dimensions.get('window');
   const urlOrder = URL + '/v1/orders/my-order?details=1';
@@ -192,6 +193,7 @@ function pesananSaya(props) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+        {console.log('data pesanan saya', orders)}
         {orders.map((data, index) => (
           <View
             key={index}
@@ -274,7 +276,8 @@ function pesananSaya(props) {
                     borderWidth: 1,
                     borderColor:
                       data.payment.status_label == 'Blm Dibayar' ||
-                      data.payment.status_label == 'Ditolak'
+                      data.payment.status_label == 'Ditolak' ||
+                      data.payment.status_label == 'pesanan sedang dikomplain'
                         ? 'red'
                         : 'green',
                     padding: 5,
@@ -286,7 +289,8 @@ function pesananSaya(props) {
                       fontSize: 8,
                       color:
                         data.payment.status_label == 'Blm Dibayar' ||
-                        data.payment.status_label == 'Ditolak'
+                        data.payment.status_label == 'Ditolak' ||
+                        data.payment.status_label == 'pesanan sedang dikomplain'
                           ? 'red'
                           : 'green',
                     }}>

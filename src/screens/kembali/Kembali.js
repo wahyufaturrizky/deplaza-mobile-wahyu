@@ -55,7 +55,9 @@ function Kembali(props) {
   }, []);
 
   const gotoPesanan = () => {
-    props.navigation.navigate('PesananSaya', {title: 'Pesanan Saya'});
+    props.navigation.navigate('PesananSaya', {
+      title: 'Pesanan Saya',
+    });
   };
 
   const getRincianPesanan = async () => {
@@ -142,9 +144,9 @@ function Kembali(props) {
   };
 
   const postTukar = async () => {
-    if(image.length<1){
-      alert("Harap Mengupload Gambar Komplain Terlebih Dahulu")
-    }else{
+    if (image.length < 1) {
+      alert('Harap Mengupload Gambar Komplain Terlebih Dahulu');
+    } else {
       setLoading(true);
       const value = await AsyncStorage.getItem('data');
       const data = JSON.parse(value);
@@ -185,8 +187,8 @@ function Kembali(props) {
           alert('Komplain Berhasil di Kirim');
           gotoPesanan();
         });
-    };
-  }
+    }
+  };
   // console.log('images', image);
 
   return (
