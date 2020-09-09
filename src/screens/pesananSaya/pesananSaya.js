@@ -277,7 +277,7 @@ function pesananSaya(props) {
                     borderColor:
                       data.payment.status_label == 'Blm Dibayar' ||
                       data.payment.status_label == 'Ditolak' ||
-                      data.payment.status_label == 'pesanan sedang dikomplain'
+                      data.payment.status_label == 'Pesanan sadang di komplain'
                         ? 'red'
                         : 'green',
                     padding: 5,
@@ -290,7 +290,8 @@ function pesananSaya(props) {
                       color:
                         data.payment.status_label == 'Blm Dibayar' ||
                         data.payment.status_label == 'Ditolak' ||
-                        data.payment.status_label == 'pesanan sedang dikomplain'
+                        data.payment.status_label ==
+                          'Pesanan sadang di komplain'
                           ? 'red'
                           : 'green',
                     }}>
