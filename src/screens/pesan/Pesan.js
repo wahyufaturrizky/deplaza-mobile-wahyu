@@ -559,6 +559,7 @@ function Pesan(props) {
                                     value={phone}
                                     onChangeText={(val)=> setPhone(val)}
                                     mode="outlined"
+                                    keyboardType='numeric'
                                     style={{width:'70%', backgroundColor:'white', borderRadius:10}}
                                     disabled={pesan ? true : false}
                                     theme={{colors: {primary: '#07A9F0', underlineColor: 'transparent'}}}
