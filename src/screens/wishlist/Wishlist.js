@@ -247,14 +247,10 @@ function wishlist(props) {
                 />
 
                 <View style={{width: '68%'}}>
-                  <Title style={{fontSize: 14, lineHeight: 18}}>
+                <Text style={{fontSize: 14, width: 210, marginTop: 10, textTransform: 'capitalize'}} numberOfLines={2}>
                     {data.product && data.product.name}
-                  </Title>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      marginBottom: height * 0.01,
-                    }}>
+                  </Text>
+                  <Text style={{fontSize: 13, marginTop: 5}}>
                     Mulai Dari Rp{' '}
                     {data.product
                       ? formatRupiah(

@@ -234,10 +234,10 @@ function produk(props) {
               />
 
               <View style={{width: '68%'}}>
-                <Title style={{fontSize: 14, lineHeight: 18}}>
+                <Text style={{fontSize: 14, width: 210, marginTop: 10, textTransform: 'capitalize'}} numberOfLines={2}>
                   {product.name}
-                </Title>
-                <Text style={{fontSize: 14, marginBottom: height * 0.01}}>
+                </Text>
+                <Text style={{fontSize: 13, marginTop: 5}}>
                   Mulai Dari Rp{' '}
                   {formatRupiah(
                     product.price_basic +
@@ -256,7 +256,7 @@ function produk(props) {
                     paddingVertical: 10,
                   }}
                   onPress={() => detailProduk(product.id, product.name)}>
-                  <Text style={{color: '#07A9F0'}}>Lihat Produk</Text>
+                  <Text style={{color: '#07A9F0', marginRight: 10}}>Lihat Produk</Text>
                 </TouchableOpacity>
               </View>
             </View>
