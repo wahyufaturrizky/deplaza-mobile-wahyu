@@ -149,9 +149,13 @@ function produkDetail(props) {
     }
 
     const gotoPesan = () => {
+        let stock = parseInt(dataDetail.stock)
         if(totalOngkir===0){
             alert("Pilih Terlebih Kota atau Kecamatan Tujuan")
-        }else{
+        }else if(stock<1){
+            alert("Mohon Maaf.., stok produk ini sedang habis")
+        }
+        else{
             props.navigation.navigate("Pesan", {title:"Pesan & Kirim", data: {id_produk : id, variation:selectVariasi, qty, metodeCOD, totalHarga, totalOngkir, imageDetail:dataGambar[0]}})
         }
     }
