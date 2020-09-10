@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  RefreshControl
 } from 'react-native';
 import {Text, Card} from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -21,8 +22,16 @@ import AppbarT from '../../components/appBarTransparent';
 import BottomTab from '../../components/bottomTab';
 import Loading from '../../components/loading';
 import VersionCheck from 'react-native-version-check';
+import { ScrollView } from 'react-native-gesture-handler';
+
+const wait = (timeout) => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+}
 
 function jualanAnda(props) {
+  const [refreshing, setRefreshing] = useState(false);
   const [wishlist, setWishlist] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -64,6 +73,17 @@ function jualanAnda(props) {
       console.log(latestVersion); // 0.1.2
     });
   };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getVersion();
+    getListWishlist();
+    getSaldo();
+    getTotalOrder();
+    getPopup();
+    getNotif();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   //Pergi ke Hal Pesanan
   const gotoPesanan = () => {
@@ -253,7 +273,7 @@ function jualanAnda(props) {
           </View>
         </ImageBackground>
       )}
-
+      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View
         style={{
           width: '90%',
@@ -580,6 +600,7 @@ function jualanAnda(props) {
           )}
         </View>
       </View>
+      </ScrollView>
       {loading && <Loading />}
 
       <BottomTab {...props} />
