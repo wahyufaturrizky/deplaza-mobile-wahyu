@@ -23,12 +23,14 @@ function Pesan(props) {
     const [provinsi, setProvinsi] = useState("kosong");
     const [kecamatan, setKecamatan] = useState("kosong");
     const [kota, setKota] = useState("kosong");
+    const [kotaAsal, setKotaAsal] = useState("");
     const [pos, setPos] = useState("");
     const [alamat, setAlamat] = useState("");
     const [margin, setMargin] = useState("0");
     const [totalKeseluruhan, setTotalKeseluruhan] = useState(totalHarga);
     const [totalPendapatan, setTotalPendapatan] = useState("0");
     const [totalBiaya, setTotalBiaya] = useState(totalHarga);
+    const [berat, setBerat] = useState("");
 
     const [variation, setVariation] = useState(props.route.params.data.variation)
     
@@ -52,10 +54,13 @@ function Pesan(props) {
     const [photo, setPhoto] = useState(0)
     const [pesan, setPesan] = useState(false)
     const [loading, setLoading] = useState(true)
+    
+    const [totalOngkir, setTotalOngkir] = useState(props.route.params.data.totalOngkir)
+
 
     const metodeCOD = props.route.params.data.metodeCOD
     const id_produk = props.route.params.data.id_produk
-    const totalOngkir = props.route.params.data.totalOngkir
+    // const totalOngkir = props.route.params.data.totalOngkir
     const imageDetail = props.route.params.data.imageDetail
 
     const indonesia = "../../assets/images/indonesia.png"
@@ -67,6 +72,7 @@ function Pesan(props) {
     const urlProvincesDetail = URL+'v1/shipment/province/'
     const urlKotaDetail = URL+'v1/shipment/city/'
     const urlKecamatanDetail = URL+'v1/shipment/subdistrict/'
+    const urlOngkir = URL+"v1/shipment/cost/subdistrict"
     
     const { height, width } = Dimensions.get("window");
 
@@ -218,6 +224,8 @@ function Pesan(props) {
                 setPriceCommission(responseData.data.price_commission)
                 setStock(responseData.data.stock)
                 setBenefit(responseData.data.price_benefit)
+                setKotaAsal(responseData.data.city_id)
+                setBerat(responseData.data.weight)
                 if(provinces.length>0){
                     setLoading(false)
                 }
@@ -307,9 +315,44 @@ function Pesan(props) {
                         // console.log(responseData.rajaongkir.results.postal_code);
                         await setKotaDetail(responseData.rajaongkir.results)
                         setPos(responseData.rajaongkir.results.postal_code)
-                        setLoading(false)
                     })
             })
+
+        let formdata = new FormData();
+        formdata.append("origin", parseInt(kotaAsal))
+        formdata.append("destination", parseInt(id_kota))
+        formdata.append("weight", berat)
+        formdata.append("courier", 'jne')
+
+        fetch(urlOngkir, {method: 'POST', headers,
+            body: formdata
+        })
+        .then(response => response.json())
+        .then(async(responseData) => {
+            console.log('uuu', responseData);
+            let tipe= await responseData.rajaongkir.results[0].costs
+            setLoading(false)
+            tipe.map((type) => {
+                if(type.service === "REG" || type.service === "CTC"){
+                    setLoading(false)
+                    console.log(type.cost[0].value)
+                    setTotalOngkir(type.cost[0].value)
+                    let totalOngkirNow = type.cost[0].value
+                    let hargaProduk = parseInt(priceBasic)
+                    let komisiDasar = parseInt(priceCommission)
+                    let tmargin = parseInt(margin/qty)
+                    let qtynow = parseInt(qty)
+                    // console.log((hargaProduk*qtynow)+(komisiDasar*qtynow)+(benefit*qtynow))
+                    setTotalKeseluruhan((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow)+(tmargin*qtynow))
+                    setTotalBiaya((hargaProduk*qtynow)+totalOngkirNow+(komisiDasar*qtynow)+(benefit*qtynow))
+                    //setPilihKota(true)
+                    //setEst(type.cost[0].etd)
+                    //setTotalOngkir(type.cost[0].value)
+                    // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+                    //setTotalHarga(dataDetail.price_basic+dataDetail.price_commission+dataDetail.price_benefit+type.cost[0].value)
+                }
+            })
+        })
     }
 
     // console.log('subdistricts', subdistricts);
