@@ -282,11 +282,12 @@ function Pesan(props) {
     fetch(urlFinishOrder + id_order + '/cancel', requestOptions)
       .then(response => response.json())
       .then(result => {
+        console.log('cancel order result', result);
         getRincianPesanan();
         alert(result.message);
         props.navigation.goBack();
       })
-      .catch(error => console.log('error', error));
+      .catch(error => console.log('errorcancelorder', error));
   };
 
   const totalPrice =
