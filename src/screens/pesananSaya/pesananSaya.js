@@ -270,6 +270,10 @@ function pesananSaya(props) {
                     )}
                   </Text>
                 </View>
+                {console.log(
+                  'data.payment.status_label',
+                  data.payment.status_label,
+                )}
                 <View
                   style={{
                     width: '30%',

@@ -25,7 +25,6 @@ import moment from 'moment';
 import Appbar from '../../components/appbarHome';
 import produkDetail from '../produkDetail/produkDetail';
 
-
 const wait = timeout => {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
@@ -247,8 +246,7 @@ function Pesan(props) {
         setStatusOrder(result.message);
         setModalPesanan(false);
         alert(result.message);
-        getRincianPesanan();
-        // props.navigation.goBack();
+        props.navigation.goBack();
       })
       .catch(error => console.log('error', error));
   };
@@ -305,7 +303,10 @@ function Pesan(props) {
     <View style={{backgroundColor: 'white', flex: 1}}>
       <Appbar params={props} />
 
-      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         {trackingId != '' && statusOrder != 'Pesanan Selesai' && (
           <View
             style={{
@@ -320,28 +321,27 @@ function Pesan(props) {
           </View>
         )}
 
-        {statusOrder === 'Pesanan sudah selesai' ||
-          (statusOrder == 'Pesanan Selesai' && (
-            <View
+        {statusOrder == 'Pesanan Selesai' && (
+          <View
+            style={{
+              backgroundColor: '#93DCFC',
+              padding: 15,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image
+              source={require('../../assets/images/Solid.png')}
               style={{
-                backgroundColor: '#93DCFC',
-                padding: 15,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={require('../../assets/images/Solid.png')}
-                style={{
-                  width: width * 0.1,
-                  height: width * 0.1,
-                  resizeMode: 'cover',
-                }}
-              />
-              <Text style={{marginTop: height * 0.01, fontSize: 14}}>
-                Pesanan Selesai{' '}
-              </Text>
-            </View>
-          ))}
+                width: width * 0.1,
+                height: width * 0.1,
+                resizeMode: 'cover',
+              }}
+            />
+            <Text style={{marginTop: height * 0.01, fontSize: 14}}>
+              Pesanan Selesai{' '}
+            </Text>
+          </View>
+        )}
 
         <View style={{backgroundColor: '#F8F8F8', padding: 10}}>
           <Text style={{fontSize: 18}}>Metode Pembayaran</Text>
@@ -550,8 +550,7 @@ function Pesan(props) {
               marginRight: 20,
               marginTop: 10,
             }}>
-            {statusOrder === 'Pembayaran Telah Diterima' ||
-            statusOrder === 'Pesanan sudah selesai' ? null : (
+            {statusOrder === 'Pesanan Selesai' ? null : (
               <TouchableOpacity style={{width: '40%'}} onPress={gotoKembali}>
                 <LinearGradient
                   start={{x: 0, y: 0}}
@@ -577,32 +576,33 @@ function Pesan(props) {
             )}
             {statusOrder === 'Pesanan sudah selesai' ||
             statusOrder === 'Pesanan Selesai' ||
-            statusOrder === 'Pembayaran Telah Diterima' || trackingId !=""
-              ? <TouchableOpacity
-                  style={{width: '40%'}}
-                  onPress={submitFinisOrder}>
-                  <LinearGradient
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1}}
-                    colors={['#0956C6', '#0879D8', '#07A9F0']}
+            statusOrder === 'Pembayaran Telah Diterima' ||
+            trackingId != '' ? (
+              <TouchableOpacity
+                style={{width: '40%'}}
+                onPress={submitFinisOrder}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{
+                    padding: 5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 8,
+                    borderRadius: 5,
+                  }}>
+                  <Text
                     style={{
-                      padding: 5,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      padding: 8,
-                      borderRadius: 5,
+                      fontSize: 12,
+                      textAlign: 'center',
+                      color: 'white',
                     }}>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        textAlign: 'center',
-                        color: 'white',
-                      }}>
-                      Pesanan Selesai
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              : null}
+                    Pesanan Selesai
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            ) : null}
           </View>
         )}
         <View
@@ -770,32 +770,33 @@ function Pesan(props) {
             </TouchableOpacity>
             {statusOrder === 'Pesanan sudah selesai' ||
             statusOrder === 'Pembayaran Telah Diterima' ||
-            statusOrder === 'Pesanan Selesai' || trackingId !=""
-              ? <TouchableOpacity
-                  style={{width: '60%', alignSelf: 'center'}}
-                  onPress={submitFinisOrder}>
-                  <LinearGradient
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1}}
-                    colors={['#0956C6', '#0879D8', '#07A9F0']}
+            statusOrder === 'Pesanan Selesai' ||
+            trackingId != '' ? (
+              <TouchableOpacity
+                style={{width: '60%', alignSelf: 'center'}}
+                onPress={submitFinisOrder}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{
+                    padding: 5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 8,
+                    borderRadius: 10,
+                  }}>
+                  <Text
                     style={{
-                      padding: 5,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      padding: 8,
-                      borderRadius: 10,
+                      fontSize: 16,
+                      textAlign: 'center',
+                      color: 'white',
                     }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        textAlign: 'center',
-                        color: 'white',
-                      }}>
-                      Pesanan Selesai
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              : null}
+                    Pesanan Selesai
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity
               style={{alignSelf: 'flex-end'}}
               onPress={modalPesananTrigger}>
@@ -833,33 +834,9 @@ function Pesan(props) {
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
-          ) : statusOrder === 'Pembayaran Telah Diterima' ? (
-            <TouchableOpacity disabled>
-              <LinearGradient
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1}}
-                colors={['#cecece', '#cecece', '#cecece']}
-                style={{
-                  padding: 15,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    textAlign: 'center',
-                    color: 'white',
-                    marginLeft: 30,
-                    marginRight: 30,
-                  }}>
-                  Pesanan Telah Selesai
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
           ) : (
             <View style={{flexDirection: 'row'}}>
               {statusOrder === 'Pesanan sudah selesai' ||
-              statusOrder === 'Pembayaran Telah Diterima' ||
               statusOrder === 'Sedang di Dikirim' ||
               statusOrder === 'Pesanan Selesai' ? null : (
                 <TouchableOpacity onPress={modalTrigger}>
@@ -880,14 +857,12 @@ function Pesan(props) {
                         marginLeft:
                           statusOrder === 'Pesanan sudah selesai' ||
                           statusOrder === 'Pesanan Selesai' ||
-                          statusOrder === 'Pembayaran Telah Diterima' ||
                           statusOrder === 'Sedang di Dikirim'
                             ? 112.5
                             : 10,
                         marginRight:
                           statusOrder === 'Pesanan sudah selesai' ||
                           statusOrder === 'Pesanan Selesai' ||
-                          statusOrder === 'Pembayaran Telah Diterima' ||
                           statusOrder === 'Sedang di Dikirim'
                             ? 112.5
                             : 10,
@@ -899,7 +874,6 @@ function Pesan(props) {
               )}
               {statusOrder === 'Pesanan sudah selesai' ||
               statusOrder === 'Pesanan Selesai' ||
-              statusOrder === 'Pembayaran Telah Diterima' ||
               statusOrder === 'Sedang di Dikirim' ? null : (
                 <TouchableOpacity onPress={handleCancel}>
                   <LinearGradient
