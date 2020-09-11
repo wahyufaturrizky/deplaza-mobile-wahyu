@@ -225,7 +225,7 @@ function wishlist(props) {
                 style={{
                   flexDirection: 'row',
                   marginVertical: 10,
-                  height: height * 0.18,
+                  height: height * 0.22,
                   justifyContent: 'space-between',
                   borderWidth: 1,
                   borderColor: '#ddd',
@@ -247,7 +247,14 @@ function wishlist(props) {
                 />
 
                 <View style={{width: '68%'}}>
-                <Text style={{fontSize: 14, width: 210, marginTop: 10, textTransform: 'capitalize'}} numberOfLines={2}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      width: 210,
+                      marginTop: 10,
+                      textTransform: 'capitalize',
+                    }}
+                    numberOfLines={2}>
                     {data.product && data.product.name}
                   </Text>
                   <Text style={{fontSize: 13, marginTop: 5}}>
