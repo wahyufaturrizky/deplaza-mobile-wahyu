@@ -2,6 +2,7 @@ import * as React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {CommonActions} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-community/async-storage'
 
 function bottomTab(props) {
   const title = props.route.params.title;
@@ -10,8 +11,17 @@ function bottomTab(props) {
     props.navigation.navigate('Akun', {title: 'Akun Saya', ...props});
   };
 
-  const gotoChat = () => {
-    props.navigation.navigate('Chat');
+  const gotoChat = async() => {
+    let syncIg = await AsyncStorage.getItem(`sync-Instagram`);
+    let syncWa = await AsyncStorage.getItem(`sync-Whatsapp`);
+    let syncFb = await AsyncStorage.getItem(`sync-Mesengger`);
+    console.log(syncIg+syncWa+syncFb)
+    if(syncIg!=null || syncWa!=null || syncFb!=null){
+      props.navigation.navigate('ListChat');
+    }else{
+      props.navigation.navigate('Chat');
+    }
+
   };
 
   const gotoBantuan = () => {

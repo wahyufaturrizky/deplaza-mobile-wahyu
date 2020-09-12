@@ -9,6 +9,7 @@ import {
   Image,
   BackHandler,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TextInput} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
@@ -23,16 +24,44 @@ export default class Sync extends Component {
       toggle: false,
       home: false,
     };
+    this.content = this.props.route.params.content;
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    this.checkSync()
   }
 
   handleBackButton = () => {
     // alert('asdasd')
     this.setState({home: true});
     return true;
+  };
+
+  checkSync = async() =>{
+    if(this.content.title=="Instagram"){
+      let syncIg = await AsyncStorage.getItem(`sync-Instagram`);
+      syncIg=='true' ? this.setState({toggle:true}) : this.setState({toggle:false})
+    }else if(this.content.title=="Whatsapp"){
+      let syncWa = await AsyncStorage.getItem(`sync-Whatsapp`);
+      syncWa=='true' ? this.setState({toggle:true}) : this.setState({toggle:false})
+    }else if(this.content.title=="Mesengger"){
+      let syncFb = await AsyncStorage.getItem(`sync-Mesengger`);
+      syncFb=='true' ? this.setState({toggle:true}) : this.setState({toggle:false})
+    }
+
+  }
+
+  
+  storeSync = async (val, platform) => {
+    this.setState({toggle:val})
+    try {
+      await AsyncStorage.setItem(`sync-${this.content.title}`,val.toString());
+    } catch (error) {
+      console.log(error)
+    }
+    console.log(this.content.title)
+    
   };
 
   render() {
@@ -58,16 +87,16 @@ export default class Sync extends Component {
             </TouchableOpacity>
             <Text style={styles.titleHeader}>{content.title}</Text>
           </View>
-          {/* <View style={styles.sync}>
+          <View style={styles.sync}>
             <Text style={styles.textSync}>Sinkronisasi {content.title}</Text>
             <Switch
               trackColor={{false: 'gray', true: 'teal'}}
               thumbColor="white"
               ios_backgroundColor="gray"
-              onValueChange={value => this.setState({toggle: value})}
+              onValueChange={value => this.storeSync(value,content.title)}
               value={this.state.toggle}
             />
-          </View> */}
+          </View>
         </View>
         <WebView
           scalesPageToFit={false}
