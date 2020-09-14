@@ -8,8 +8,10 @@ import {
   Image,
   FlatList,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconArrow from 'react-native-vector-icons/MaterialIcons';
+import {URL} from '../../utils/global'
 const data = [
   {
     id: 1,
@@ -34,8 +36,56 @@ const data = [
   },
 ];
 
+const urlProfile = URL+'v1/my-profile'
+
 // chat component
 export default class Chat extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      instagram: false,
+      whatsapp: false,
+      mesengger: false,
+      nama:'',
+      avatar:''
+    };
+  }
+  
+  componentDidMount() {
+    this.checkSync()
+    this.getProfile()
+  }
+
+  checkSync = async() =>{
+    let syncIg = await AsyncStorage.getItem(`sync-Instagram`);
+    console.log('ig',syncIg)
+    syncIg=='true' ? this.setState({instagram:'On'}) : this.setState({instagram:'Off'})
+
+    let syncWa = await AsyncStorage.getItem(`sync-Whatsapp`);
+    console.log('wa',syncWa)
+    syncWa=='true' ? this.setState({whatsapp:'On'}) : this.setState({whatsapp:'Off'})
+    
+    let syncFb = await AsyncStorage.getItem(`sync-Mesengger`);
+    console.log('fb',syncFb)
+    syncFb=='true' ? this.setState({mesengger:'On'}) : this.setState({mesengger:'Off'})
+  }
+
+  getProfile = async() => {
+    const value = await AsyncStorage.getItem('data');
+    const data = JSON.parse(value)
+
+    let headers = {
+        Authorization: `Bearer ${data.token}`,
+        'Access-Control-Allow-Origin': '*',
+    }
+
+    fetch(urlProfile, {headers})
+        .then(response => response.json())
+        .then(responseData => {
+            this.setState({nama:responseData.data.fullname,avatar:responseData.data.avatar_url})
+        })
+  }
+
   renderItem = ({item}) => (
     <TouchableOpacity
       style={styles.contentList}
@@ -49,9 +99,21 @@ export default class Chat extends Component {
             : item.description}
         </Text>
       </View>
-      <Text style={{color: item.status ? '#4086f7' : '#f74040'}}>
-        {item.status ? 'On' : 'Off'}
+      {item.title=="Whatsapp" && 
+      <Text style={{color: (this.state.whatsapp=="On") ? '#4086f7' : '#f74040' }}>
+        {this.state.whatsapp}
       </Text>
+      }
+      {item.title=="Instagram" && 
+      <Text style={{color: (this.state.instagram=="On") ? '#4086f7' : '#f74040' }}>
+        {this.state.instagram}
+      </Text>
+      }
+      {item.title=="Messenger" && 
+      <Text style={{color: (this.state.mesengger=="On") ? '#4086f7' : '#f74040' }}>
+        {this.state.mesengger}
+      </Text>
+      }
       <IconArrow name="keyboard-arrow-right" style={styles.iconContent} />
     </TouchableOpacity>
   );
@@ -74,9 +136,10 @@ export default class Chat extends Component {
           <View style={styles.contentAvatar}>
             <Image
               style={styles.avatar}
-              source={require('../../assets/images/profileChat.jpg')}
+              source={{uri:this.state.avatar}}
             />
           </View>
+          <Text style={styles.textContentTitle}>{this.state.nama}</Text>
           <Text style={styles.textContentTitle}>Pilih Akun Sosial Media</Text>
           <Text style={styles.textContentDesc}>
             Untuk melanjutkan ke halaman Chat
