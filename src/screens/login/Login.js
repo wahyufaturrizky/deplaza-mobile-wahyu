@@ -38,7 +38,7 @@ function Login(props) {
     const urlLogin = URL+"v1/oauth/login"
 
     useEffect(()=>{
-        checkLogin()
+        //checkLogin()
     },[])
 
     // Pergi Ke Home Reset Index

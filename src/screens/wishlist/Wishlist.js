@@ -13,10 +13,12 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Loading from '../../components/loading';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Title, Appbar} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // import Appbar from '../../components/appbarHome'
 import BottomTab from '../../components/bottomTab';
 import InputNormal from '../../components/inputNormal';
+import LinearGradient from 'react-native-linear-gradient'
 
 import {URL, formatRupiah} from '../../utils/global';
 import axios from 'axios';
@@ -315,7 +317,16 @@ function wishlist(props) {
         )}
       </ScrollView>
       {loading && <Loading />}
-
+      <TouchableOpacity  style={styles.button}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                               style={styles.button}
+                            >
+                              <Icon name="plus" size={20} color="#fff"/>
+                                <Text style={styles.buttonText}>
+                                    Tambah
+                                </Text>
+                            </LinearGradient>
+                </TouchableOpacity>
       <BottomTab {...props} />
     </View>
   );
@@ -335,4 +346,16 @@ const styles = StyleSheet.create({
 
     elevation: 2,
   },
+  button: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+},
+buttonText: {
+    fontSize:17, 
+    textAlign:'center', 
+    color:'white',
+}
 });

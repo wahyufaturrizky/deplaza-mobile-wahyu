@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, ImageBackground, Dimensions, Image} from 'react-native';
+import {View, Text, ImageBackground, Dimensions, Image, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -36,11 +36,11 @@ function Bantuan(props) {
 
   const {height, width} = Dimensions.get('window');
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
       <Appbar params={props} />
       <View style={{flex: 1}}>
         {bantu === 0 && (
-          <View>
+          <View> 
             <TouchableOpacity onPress={() => changeBantu(1)}>
               <ImageBackground
                 source={require('../../assets/images/bantuJualan1.png')}
@@ -66,21 +66,77 @@ function Bantuan(props) {
                 {/* </View> */}
               </ImageBackground>
             </TouchableOpacity>
-
-            {/* <TouchableOpacity>
-                        <ImageBackground source={require('../../assets/images/bantuJualan2.png')} style={{justifyContent:'flex-end', padding:10, alignItems:'center', marginVertical:height*0.005, height:height*0.2}}>
-                                <Text style={{color:'white', marginVertical:5, fontSize:18}}>Akademi Jualan Online</Text>
-                                <Text style={{color:'white', marginBottom:height*0.01, fontSize:18}}>(Tersedia Tutorial Video)</Text>
-                        </ImageBackground>
-                    </TouchableOpacity> */}
-
-            {/* <TouchableOpacity onPress={gotoBantuanFaq}>
-                        <ImageBackground source={require('../../assets/images/bantuJualan3.png')} style={{justifyContent:'center', padding:10, alignItems:'center', marginVertical:height*0.005, height:height*0.2}}>
-                                <Text style={{color:'white', fontSize:22}}>FAQ</Text>
-                        </ImageBackground>
-                    </TouchableOpacity> */}
+            <TouchableOpacity  style={styles.button} onPress={() => setBantu(10)}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                               style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>
+                                    Pengaturan Selling Otomation (SO)
+                                </Text>
+                            </LinearGradient>
+                </TouchableOpacity>
           </View>
         )}
+
+        {bantu === 10 ? (
+          <View style={styles.container}>
+            <Text>Pengaturan Selling Automation</Text>
+            <TouchableOpacity  style={{...styles.button, marginBottom: 50, marginTop: 50}} onPress={() => setBantu(11)}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                               style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>
+                                    Custom Pengaturan
+                                </Text>
+                            </LinearGradient>
+                </TouchableOpacity>
+                <TouchableOpacity  style={{...styles.button, marginBottom: -10, marginTop: -10}}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                               style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>
+                                    Pengaturan SO Semua Pembeli
+                                </Text>
+                            </LinearGradient>
+                </TouchableOpacity>
+            </View>
+        ) : null}
+
+{bantu === 11 ? (
+          <View style={styles.container}>
+            <Text>Custom Pengaturan</Text>
+            <TouchableOpacity  style={{...styles.button, marginBottom: 50, marginTop: 50, flexDirection: 'row'}}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                               style={{...styles.button, flexDirection: 'row'}}
+                            >
+                              <Image source={require('../../assets/images/wa.png')} resizeMode="contain" style={{width: 20, height: 20}} />
+                                <Text style={styles.buttonText}>
+                                   WA Pembeli
+                                </Text>
+                            </LinearGradient>
+                </TouchableOpacity>
+                <TouchableOpacity  style={{...styles.button, marginBottom: -10, marginTop: -10, flexDirection: 'row'}}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                style={{...styles.button, flexDirection: 'row'}}
+                            >
+                            <Image source={require('../../assets/images/ig.png')} resizeMode="contain" style={{width: 20, height: 20}} />
+                                <Text style={styles.buttonText}>
+                                    IG Pembeli
+                                </Text>
+                            </LinearGradient>
+                </TouchableOpacity>
+                <TouchableOpacity  style={{...styles.button, marginBottom: 50, marginTop: 50, flexDirection: 'row'}}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
+                                style={{...styles.button, flexDirection: 'row'}}
+                            >
+                              <Image source={require('../../assets/images/fb.png')} resizeMode="contain" style={{width: 20, height: 20}} />
+                                <Text style={styles.buttonText}>
+                                    FB Pembeli
+                                </Text>
+                            </LinearGradient>
+                </TouchableOpacity>
+            </View>
+        ) : null}
 
         {bantu === 1 && subBantu !== 3 && (
           <View
@@ -467,3 +523,29 @@ function Bantuan(props) {
 }
 
 export default Bantuan;
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      marginTop: 20
+  },
+  button: {
+      borderRadius: 5,
+      width: 300,
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 100,
+      alignSelf: 'center',
+      marginBottom: 100
+  },
+  buttonText: {
+      fontSize:17, 
+      marginLeft: 10,
+      marginRight: 10,
+      textAlign:'center', 
+      color:'white',
+  }
+})

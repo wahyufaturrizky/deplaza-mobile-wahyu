@@ -43,13 +43,15 @@ import DetailChat from './src/screens/chat/DetailChat';
 import ChatScreen from './src/screens/chat/Chat';
 import Canva from './src/screens/canva';
 import Pembayaran from './src/screens/akun/pembayaran';
+import Splash from './src/screens/splash'
 
 const Stack = createStackNavigator();
 
 function StackNav(props) {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" headerMode={'none'}>
+      <Stack.Navigator initialRouteName="Splash" headerMode={'none'}>
+      <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="JualanAnda" component={JualanAnda} />

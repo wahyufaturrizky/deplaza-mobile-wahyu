@@ -17,7 +17,7 @@ function bottomTab(props) {
     let syncFb = await AsyncStorage.getItem(`sync-Mesengger`);
     console.log(syncIg+syncWa+syncFb)
     if(syncIg!=null || syncWa!=null || syncFb!=null){
-      props.navigation.navigate('ListChat');
+      props.navigation.navigate('Chat');
     }else{
       props.navigation.navigate('Chat');
     }
