@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import {Text, Card} from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -22,13 +22,13 @@ import AppbarT from '../../components/appBarTransparent';
 import BottomTab from '../../components/bottomTab';
 import Loading from '../../components/loading';
 import VersionCheck from 'react-native-version-check';
-import { ScrollView } from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 
-const wait = (timeout) => {
+const wait = timeout => {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
   });
-}
+};
 
 function jualanAnda(props) {
   const [refreshing, setRefreshing] = useState(false);
@@ -273,255 +273,217 @@ function jualanAnda(props) {
           </View>
         </ImageBackground>
       )}
-      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <View
-        style={{
-          width: '90%',
-          alignSelf: 'center',
-          marginTop: height * -0.02,
-          flex: 1,
-        }}>
-        {wishlist > 0 && (
-          <View
-            style={[
-              styles.shadow,
-              {
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#fff',
-                borderRadius: 10,
-              },
-            ]}>
-            <Icon
-              style={{padding: 10}}
-              name="magnify"
-              size={20}
-              color="#949494"
-            />
-            <TextInput
-              style={{
-                flex: 1,
-                paddingTop: 10,
-                paddingRight: 10,
-                paddingBottom: 10,
-                paddingLeft: 0,
-                backgroundColor: '#fff',
-                color: '#424242',
-                height: 50,
-              }}
-              onChangeText={val => setSearch(val)}
-              placeholder="Cari Produk"
-              underlineColorAndroid="transparent"
-              onSubmitEditing={searchProduk}
-            />
-            <Icon
-              style={{padding: 10}}
-              name="camera"
-              size={30}
-              color="#07A9F0"
-            />
-          </View>
-        )}
-
-        <TouchableOpacity
-          onPress={() => listProduk('Produk Terlaris')}
-          style={{marginTop: height * 0.01}}>
-          <Card>
-            <Card.Cover
-              source={require('../../assets/images/banner-terlaris.png')}
-              style={{height: height * 0.2, resizeMode: 'cover'}}
-            />
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        <View
+          style={{
+            width: '90%',
+            alignSelf: 'center',
+            marginTop: height * -0.02,
+            flex: 1,
+          }}>
+          {wishlist > 0 && (
             <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                padding: 10,
-                alignItems: 'center',
-              }}>
-              <Text style={{fontSize: 16}}>Produk Terlaris</Text>
+              style={[
+                styles.shadow,
+                {
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#fff',
+                  borderRadius: 10,
+                },
+              ]}>
+              <Icon
+                style={{padding: 10}}
+                name="magnify"
+                size={20}
+                color="#949494"
+              />
+              <TextInput
+                style={{
+                  flex: 1,
+                  paddingTop: 10,
+                  paddingRight: 10,
+                  paddingBottom: 10,
+                  paddingLeft: 0,
+                  backgroundColor: '#fff',
+                  color: '#424242',
+                  height: 50,
+                }}
+                onChangeText={val => setSearch(val)}
+                placeholder="Cari Produk"
+                underlineColorAndroid="transparent"
+                onSubmitEditing={searchProduk}
+              />
+              <Icon
+                style={{padding: 10}}
+                name="camera"
+                size={30}
+                color="#07A9F0"
+              />
+            </View>
+          )}
+
+          <TouchableOpacity
+            onPress={() => listProduk('Produk Terlaris')}
+            style={{marginTop: height * 0.01}}>
+            <Card>
+              <Card.Cover
+                source={require('../../assets/images/banner-terlaris.png')}
+                style={{height: height * 0.2, resizeMode: 'cover'}}
+              />
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
+                  padding: 10,
                   alignItems: 'center',
                 }}>
-                <Icon name="heart" size={16} color="#707070" />
-                <Text style={{fontSize: 10}}> 200 Orang </Text>
+                <Text style={{fontSize: 16}}>Produk Terlaris</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Icon name="heart" size={16} color="#707070" />
+                  <Text style={{fontSize: 10}}> 200 Orang </Text>
+                </View>
               </View>
-            </View>
-          </Card>
-        </TouchableOpacity>
-
-        {wishlist > 0 && (
-          <TouchableOpacity
-            onPress={gotoWishlist}
-            style={{marginTop: height * 0.01}}>
-            <LinearGradient
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 1}}
-              colors={['#0956C6', '#0879D8', '#07A9F0']}
-              style={{
-                padding: 15,
-                flexDirection: 'row',
-                borderRadius: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={require('../../assets/images/box2.png')}
-                style={{width: width * 0.05, height: width * 0.05}}
-              />
-              <Text
-                style={{
-                  fontSize: 18,
-                  textAlign: 'center',
-                  color: 'white',
-                  marginLeft: width * 0.04,
-                }}>
-                Produk Saya
-              </Text>
-            </LinearGradient>
+            </Card>
           </TouchableOpacity>
-        )}
 
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: height * 0.01,
-          }}>
           {wishlist > 0 && (
             <TouchableOpacity
-              imageStyle={{borderRadius: 10}}
-              onPress={() => gotoPesanan()}
-              style={{width: '32%'}}>
-              <ImageBackground
-                source={require('../../assets/images/produk-lain.png')}
-                resizeMode="stretch"
+              onPress={gotoWishlist}
+              style={{marginTop: height * 0.01}}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
                 style={{
-                  justifyContent: 'flex-end',
-                  padding: 10,
-                  height: height * 0.2,
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    marginLeft: width * 0.01,
-                    fontSize: width * 0.03,
-                  }}>
-                  Pesanan Saya
-                </Text>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    marginBottom: height * 0.01,
-                    marginLeft: width * 0.01,
-                  }}>
-                  <Icon name="circle" size={width * 0.01} color="#fff" />
-                  <Text
-                    style={{
-                      color: 'white',
-                      marginLeft: width * 0.01,
-                      fontSize: width * 0.03,
-                    }}>
-                    123 produk
-                  </Text>
-                </View>
-              </ImageBackground>
-            </TouchableOpacity>
-          )}
-
-          {wishlist == 0 && (
-            <TouchableOpacity
-              onPress={() => listProduk('Komisi Terbesar')}
-              style={{width: '32%'}}>
-              <ImageBackground
-                imageStyle={{borderRadius: 10}}
-                source={require('../../assets/images/komisi-terbesar.png')}
-                resizeMode="stretch"
-                style={{
-                  justifyContent: 'flex-end',
-                  padding: 10,
-                  height: height * 0.2,
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: width * 0.03,
-                    marginLeft: width * 0.01,
-                  }}>
-                  Komisi Terbesar
-                </Text>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    marginBottom: height * 0.01,
-                    marginLeft: width * 0.01,
-                  }}>
-                  <Icon name="circle" size={width * 0.01} color="#fff" />
-                  <Text
-                    style={{
-                      color: 'white',
-                      marginLeft: width * 0.01,
-                      fontSize: width * 0.03,
-                    }}>
-                    500 Rb
-                  </Text>
-                </View>
-              </ImageBackground>
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity
-            onPress={() => listProduk('Paling Disukai')}
-            style={{width: '32%'}}>
-            <ImageBackground
-              imageStyle={{borderRadius: 10}}
-              source={require('../../assets/images/produk-disukai.png')}
-              resizeMode="stretch"
-              style={{
-                justifyContent: 'flex-end',
-                padding: 10,
-                height: height * 0.2,
-              }}>
-              <Text
-                style={{
-                  color: 'white',
-                  marginLeft: width * 0.01,
-                  fontSize: width * 0.03,
-                }}>
-                Paling Disukai
-              </Text>
-              <View
-                style={{
-                  alignItems: 'center',
+                  padding: 15,
                   flexDirection: 'row',
-                  marginBottom: height * 0.01,
-                  marginLeft: width * 0.01,
+                  borderRadius: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                <Icon name="circle" size={width * 0.01} color="#fff" />
+                <Image
+                  source={require('../../assets/images/box2.png')}
+                  style={{width: width * 0.05, height: width * 0.05}}
+                />
                 <Text
                   style={{
+                    fontSize: 18,
+                    textAlign: 'center',
                     color: 'white',
-                    marginLeft: width * 0.01,
-                    fontSize: width * 0.03,
+                    marginLeft: width * 0.04,
                   }}>
-                  123 produk
+                  Produk Saya
                 </Text>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
 
-          {wishlist > 0 && (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: height * 0.01,
+            }}>
+            {wishlist > 0 && (
+              <TouchableOpacity
+                imageStyle={{borderRadius: 10}}
+                onPress={() => gotoPesanan()}
+                style={{width: '32%'}}>
+                <ImageBackground
+                  source={require('../../assets/images/produk-lain.png')}
+                  resizeMode="stretch"
+                  style={{
+                    justifyContent: 'flex-end',
+                    padding: 10,
+                    height: height * 0.2,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      marginLeft: width * 0.01,
+                      fontSize: width * 0.03,
+                    }}>
+                    Pesanan Saya
+                  </Text>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginBottom: height * 0.01,
+                      marginLeft: width * 0.01,
+                    }}>
+                    <Icon name="circle" size={width * 0.01} color="#fff" />
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginLeft: width * 0.01,
+                        fontSize: width * 0.03,
+                      }}>
+                      123 produk
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            )}
+
+            {wishlist == 0 && (
+              <TouchableOpacity
+                onPress={() => listProduk('Komisi Terbesar')}
+                style={{width: '32%'}}>
+                <ImageBackground
+                  imageStyle={{borderRadius: 10}}
+                  source={require('../../assets/images/komisi-terbesar.png')}
+                  resizeMode="stretch"
+                  style={{
+                    justifyContent: 'flex-end',
+                    padding: 10,
+                    height: height * 0.2,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: width * 0.03,
+                      marginLeft: width * 0.01,
+                    }}>
+                    Komisi Terbesar
+                  </Text>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginBottom: height * 0.01,
+                      marginLeft: width * 0.01,
+                    }}>
+                    <Icon name="circle" size={width * 0.01} color="#fff" />
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginLeft: width * 0.01,
+                        fontSize: width * 0.03,
+                      }}>
+                      500 Rb
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            )}
+
             <TouchableOpacity
-              onPress={() => gotoKategori()}
+              onPress={() => listProduk('Paling Disukai')}
               style={{width: '32%'}}>
               <ImageBackground
                 imageStyle={{borderRadius: 10}}
-                source={require('../../assets/images/komisi-terbesar.png')}
+                source={require('../../assets/images/produk-disukai.png')}
                 resizeMode="stretch"
                 style={{
                   justifyContent: 'flex-end',
@@ -531,10 +493,10 @@ function jualanAnda(props) {
                 <Text
                   style={{
                     color: 'white',
-                    fontSize: width * 0.03,
                     marginLeft: width * 0.01,
+                    fontSize: width * 0.03,
                   }}>
-                  Produk Lain
+                  Paling Disukai
                 </Text>
                 <View
                   style={{
@@ -555,51 +517,92 @@ function jualanAnda(props) {
                 </View>
               </ImageBackground>
             </TouchableOpacity>
-          )}
 
-          {wishlist == 0 && (
-            <TouchableOpacity
-              imageStyle={{borderRadius: 10}}
-              onPress={() => gotoKategori()}
-              style={{width: '32%'}}>
-              <ImageBackground
-                source={require('../../assets/images/produk-lain.png')}
-                resizeMode="stretch"
-                style={{
-                  justifyContent: 'flex-end',
-                  padding: 10,
-                  height: height * 0.2,
-                }}>
-                <Text
+            {wishlist > 0 && (
+              <TouchableOpacity
+                onPress={() => gotoKategori()}
+                style={{width: '32%'}}>
+                <ImageBackground
+                  imageStyle={{borderRadius: 10}}
+                  source={require('../../assets/images/komisi-terbesar.png')}
+                  resizeMode="stretch"
                   style={{
-                    color: 'white',
-                    marginLeft: width * 0.01,
-                    fontSize: width * 0.03,
+                    justifyContent: 'flex-end',
+                    padding: 10,
+                    height: height * 0.2,
                   }}>
-                  Produk Lain
-                </Text>
-                <View
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: width * 0.03,
+                      marginLeft: width * 0.01,
+                    }}>
+                    Produk Lain
+                  </Text>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginBottom: height * 0.01,
+                      marginLeft: width * 0.01,
+                    }}>
+                    <Icon name="circle" size={width * 0.01} color="#fff" />
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginLeft: width * 0.01,
+                        fontSize: width * 0.03,
+                      }}>
+                      123 produk
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            )}
+
+            {wishlist == 0 && (
+              <TouchableOpacity
+                imageStyle={{borderRadius: 10}}
+                onPress={() => gotoKategori()}
+                style={{width: '32%'}}>
+                <ImageBackground
+                  source={require('../../assets/images/produk-lain.png')}
+                  resizeMode="stretch"
                   style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    marginBottom: height * 0.01,
-                    marginLeft: width * 0.01,
+                    justifyContent: 'flex-end',
+                    padding: 10,
+                    height: height * 0.2,
                   }}>
-                  <Icon name="circle" size={width * 0.01} color="#fff" />
                   <Text
                     style={{
                       color: 'white',
                       marginLeft: width * 0.01,
                       fontSize: width * 0.03,
                     }}>
-                    1 juta produk
+                    Produk Lain
                   </Text>
-                </View>
-              </ImageBackground>
-            </TouchableOpacity>
-          )}
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginBottom: height * 0.01,
+                      marginLeft: width * 0.01,
+                    }}>
+                    <Icon name="circle" size={width * 0.01} color="#fff" />
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginLeft: width * 0.01,
+                        fontSize: width * 0.03,
+                      }}>
+                      1 juta produk
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      </View>
       </ScrollView>
       {loading && <Loading />}
 

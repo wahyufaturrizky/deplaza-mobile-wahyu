@@ -69,11 +69,13 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlProduk + '?limit=10&offset=0&order_direction=desc' + param, {headers})
+    fetch(urlProduk + '?limit=10&offset=0&order_direction=desc' + param, {
+      headers,
+    })
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(responseData.data);
-        // console.log(products.data)
+        console.log(products.data);
         setPage(1);
         setLoading(false);
       })
@@ -104,7 +106,10 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlProduk + '?order_direction=desc&limit=10&offset=' + off + '' + param, {headers})
+    fetch(
+      urlProduk + '?order_direction=desc&limit=10&offset=' + off + '' + param,
+      {headers},
+    )
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(products.concat(responseData.data));
@@ -151,7 +156,9 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlProduk + '?order_direction=desc&limit=10&offset=0' + param, {headers})
+    fetch(urlProduk + '?order_direction=desc&limit=10&offset=0' + param, {
+      headers,
+    })
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(responseData.data);
@@ -234,7 +241,14 @@ function produk(props) {
               />
 
               <View style={{width: '68%'}}>
-                <Text style={{fontSize: 14, width: 210, marginTop: 10, textTransform: 'capitalize'}} numberOfLines={2}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    width: 210,
+                    marginTop: 10,
+                    textTransform: 'capitalize',
+                  }}
+                  numberOfLines={2}>
                   {product.name}
                 </Text>
                 <Text style={{fontSize: 13, marginTop: 5}}>
@@ -256,7 +270,9 @@ function produk(props) {
                     paddingVertical: 10,
                   }}
                   onPress={() => detailProduk(product.id, product.name)}>
-                  <Text style={{color: '#07A9F0', marginRight: 10}}>Lihat Produk</Text>
+                  <Text style={{color: '#07A9F0', marginRight: 10}}>
+                    Lihat Produk
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
