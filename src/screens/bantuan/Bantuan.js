@@ -1,10 +1,20 @@
 import React, {useState} from 'react';
-import {View, Text, ImageBackground, Dimensions, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  ImageBackground,
+  Dimensions,
+  Image,
+  StyleSheet,
+  TextInput,
+  CheckBox,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Appbar from '../../components/appbarHome';
 import BottomTab from '../../components/bottomTab';
+import {Picker} from '@react-native-community/picker';
 
 function Bantuan(props) {
   const [bantu, setBantu] = useState(0);
@@ -40,7 +50,7 @@ function Bantuan(props) {
       <Appbar params={props} />
       <View style={{flex: 1}}>
         {bantu === 0 && (
-          <View> 
+          <View>
             <TouchableOpacity onPress={() => changeBantu(1)}>
               <ImageBackground
                 source={require('../../assets/images/bantuJualan1.png')}
@@ -66,76 +76,366 @@ function Bantuan(props) {
                 {/* </View> */}
               </ImageBackground>
             </TouchableOpacity>
-            <TouchableOpacity  style={styles.button} onPress={() => setBantu(10)}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                               style={styles.button}
-                            >
-                                <Text style={styles.buttonText}>
-                                    Pengaturan Selling Otomation (SO)
-                                </Text>
-                            </LinearGradient>
-                </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setBantu(10)}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={styles.button}>
+                <Text style={styles.buttonText}>
+                  Pengaturan Selling Otomation (SO)
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         )}
 
         {bantu === 10 ? (
           <View style={styles.container}>
             <Text>Pengaturan Selling Automation</Text>
-            <TouchableOpacity  style={{...styles.button, marginBottom: 50, marginTop: 50}} onPress={() => setBantu(11)}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                               style={styles.button}
-                            >
-                                <Text style={styles.buttonText}>
-                                    Custom Pengaturan
-                                </Text>
-                            </LinearGradient>
-                </TouchableOpacity>
-                <TouchableOpacity  style={{...styles.button, marginBottom: -10, marginTop: -10}}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                               style={styles.button}
-                            >
-                                <Text style={styles.buttonText}>
-                                    Pengaturan SO Semua Pembeli
-                                </Text>
-                            </LinearGradient>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={{...styles.button, marginBottom: 50, marginTop: 50}}
+              onPress={() => setBantu(11)}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={styles.button}>
+                <Text style={styles.buttonText}>Custom Pengaturan</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setBantu(14)}
+              style={{...styles.button, marginBottom: -10, marginTop: -10}}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={styles.button}>
+                <Text style={styles.buttonText}>
+                  Pengaturan SO Semua Pembeli
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         ) : null}
 
-{bantu === 11 ? (
+        {bantu === 11 ? (
           <View style={styles.container}>
             <Text>Custom Pengaturan</Text>
-            <TouchableOpacity  style={{...styles.button, marginBottom: 50, marginTop: 50, flexDirection: 'row'}}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                               style={{...styles.button, flexDirection: 'row'}}
-                            >
-                              <Image source={require('../../assets/images/wa.png')} resizeMode="contain" style={{width: 20, height: 20}} />
-                                <Text style={styles.buttonText}>
-                                   WA Pembeli
-                                </Text>
-                            </LinearGradient>
+            <TouchableOpacity
+              style={{
+                ...styles.button,
+                marginBottom: 50,
+                marginTop: 50,
+                flexDirection: 'row',
+              }}
+              onPress={() => setBantu(12)}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{...styles.button, flexDirection: 'row'}}>
+                <Image
+                  source={require('../../assets/images/wa.png')}
+                  resizeMode="contain"
+                  style={{width: 20, height: 20}}
+                />
+                <Text style={styles.buttonText}>WA Pembeli</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                ...styles.button,
+                marginBottom: -10,
+                marginTop: -10,
+                flexDirection: 'row',
+              }}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{...styles.button, flexDirection: 'row'}}>
+                <Image
+                  source={require('../../assets/images/ig.png')}
+                  resizeMode="contain"
+                  style={{width: 20, height: 20}}
+                />
+                <Text style={styles.buttonText}>IG Pembeli</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                ...styles.button,
+                marginBottom: 50,
+                marginTop: 50,
+                flexDirection: 'row',
+              }}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{...styles.button, flexDirection: 'row'}}>
+                <Image
+                  source={require('../../assets/images/fb.png')}
+                  resizeMode="contain"
+                  style={{width: 20, height: 20}}
+                />
+                <Text style={styles.buttonText}>FB Pembeli</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        ) : null}
+
+        {bantu === 12 ? (
+          <View style={styles.container}>
+            <Text style={{fontSize: 15, fontWeight: 'bold'}}>WA Pembeli</Text>
+            <View style={styles.content}>
+              <Image
+                source={require('../../assets/images/wa.png')}
+                resizeMode="contain"
+                style={{width: 30, height: 30, marginRight: 10}}
+              />
+              <Text>0899999999</Text>
+              <View style={styles.contentRight}>
+                <TouchableOpacity>
+                  <Icon name="pencil" size={20} />
                 </TouchableOpacity>
-                <TouchableOpacity  style={{...styles.button, marginBottom: -10, marginTop: -10, flexDirection: 'row'}}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                style={{...styles.button, flexDirection: 'row'}}
-                            >
-                            <Image source={require('../../assets/images/ig.png')} resizeMode="contain" style={{width: 20, height: 20}} />
-                                <Text style={styles.buttonText}>
-                                    IG Pembeli
-                                </Text>
-                            </LinearGradient>
+                <TouchableOpacity>
+                  <Icon name="trash-can-outline" size={20} />
                 </TouchableOpacity>
-                <TouchableOpacity  style={{...styles.button, marginBottom: 50, marginTop: 50, flexDirection: 'row'}}>
-                            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}} colors={['#0956C6', '#0879D8', '#07A9F0']}
-                                style={{...styles.button, flexDirection: 'row'}}
-                            >
-                              <Image source={require('../../assets/images/fb.png')} resizeMode="contain" style={{width: 20, height: 20}} />
-                                <Text style={styles.buttonText}>
-                                    FB Pembeli
-                                </Text>
-                            </LinearGradient>
-                </TouchableOpacity>
+              </View>
             </View>
+            <View
+              style={{
+                width: '95%',
+                borderBottomWidth: 1,
+                borderBottomColor: '#cecece',
+              }}
+            />
+            <View style={{position: 'absolute', bottom: 0}}>
+              <TouchableOpacity
+                style={{
+                  ...styles.button,
+                  borderRadius: 0,
+                  width: 400,
+                  flexDirection: 'row',
+                }}
+                onPress={() => setBantu(13)}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{
+                    ...styles.button,
+                    borderRadius: 0,
+                    width: 400,
+                    flexDirection: 'row',
+                  }}>
+                  <Icon name="plus" size={20} color="#fff" />
+                  <Text style={styles.buttonText}>Tambah WA Pembeli</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
+
+        {bantu === 13 ? (
+          <View style={styles.container}>
+            <Text style={{fontSize: 15, fontWeight: 'bold'}}>WA Pembeli</Text>
+            <View style={{...styles.content, marginLeft: 50}}>
+              <Image
+                source={require('../../assets/images/wa.png')}
+                resizeMode="contain"
+                style={{width: 30, height: 30, marginRight: 30}}
+              />
+              <Text style={{textAlign: 'center'}}>
+                Masukkan Nomor WA Pembeli Anda
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                width: '100%',
+                marginTop: 10,
+              }}>
+              <View
+                style={{
+                  ...styles.content,
+                  marginLeft: 10,
+                  marginTop: 0,
+                  borderRadius: 5,
+                  height: 40,
+                  borderWidth: 1,
+                  width: 75,
+                  justifyContent: 'center',
+                  borderColor: '#cecece',
+                  alignSelf: 'flex-start',
+                }}>
+                <Image
+                  source={require('../../assets/images/indonesia.png')}
+                  style={{width: 25, height: 25}}
+                />
+                <Text style={{marginLeft: 5}}>+62</Text>
+              </View>
+              <TextInput
+                style={{
+                  width: '65%',
+                  height: 40,
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  borderColor: '#cecece',
+                  backgroundColor: '#fff',
+                }}
+              />
+            </View>
+            <View
+              style={{
+                backgroundColor: '#cecece',
+                width: '100%',
+                marginTop: 10,
+              }}>
+              <Text style={{marginLeft: 20, marginTop: 5, marginBottom: 5}}>
+                Jenis Kelamin
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignSelf: 'flex-start',
+                marginLeft: 20,
+                marginTop: 10,
+              }}>
+              <CheckBox />
+              <Text>Pria</Text>
+              <CheckBox style={{marginLeft: 30}} />
+              <Text>Wanita</Text>
+            </View>
+            <View
+              style={{
+                backgroundColor: '#cecece',
+                width: '100%',
+                marginTop: 20,
+              }}>
+              <Text style={{marginLeft: 20, marginTop: 5, marginBottom: 5}}>
+                Range Harga
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignSelf: 'flex-start',
+                marginLeft: 20,
+                marginTop: 10,
+              }}>
+              <Picker
+                style={{
+                  height: 50,
+                  width: 150,
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: '#cecece',
+                }}>
+                <Picker.Item label="Mulai" value="1000" />
+                <Picker.Item label="20000" value="2000" />
+              </Picker>
+              <Text style={{fontSize: 20}}>-</Text>
+              <Picker
+                style={{
+                  height: 50,
+                  width: 150,
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: '#cecece',
+                  marginLeft: 20,
+                }}>
+                <Picker.Item label="Sampai" value="1000" />
+                <Picker.Item label="20000" value="2000" />
+              </Picker>
+            </View>
+            <View style={{position: 'absolute', bottom: -90}}>
+              <TouchableOpacity
+                style={{
+                  ...styles.button,
+                  borderRadius: 0,
+                  width: 400,
+                  flexDirection: 'row',
+                }}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{
+                    ...styles.button,
+                    borderRadius: 0,
+                    width: 400,
+                    flexDirection: 'row',
+                  }}>
+                  <Icon name="plus" size={20} color="#fff" />
+                  <Text style={styles.buttonText}>Tambah WA Pembeli</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
+
+        {bantu === 14 ? (
+          <View style={styles.container}>
+            <Text style={{fontSize: 15, fontWeight: 'bold', marginBottom: 30}}>
+              Pengaturan Semua Pembeli
+            </Text>
+            <View
+              style={{
+                backgroundColor: '#cecece',
+                width: '100%',
+                marginTop: 10,
+              }}>
+              <Text style={{marginLeft: 20, marginTop: 5, marginBottom: 5}}>
+                Aktifkan SO Custom
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignSelf: 'flex-start',
+                marginLeft: 20,
+                marginTop: 10,
+              }}>
+              <CheckBox />
+              <Text>Ya</Text>
+              <CheckBox style={{marginLeft: 30}} />
+              <Text>Tidak</Text>
+            </View>
+            <View
+              style={{
+                backgroundColor: '#cecece',
+                width: '100%',
+                marginTop: 20,
+              }}>
+              <Text style={{marginLeft: 20, marginTop: 5, marginBottom: 5}}>
+                Aktifkan SO Pelanggan
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignSelf: 'flex-start',
+                marginLeft: 20,
+                marginTop: 10,
+              }}>
+              <CheckBox />
+              <Text>Ya</Text>
+              <CheckBox style={{marginLeft: 30}} />
+              <Text>Tidak</Text>
+            </View>
+          </View>
         ) : null}
 
         {bantu === 1 && subBantu !== 3 && (
@@ -526,26 +826,41 @@ export default Bantuan;
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      marginTop: 20
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    marginTop: 20,
   },
   button: {
-      borderRadius: 5,
-      width: 300,
-      height: 50,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 100,
-      alignSelf: 'center',
-      marginBottom: 100
+    borderRadius: 5,
+    width: 300,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 100,
+    alignSelf: 'center',
+    marginBottom: 100,
   },
   buttonText: {
-      fontSize:17, 
-      marginLeft: 10,
-      marginRight: 10,
-      textAlign:'center', 
-      color:'white',
-  }
-})
+    fontSize: 17,
+    marginLeft: 10,
+    marginRight: 10,
+    textAlign: 'center',
+    color: 'white',
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginLeft: 20,
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  contentRight: {
+    flexDirection: 'row',
+    width: '65%',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+});
