@@ -19,6 +19,10 @@ import {Picker} from '@react-native-community/picker';
 function Bantuan(props) {
   const [bantu, setBantu] = useState(0);
   const [subBantu, setSubBantu] = useState(0);
+  const [optionSo, setOptionSo] = useState(false);
+  const [optionSoNo, setOptionSoNo] = useState(false);
+  const [optionCust, setOptionCust] = useState(false);
+  const [optionCustNo, setOptionCustNo] = useState(false);
 
   const changeSubBantu = sub => {
     setSubBantu(sub);
@@ -42,6 +46,24 @@ function Bantuan(props) {
 
   const gotoBantuanFaq = () => {
     props.navigation.navigate('BantuanFaq', {title: 'Bantuan FAQ'});
+  };
+
+  const checkSo = () => {
+    setOptionSo(!optionSo);
+    setOptionSoNo(false);
+  };
+  const checkSoNo = () => {
+    setOptionSo(false);
+    setOptionSoNo(!optionSoNo);
+  };
+
+  const checkCust = () => {
+    setOptionCust(!optionCust);
+    setOptionCustNo(false);
+  };
+  const checkCustNo = () => {
+    setOptionCust(false);
+    setOptionCustNo(!optionCustNo);
   };
 
   const {height, width} = Dimensions.get('window');
@@ -407,9 +429,13 @@ function Bantuan(props) {
                 marginLeft: 20,
                 marginTop: 10,
               }}>
-              <CheckBox />
+              <CheckBox value={optionSo} onValueChange={checkSo} />
               <Text>Ya</Text>
-              <CheckBox style={{marginLeft: 30}} />
+              <CheckBox
+                style={{marginLeft: 30}}
+                value={optionSoNo}
+                onValueChange={checkSoNo}
+              />
               <Text>Tidak</Text>
             </View>
             <View
@@ -430,9 +456,13 @@ function Bantuan(props) {
                 marginLeft: 20,
                 marginTop: 10,
               }}>
-              <CheckBox />
+              <CheckBox value={optionCust} onValueChange={checkCust} />
               <Text>Ya</Text>
-              <CheckBox style={{marginLeft: 30}} />
+              <CheckBox
+                style={{marginLeft: 30}}
+                value={optionCustNo}
+                onValueChange={checkCustNo}
+              />
               <Text>Tidak</Text>
             </View>
           </View>
