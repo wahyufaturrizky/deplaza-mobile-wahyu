@@ -34,6 +34,7 @@ function penarikan(props) {
 
   useEffect(() => {
     getRekening();
+    getSaldo();
   }, []);
 
   const getRekening = async () => {
@@ -145,6 +146,7 @@ function penarikan(props) {
       .then(response => response.json())
       .then(responseData => {
         setLoading(false);
+        console.log('penarikan', responseData);
         setSaldo(responseData.data);
         console.log(responseData.data);
       })
