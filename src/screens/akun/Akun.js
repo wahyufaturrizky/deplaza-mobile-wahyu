@@ -95,6 +95,7 @@ function Akun(props) {
   };
 
   const logout = async () => {
+    await AsyncStorage.removeItem('regular');
     await AsyncStorage.removeItem('data');
     props.navigation.navigate('Login');
   };

@@ -29,13 +29,14 @@ function wishlist(props) {
   const [page, setPage] = useState(0);
   const [any, setAny] = useState(true);
   const [search, setSearch] = useState(false);
-
+  const [status, setStatus] = useState('');
   const {height, width} = Dimensions.get('window');
   const urlWishlist = URL + 'v1/wishlist/me';
   let halaman = props.route.params.title;
 
   useEffect(() => {
     getWishlist();
+    getStatus();
   }, []);
 
   const getWishlist = async () => {
@@ -56,6 +57,13 @@ function wishlist(props) {
       })
       .catch(e => console.log(e));
   };
+
+  const getStatus = async () => {
+    const regular = await AsyncStorage.getItem('regular');
+    setStatus(regular);
+  };
+
+  console.log(status);
 
   //Pergi ke Hal List Produk
   const detailProduk = (id, name) => {
@@ -317,16 +325,18 @@ function wishlist(props) {
         )}
       </ScrollView>
       {loading && <Loading />}
-      <TouchableOpacity style={styles.button}>
-        <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
-          colors={['#0956C6', '#0879D8', '#07A9F0']}
-          style={styles.button}>
-          <Icon name="plus" size={20} color="#fff" />
-          <Text style={styles.buttonText}>Tambah</Text>
-        </LinearGradient>
-      </TouchableOpacity>
+      {status === 'true' ? null : (
+        <TouchableOpacity style={styles.button}>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={['#0956C6', '#0879D8', '#07A9F0']}
+            style={styles.button}>
+            <Icon name="plus" size={20} color="#fff" />
+            <Text style={styles.buttonText}>Tambah</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      )}
       <BottomTab {...props} />
     </View>
   );

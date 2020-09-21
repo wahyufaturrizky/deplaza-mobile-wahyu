@@ -246,7 +246,7 @@ function jualanAnda(props) {
           style={{width: width * 1, height: height * 0.3}}
           width={width * 1}
           height={height * 0.25}
-          resizeMode="stretch"
+          resizeMode="contain"
         />
       ) : (
         <ImageBackground
@@ -273,6 +273,47 @@ function jualanAnda(props) {
           </View>
         </ImageBackground>
       )}
+      {wishlist > 0 && (
+        <View
+          style={[
+            styles.shadow,
+            {
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#fff',
+              borderRadius: 10,
+              bottom: 10,
+              width: '90%',
+              alignSelf: 'center',
+              marginBottom: 10,
+            },
+          ]}>
+          <Icon
+            style={{padding: 10}}
+            name="magnify"
+            size={20}
+            color="#949494"
+          />
+          <TextInput
+            style={{
+              flex: 1,
+              paddingTop: 10,
+              paddingRight: 10,
+              paddingBottom: 10,
+              paddingLeft: 0,
+              backgroundColor: '#fff',
+              color: '#424242',
+              height: 50,
+            }}
+            onChangeText={val => setSearch(val)}
+            placeholder="Cari Produk"
+            underlineColorAndroid="transparent"
+            onSubmitEditing={searchProduk}
+          />
+          <Icon style={{padding: 10}} name="camera" size={30} color="#07A9F0" />
+        </View>
+      )}
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -284,52 +325,9 @@ function jualanAnda(props) {
             marginTop: height * -0.02,
             flex: 1,
           }}>
-          {wishlist > 0 && (
-            <View
-              style={[
-                styles.shadow,
-                {
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#fff',
-                  borderRadius: 10,
-                },
-              ]}>
-              <Icon
-                style={{padding: 10}}
-                name="magnify"
-                size={20}
-                color="#949494"
-              />
-              <TextInput
-                style={{
-                  flex: 1,
-                  paddingTop: 10,
-                  paddingRight: 10,
-                  paddingBottom: 10,
-                  paddingLeft: 0,
-                  backgroundColor: '#fff',
-                  color: '#424242',
-                  height: 50,
-                }}
-                onChangeText={val => setSearch(val)}
-                placeholder="Cari Produk"
-                underlineColorAndroid="transparent"
-                onSubmitEditing={searchProduk}
-              />
-              <Icon
-                style={{padding: 10}}
-                name="camera"
-                size={30}
-                color="#07A9F0"
-              />
-            </View>
-          )}
-
           <TouchableOpacity
             onPress={() => listProduk('Produk Terlaris')}
-            style={{marginTop: height * 0.01}}>
+            style={{marginTop: height * 0.01, marginBottom: 20}}>
             <Card>
               <Card.Cover
                 source={require('../../assets/images/banner-terlaris.png')}
@@ -357,9 +355,7 @@ function jualanAnda(props) {
           </TouchableOpacity>
 
           {wishlist > 0 && (
-            <TouchableOpacity
-              onPress={gotoWishlist}
-              style={{marginTop: height * 0.01}}>
+            <TouchableOpacity onPress={gotoWishlist} style={{marginBottom: 10}}>
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
