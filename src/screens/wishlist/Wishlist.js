@@ -26,6 +26,7 @@ import axios from 'axios';
 function wishlist(props) {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [Orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
   const [any, setAny] = useState(true);
   const [search, setSearch] = useState(false);
@@ -133,12 +134,12 @@ function wishlist(props) {
     getWishlist();
   };
 
-  const searchProduk = async search => {
+  const searchProduk = async searchData => {
     setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
     let param = '';
-    // let param ="&invoice="+search
+    // let param ="&invoice="+searchData
     // console.log(urlOrder+"?limit=10&offset="+page+""+param)
 
     let headers = {
@@ -147,8 +148,7 @@ function wishlist(props) {
     };
 
     fetch(
-      'https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=0&order_direction=desc' +
-        param,
+      `https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=0&order_direction=desc&keyword=${searchData}`,
       {
         headers,
       },
