@@ -430,6 +430,7 @@ function Pesan(props) {
               }}>
               <View>
                 <Text style={{fontSize: 18}}>{productName}</Text>
+                <Text>Berat : {productDetail.weight * 1000} Gram</Text>
                 <Text>Rp. {formatRupiah(totalPrice)}</Text>
                 <View
                   style={{
