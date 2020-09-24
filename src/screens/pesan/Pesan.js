@@ -409,7 +409,7 @@ function Pesan(props) {
         fetch(urlKotaDetail + id_kota, {headers})
           .then(response => response.json())
           .then(async responseData => {
-            // console.log(responseData.rajaongkir.results.postal_code);
+            // console.log('oo', responseData.rajaongkir.destination_details);
             await setKotaDetail(responseData.rajaongkir.results);
             setPos(responseData.rajaongkir.results.postal_code);
             setLoading(false);
@@ -437,7 +437,7 @@ function Pesan(props) {
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
-        console.log('uuu', responseData);
+        await setKotaDetail(responseData.rajaongkir.destination_details);
         let tipe = await responseData.rajaongkir.results[0].costs;
         setLoading(false);
         tipe.map(type => {
@@ -473,6 +473,8 @@ function Pesan(props) {
         });
       });
   };
+
+  //console.log('ook', kotaDetail.city);
 
   const postProduct = async () => {
     const value = await AsyncStorage.getItem('data');
@@ -535,9 +537,9 @@ function Pesan(props) {
           delivery_reciver_address:
             alamat +
             ' Kec.' +
-            kecamatan +
+            kotaDetail.subdistrict_name +
             ', Kota ' +
-            kotaDetail.city_name +
+            kotaDetail.city +
             ', Provinsi ' +
             provinsiDetail.province,
         },

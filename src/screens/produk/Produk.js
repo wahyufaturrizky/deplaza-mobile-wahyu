@@ -24,6 +24,7 @@ function produk(props) {
   const [page, setPage] = useState(0);
   const [any, setAny] = useState(true);
   const [search, setSearch] = useState(false);
+  const [pageOff, setPageOff] = useState(0);
 
   // Untuk Dapetin lagi di page mana
   let halaman = props.route.params.title;
@@ -89,25 +90,35 @@ function produk(props) {
     const data = JSON.parse(value);
 
     let pageNow = hal;
-    let param = '';
 
     let off = 10 * pageNow;
 
+    await setPageOff(off);
+
+    let param = '';
+
     if (halaman === 'Komisi Terbesar') {
-      param = '&order_by=price_commission&order_direction=desc';
+      param += '&order_by=price_commission&order_direction=desc';
     } else if (props.route.params.idKategori != null) {
-      param = '&category=' + props.route.params.idKategori;
+      param += '&category=' + props.route.params.idKategori;
+    } else if (halaman === 'Paling Disukai') {
+      param += '&order_by=wishlist_qty&order_direction=desc';
     } else {
-      param = '';
+      param += '';
     }
+    param += search ? '&keyword=' + search : '';
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(
-      urlProduk + '?order_direction=desc&limit=10&offset=' + off + '' + param,
+    await fetch(
+      urlProduk +
+        '?order_direction=desc&limit=10&offset=' +
+        pageOff +
+        '' +
+        param,
       {headers},
     )
       .then(response => response.json())
@@ -156,14 +167,17 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlProduk + '?order_direction=desc&limit=10&offset=0' + param, {
-      headers,
-    })
+    fetch(
+      urlProduk + `?order_direction=desc&limit=10&offset=${pageOff}${param}`,
+      {
+        headers,
+      },
+    )
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(responseData.data);
-        setPage(1);
         setLoading(false);
+        setPage(pageOff++);
       })
       .catch(e => console.log(e));
   };
