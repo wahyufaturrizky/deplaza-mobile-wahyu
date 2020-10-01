@@ -200,7 +200,7 @@ function pesananSaya(props) {
             style={{
               flexDirection: 'row',
               marginVertical: 10,
-              height: height * 0.26,
+              height: height * 0.3,
               justifyContent: 'space-between',
               borderWidth: 1,
               borderColor: '#ddd',
