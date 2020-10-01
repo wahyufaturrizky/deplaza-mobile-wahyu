@@ -288,11 +288,12 @@ function wishlist(props) {
                       marginTop: 10,
                       paddingBottom: 20,
                     }}>
+                    {console.log('asdasdasd', data)}
                     <TouchableOpacity
                       style={{
                         width: '50%',
                       }}
-                      onPress={() => hapusProduk(data.product.id)}>
+                      onPress={() => hapusProduk(data.id)}>
                       <Text style={{color: 'red'}}>Hapus Produk</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
