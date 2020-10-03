@@ -19,7 +19,7 @@ const {height, width} = Dimensions.get('window');
 
 function MyTabBar(props) {
   const gotoAkun = () => {
-    props.navigation.navigate('Akun', {title: 'Akun Saya', ...props});
+    props.navigation.navigate('JualanAnda');
   };
 
   return (

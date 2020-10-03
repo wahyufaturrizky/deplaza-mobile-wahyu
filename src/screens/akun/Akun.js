@@ -64,6 +64,12 @@ function Akun(props) {
     props.navigation.navigate('PembayaranSaya', {title: 'Pembayaran Saya'});
   };
 
+  const gotoInformasiPenjualanSaya = () => {
+    props.navigation.navigate('InformasiPenjualanSaya', {
+      title: 'Informasi Penjualan Saya',
+    });
+  };
+
   const gotoRincianRekening = () => {
     props.navigation.navigate('RincianRekening', {
       title: 'Rincian Rekening Saya',
@@ -178,6 +184,28 @@ function Akun(props) {
                 }}
               />
               <Text style={{fontSize: 18}}>Pembayaran Saya</Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={{borderTopWidth: 1, borderColor: '#D5D5D5'}} />
+          <TouchableOpacity onPress={gotoInformasiPenjualanSaya}>
+            <View
+              style={{
+                justifyContent: 'flex-start',
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: 20,
+              }}>
+              <Image
+                source={require('../../assets/images/bill.png')}
+                style={{
+                  width: width * 0.1,
+                  height: width * 0.1,
+                  marginRight: width * 0.04,
+                  resizeMode: 'contain',
+                }}
+              />
+              <Text style={{fontSize: 18}}>Informasi Penjualan</Text>
             </View>
           </TouchableOpacity>
 

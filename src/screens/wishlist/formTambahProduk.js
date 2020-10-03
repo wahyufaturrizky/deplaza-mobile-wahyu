@@ -45,7 +45,7 @@ function formTambahProduk(props) {
   const [categoryId, setCategoryId] = useState(null);
   const [idCity, setIdCity] = useState(null);
   const [idKecataman, setIdKecataman] = useState(null);
-  const [codCityId, setCodCityId] = useState(null);
+  const [codCityId, setCodCityId] = useState([]);
   const [cod, setCod] = useState(null);
   const [weight, setWeight] = useState(null);
   const [description, setDescription] = useState('');
@@ -61,6 +61,7 @@ function formTambahProduk(props) {
   const [heightProduct, setHeightProduct] = useState(null);
   const [widthProduct, setWidthProduct] = useState(null);
   const [file, setFile] = useState([]);
+  const [source, setSource] = useState('');
 
   const [loading, setLoading] = useState(true);
 
@@ -146,7 +147,6 @@ function formTambahProduk(props) {
     fetch(URL + `v1/supplier?limit=10000`, {headers})
       .then(response => response.json())
       .then(async responseData => {
-        console.log('getDataSupplier', responseData.data.data);
         const mapAlamatGudangSupplier = responseData.data;
         let data = mapAlamatGudangSupplier.map(s => ({
           id: s.id,
@@ -302,47 +302,44 @@ function formTambahProduk(props) {
         fetch(urlKotaDetail + id_kota, {headers})
           .then(response => response.json())
           .then(async responseData => {
-            await setKotaDetail(responseData.rajaongkir.results);
             setLoading(false);
+            await setKotaDetail(responseData.rajaongkir.results);
           });
       });
   };
 
   // Fungsi untuk ADD NEW PRODUCT
   const addNewProduct = async () => {
-    console.log('nameProduct', nameProduct);
-    console.log('categoryId', categoryId);
-    console.log('brand', brand);
-    console.log('priceBasic', priceBasic);
-    console.log('priceCommission', priceCommission);
-    console.log('Stok', stock);
-    console.log('setDescription', description);
-    console.log('setWeight', weight);
-    console.log('idCity', idCity);
-    console.log('idKecataman', idKecataman);
-    console.log('bisa COD', cod);
-    console.log('codCityId', codCityId);
-    console.log('resi otomatis atau tidak', awb);
+    // console.log('nameProduct', nameProduct);
+    // console.log('categoryId', categoryId);
+    // console.log('brand', brand);
+    // console.log('priceBasic', priceBasic);
+    // console.log('priceCommission', priceCommission);
+    // console.log('Stok', stock);
+    // console.log('setDescription', description);
+    // console.log('setWeight', weight);
+    // console.log('idCity', idCity);
+    // console.log('idKecataman', idKecataman);
+    // console.log('bisa COD', cod);
+    // console.log('codCityId', codCityId);
+    // console.log('resi otomatis atau tidak', awb);
 
     let checkDataEmpty = [
-      {name: 'name product', value: nameProduct},
+      {name: 'Judul Produk', value: nameProduct},
       {name: 'description', value: description},
-      {name: 'category Id', value: categoryId},
+      {name: 'category', value: categoryId},
       {name: 'brand', value: brand},
       {name: 'photo product', value: file},
-      {name: 'price basic', value: priceBasic},
-      {name: 'price commission', value: priceCommission},
+      {name: 'Harga Pokok Produk', value: priceBasic},
+      {name: 'Benefit Deplaza', value: priceCommission},
       {name: 'stock', value: stock},
       {name: 'weight', value: weight},
-      {name: 'idCity', value: idCity},
-      {name: 'id Kecataman', value: idKecataman},
-      {name: 'cod', value: cod},
-
-      {name: 'awb', value: awb},
-      {name: 'codCity Id', value: codCityId},
+      {name: 'Kota Asal Produk', value: idCity},
+      {name: 'Kecamatan Asal Produk', value: idKecataman},
+      {name: 'Bisa COD / Tidak', value: cod},
+      {name: 'Supplier (Sumber Produk)', value: source},
+      {name: 'Resi Otomatis / Tidak', value: awb},
     ];
-
-    console.log('checkDataEmpty', checkDataEmpty);
 
     // if (awb === 1) {
     //   checkDataEmptyAwb = [
@@ -359,8 +356,6 @@ function formTambahProduk(props) {
       field => field.value === '' || field.value === null,
     );
 
-    console.log('emptyField', emptyField);
-
     if (!emptyField) {
       setLoading(true);
       const value = await AsyncStorage.getItem('data');
@@ -372,9 +367,15 @@ function formTambahProduk(props) {
         'Content-Type': 'multipart/form-data',
       };
 
+      // const testVariation = [
+      //   {[nameVariation]: values.val},
+      //   {[nameSecondVariation]: secondValues.val},
+      //   {[nameThirdVariation]: thirdValues.val},
+      // ];
+
       let formData = new FormData();
       file.forEach(file => formData.append('images[]', file));
-      formdata.append('name', nameProduct);
+      formData.append('name', nameProduct);
       formData.append('description', description);
       formData.append('category_id', parseInt(categoryId));
       formData.append('brand', brand);
@@ -390,17 +391,17 @@ function formTambahProduk(props) {
       formData.append('width', parseInt(widthProduct));
       formData.append('height', parseInt(heightProduct));
       formData.append('is_awb_auto', parseInt(awb));
-      formData.append('cod_city_id', parseInt(codCityId));
+      formData.append('cod_city_id', JSON.stringify(codCityId));
       formData.append('price_benefit', parseInt(0));
       formData.append('user_id', data.id);
+      // formData.append('variation', JSON.stringify(test));
 
-      console.log('JSON.stringify(formData)', JSON.stringify(formData));
       console.log('formData', formData);
 
       fetch(URL_POST, {
         headers,
         method: 'POST',
-        body: formdata,
+        body: formData,
       })
         .then(response => response.text())
         .then(async result => {
@@ -408,7 +409,11 @@ function formTambahProduk(props) {
           setLoading(false);
           alert('Product berhasil dibuat');
         })
-        .catch(error => console.log('error addNewProduct', error));
+        .catch(error => {
+          console.log('error addNewProduct', error);
+          alert(`Gagal upload new product`);
+          setLoading(false);
+        });
     } else {
       alert(`field ${emptyField.name} wajib di isi`);
     }
@@ -431,7 +436,7 @@ function formTambahProduk(props) {
         setLoading(false);
         console.log('kecamatan', responseData.rajaongkir.result);
         const mapKota = responseData.rajaongkir.results;
-        let data = mapKota.map(s => ({
+        let data = mapKota.map((s, index) => ({
           id: s.subdistrict_id,
           name: 'Kecamatan' + ' ' + s.subdistrict_name,
         }));
@@ -441,8 +446,22 @@ function formTambahProduk(props) {
   };
 
   const _selectKecamatan = async data_kota => {
-    setLoading(true);
     setIdKecataman(data_kota.id);
+  };
+
+  const handleChangeCodCity = data => {
+    console.log('getDataCities', data);
+    let catArray = [];
+    data && data.map(i => catArray.push(i.id));
+    const getCityId = cities.filter(obj => {
+      if (catArray.indexOf(obj.province_id) === -1) {
+        return false;
+      }
+      return true;
+    });
+    const getDataCities = getCityId.map(id => id.id);
+
+    setCodCityId(getDataCities);
   };
 
   return (
@@ -665,6 +684,23 @@ function formTambahProduk(props) {
             }}
           />
 
+          <TextInput
+            label="Supplier (Sumber Produk)"
+            value={source}
+            mode="outlined"
+            onChangeText={val => setSource(val)}
+            style={{
+              width: '90%',
+              alignSelf: 'center',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              marginBottom: height * 0.01,
+            }}
+            theme={{
+              colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+            }}
+          />
+
           <View
             style={{
               borderColor: 'gray',
@@ -807,7 +843,7 @@ function formTambahProduk(props) {
                   const items = selectKota;
                   items.push(item);
                   setSelectKota(items);
-                  setCodCityId(item.id);
+                  handleChangeCodCity(items);
                 }}
                 containerStyle={{
                   width: '100%',
@@ -933,6 +969,7 @@ function formTambahProduk(props) {
               <TextInput
                 label="Panjang (Cm)"
                 value={heightProduct}
+                keyboardType="numeric"
                 mode="outlined"
                 onChangeText={val => setHeightProduct(val)}
                 style={{
@@ -949,6 +986,7 @@ function formTambahProduk(props) {
               <TextInput
                 label="Lebar (Cm)"
                 value={widthProduct}
+                keyboardType="numeric"
                 mode="outlined"
                 onChangeText={val => setWidthProduct(val)}
                 style={{
@@ -965,6 +1003,7 @@ function formTambahProduk(props) {
               <TextInput
                 label="Tinggi (Cm)"
                 value={lengthProduct}
+                keyboardType="numeric"
                 mode="outlined"
                 onChangeText={val => setLengthProduct(val)}
                 style={{

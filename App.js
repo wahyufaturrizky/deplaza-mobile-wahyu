@@ -29,6 +29,7 @@ import Lacak from './src/screens/lacak/Lacak';
 import SaldoPenjual from './src/screens/tarik/saldoPenjual';
 import Penarikan from './src/screens/tarik/penarikan';
 import PembayaranSaya from './src/screens/akun/pembayaranSaya';
+import InformasiPenjualanSaya from './src/screens/akun/informasiPenjualanSaya';
 import Notifikasi from './src/screens/akun/notifikasi';
 import BantuanFaq from './src/screens/bantuanFaq/bantuanFaq';
 import MulaiBerjualan from './src/screens/bantuanFaq/mulaiBerjualan';
@@ -77,6 +78,10 @@ function StackNav(props) {
         <Stack.Screen name="SaldoPenjual" component={SaldoPenjual} />
         <Stack.Screen name="Penarikan" component={Penarikan} />
         <Stack.Screen name="PembayaranSaya" component={Pembayaran} />
+        <Stack.Screen
+          name="InformasiPenjualanSaya"
+          component={InformasiPenjualanSaya}
+        />
         <Stack.Screen name="Notifikasi" component={Notifikasi} />
         <Stack.Screen name="BantuanFaq" component={BantuanFaq} />
         <Stack.Screen name="MulaiBerjualan" component={MulaiBerjualan} />
