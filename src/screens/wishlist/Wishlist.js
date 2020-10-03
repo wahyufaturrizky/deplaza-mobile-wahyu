@@ -64,6 +64,12 @@ function wishlist(props) {
     setStatus(regular);
   };
 
+  const goCreateNewProduct = () => {
+    props.navigation.navigate('TambahProduk', {
+      title: 'Tambah Produk',
+    });
+  };
+
   console.log(status);
 
   //Pergi ke Hal List Produk
@@ -327,7 +333,7 @@ function wishlist(props) {
       </ScrollView>
       {loading && <Loading />}
       {status === 'true' ? null : (
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={goCreateNewProduct} style={styles.button}>
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
