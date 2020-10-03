@@ -607,6 +607,7 @@ function jualanAnda(props) {
       {modal
         ? popup.map((data, i) => (
             <View
+              key={i}
               style={{
                 position: 'absolute',
                 flex: 1,

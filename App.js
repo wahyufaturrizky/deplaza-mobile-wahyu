@@ -14,6 +14,7 @@ import Pesan from './src/screens/pesan/Pesan';
 import PesananSaya from './src/screens/pesananSaya/pesananSaya';
 import RincianPesanan from './src/screens/rincianPesanan/rincianPesanan';
 import Wishlist from './src/screens/wishlist/Wishlist';
+import TambahProduk from './src/screens/wishlist/tambahProduk';
 import Kembali from './src/screens/kembali/Kembali';
 import Bantuan from './src/screens/bantuan/Bantuan';
 import BantuanFoto from './src/screens/bantuan/bantuanFoto';
@@ -43,7 +44,7 @@ import DetailChat from './src/screens/chat/DetailChat';
 import ChatScreen from './src/screens/chat/Chat';
 import Canva from './src/screens/canva';
 import Pembayaran from './src/screens/akun/pembayaran';
-import Splash from './src/screens/splash'
+import Splash from './src/screens/splash';
 
 const Stack = createStackNavigator();
 
@@ -51,7 +52,7 @@ function StackNav(props) {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash" headerMode={'none'}>
-      <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="JualanAnda" component={JualanAnda} />
@@ -61,6 +62,7 @@ function StackNav(props) {
         <Stack.Screen name="PesananSaya" component={PesananSaya} />
         <Stack.Screen name="RincianPesanan" component={RincianPesanan} />
         <Stack.Screen name="Wishlist" component={Wishlist} />
+        <Stack.Screen name="TambahProduk" component={TambahProduk} />
         <Stack.Screen name="Kembali" component={Kembali} />
         <Stack.Screen name="Bantuan" component={Bantuan} />
         <Stack.Screen name="BantuanFoto" component={BantuanFoto} />
