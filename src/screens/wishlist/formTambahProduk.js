@@ -944,7 +944,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               backgroundColor: 'white',
               borderRadius: 10,
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.04,
             }}
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
@@ -957,6 +957,7 @@ function formTambahProduk(props) {
               justifyContent: 'center',
               width: '90%',
               alignSelf: 'center',
+              marginBottom: height * 0.03,
             }}>
             <SearchableDropdown
               onItemSelect={item => {
@@ -1015,7 +1016,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               backgroundColor: 'white',
               borderRadius: 10,
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.03,
             }}
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
@@ -1033,7 +1034,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               backgroundColor: 'white',
               borderRadius: 10,
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.03,
             }}
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
@@ -1051,7 +1052,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               backgroundColor: 'white',
               borderRadius: 10,
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.03,
             }}
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
@@ -1069,7 +1070,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               backgroundColor: 'white',
               borderRadius: 10,
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.03,
             }}
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
@@ -1086,7 +1087,7 @@ function formTambahProduk(props) {
                 width: '90%',
                 alignSelf: 'center',
                 backgroundColor: 'white',
-                marginBottom: height * 0.01,
+                marginBottom: height * 0.03,
               }}
               onPress={addClick}>
               <LinearGradient
@@ -1117,7 +1118,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               borderRadius: 10,
               backgroundColor: 'white',
-              marginTop: height * 0.005,
+              marginBottom: height * 0.03,
             }}
             multiline={true}
             numberOfLines={4}
@@ -1137,7 +1138,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               backgroundColor: 'white',
               borderRadius: 10,
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.03,
             }}
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
@@ -1154,7 +1155,7 @@ function formTambahProduk(props) {
               alignSelf: 'center',
               backgroundColor: 'white',
               borderRadius: 10,
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.04,
             }}
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
@@ -1167,6 +1168,7 @@ function formTambahProduk(props) {
               justifyContent: 'center',
               width: '90%',
               alignSelf: 'center',
+              marginBottom: height * 0.03,
             }}>
             <SearchableDropdown
               onItemSelect={item => {
@@ -1221,6 +1223,7 @@ function formTambahProduk(props) {
               justifyContent: 'center',
               width: '90%',
               alignSelf: 'center',
+              marginBottom: height * 0.03,
             }}>
             <SearchableDropdown
               onItemSelect={item => {
@@ -1276,7 +1279,7 @@ function formTambahProduk(props) {
               justifyContent: 'center',
               width: '90%',
               alignSelf: 'center',
-              marginBottom: height * 0.01,
+              marginBottom: height * 0.03,
               borderRadius: 10,
               height: height * 0.055,
             }}>
