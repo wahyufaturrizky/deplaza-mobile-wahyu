@@ -38,6 +38,9 @@ function formTambahProduk(props) {
   const [kota, setKota] = useState('kosong');
   const [selectKota, setSelectKota] = useState([]);
   const [kecamatan, setKecamatan] = useState([]);
+  const [values, setValues] = useState({val: []});
+  const [secondValues, setSecondValues] = useState({val: []});
+  const [thirdValues, setThirdValues] = useState({val: []});
 
   const [provinsiDetail, setProvinsiDetail] = useState({});
   const [kotaDetail, setKotaDetail] = useState({});
@@ -62,6 +65,9 @@ function formTambahProduk(props) {
   const [widthProduct, setWidthProduct] = useState(null);
   const [file, setFile] = useState([]);
   const [source, setSource] = useState('');
+  const [nameVariation, setNameVariation] = useState('');
+  const [nameSecondVariation, setNameSecondVariation] = useState('');
+  const [nameThirdVariation, setNameThirdVariation] = useState('');
 
   const [loading, setLoading] = useState(true);
 
@@ -367,11 +373,11 @@ function formTambahProduk(props) {
         'Content-Type': 'multipart/form-data',
       };
 
-      // const testVariation = [
-      //   {[nameVariation]: values.val},
-      //   {[nameSecondVariation]: secondValues.val},
-      //   {[nameThirdVariation]: thirdValues.val},
-      // ];
+      const testVariation = [
+        {[nameVariation]: values.val},
+        {[nameSecondVariation]: secondValues.val},
+        {[nameThirdVariation]: thirdValues.val},
+      ];
 
       let formData = new FormData();
       file.forEach(file => formData.append('images[]', file));
@@ -394,7 +400,7 @@ function formTambahProduk(props) {
       formData.append('cod_city_id', JSON.stringify(codCityId));
       formData.append('price_benefit', parseInt(0));
       formData.append('user_id', data.id);
-      // formData.append('variation', JSON.stringify(test));
+      formData.append('variation', JSON.stringify(testVariation));
 
       console.log('formData', formData);
 
@@ -462,6 +468,429 @@ function formTambahProduk(props) {
     const getDataCities = getCityId.map(id => id.id);
 
     setCodCityId(getDataCities);
+  };
+
+  function handleChange(event) {
+    let vals = [...values.val];
+    vals[this] = event.target.value;
+    setValues({val: vals});
+    // setVariation([...variation, nameVariation, ...values.val])
+    console.log('vals', event);
+  }
+
+  function createInputs() {
+    return (
+      <View>
+        {values.val.length > 0 ? (
+          <TextInput
+            label="Variasi 1 Nama"
+            value={nameVariation}
+            mode="outlined"
+            onChangeText={val => setNameVariation(val)}
+            style={{
+              width: '90%',
+              alignSelf: 'center',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              marginBottom: height * 0.01,
+            }}
+            theme={{
+              colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+            }}
+          />
+        ) : null}
+        {values.val.map((el, i) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '90%',
+              alignSelf: 'center',
+              marginBottom: height * 0.01,
+            }}>
+            <TextInput
+              label={`Variasi 1 Pilihan ${i + 1}`}
+              value={el || ''}
+              mode="outlined"
+              onChangeText={val => handleChange.bind(i)}
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                borderRadius: 10,
+                marginBottom: height * 0.01,
+              }}
+              theme={{
+                colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+              }}
+            />
+            <TouchableOpacity onPress={removeClick.bind(i)}>
+              <View
+                style={{
+                  backgroundColor: '#cecece',
+                  width: 25,
+                  height: 25,
+                  borderRadius: 6,
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Icon name="trash" size={20} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        ))}
+        {values.val.length > 0 ? (
+          <View>
+            <TouchableOpacity
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                marginBottom: height * 0.01,
+              }}
+              onPress={addClick}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 6,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    textAlign: 'center',
+                    color: 'white',
+                  }}>
+                  TAMBAHKAN PILIHAN
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            {secondValues.val.length > 0 ? null : (
+              <TouchableOpacity
+                style={{
+                  width: '90%',
+                  alignSelf: 'center',
+                  backgroundColor: 'white',
+                  marginBottom: height * 0.01,
+                }}
+                onPress={addClick2}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{
+                    padding: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 6,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      textAlign: 'center',
+                      color: 'white',
+                    }}>
+                    TAMBAHKAN
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+
+  function handleSecondChange(event) {
+    let vals = [...secondValues.val];
+    vals[this] = event.target.value;
+    setSecondValues({val: vals});
+    // setVariation([...variation, nameSecondVariation, secondValues.val])
+    console.log(vals);
+  }
+
+  function createInputs2() {
+    return (
+      <View>
+        {secondValues.val.length > 0 ? (
+          <TextInput
+            label="Variasi 2 Nama"
+            value={nameSecondVariation}
+            mode="outlined"
+            onChangeText={val => setNameSecondVariation(val)}
+            style={{
+              width: '90%',
+              alignSelf: 'center',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              marginBottom: height * 0.01,
+            }}
+            theme={{
+              colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+            }}
+          />
+        ) : null}
+        {secondValues.val.map((el, i) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '90%',
+              alignSelf: 'center',
+              marginBottom: height * 0.01,
+            }}>
+            <TextInput
+              label={`Variasi 2 Pilihan ${i + 1}`}
+              value={el || ''}
+              mode="outlined"
+              onChangeText={val => handleSecondChange.bind(i)}
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                borderRadius: 10,
+                marginBottom: height * 0.01,
+              }}
+              theme={{
+                colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+              }}
+            />
+            <TouchableOpacity onPress={removeSecondClick.bind(i)}>
+              <View
+                style={{
+                  backgroundColor: '#cecece',
+                  width: 25,
+                  height: 25,
+                  borderRadius: 6,
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Icon name="trash" size={20} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        ))}
+        {secondValues.val.length > 0 ? (
+          <View>
+            <TouchableOpacity
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                marginBottom: height * 0.01,
+              }}
+              onPress={addClick2}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 6,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    textAlign: 'center',
+                    color: 'white',
+                  }}>
+                  TAMBAHKAN PILIHAN
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            {thirdValues.val.length > 0 ? null : (
+              <TouchableOpacity
+                style={{
+                  width: '90%',
+                  alignSelf: 'center',
+                  backgroundColor: 'white',
+                  marginBottom: height * 0.01,
+                }}
+                onPress={addClick3}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{
+                    padding: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 6,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      textAlign: 'center',
+                      color: 'white',
+                    }}>
+                    TAMBAHKAN
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+
+  function handleThirdChange(event) {
+    let vals = [...thirdValues.val];
+    vals[this] = event.target.value;
+    setThirdValues({val: vals});
+    // setVariation([...variation, nameThirdVariation, thirdValues.val])
+    console.log(vals);
+  }
+
+  function createInputs3() {
+    return (
+      <View>
+        {thirdValues.val.length > 0 ? (
+          <TextInput
+            label="Variasi 3 Nama"
+            value={nameThirdVariation}
+            mode="outlined"
+            onChangeText={val => setNameThirdVariation(val)}
+            style={{
+              width: '90%',
+              alignSelf: 'center',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              marginBottom: height * 0.01,
+            }}
+            theme={{
+              colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+            }}
+          />
+        ) : null}
+        {thirdValues.val.map((el, i) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '90%',
+              alignSelf: 'center',
+              marginBottom: height * 0.01,
+            }}>
+            <TextInput
+              label={`Variasi 3 Pilihan ${i + 1}`}
+              value={el || ''}
+              mode="outlined"
+              onChangeText={val => handleThirdChange.bind(i)}
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                borderRadius: 10,
+                marginBottom: height * 0.01,
+              }}
+              theme={{
+                colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+              }}
+            />
+            <TouchableOpacity onPress={removeThirdClick.bind(i)}>
+              <View
+                style={{
+                  backgroundColor: '#cecece',
+                  width: 25,
+                  height: 25,
+                  borderRadius: 6,
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Icon name="trash" size={20} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        ))}
+        {thirdValues.val.length > 0 ? (
+          <View>
+            <TouchableOpacity
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                marginBottom: height * 0.01,
+              }}
+              onPress={addClick3}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 6,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    textAlign: 'center',
+                    color: 'white',
+                  }}>
+                  TAMBAHKAN PILIHAN
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+
+  const addClick = () => {
+    if (values.val.length > 9) {
+      alert('Pilihan tidak boleh lebih dari 10');
+    } else {
+      setValues({val: [...values.val, '']});
+    }
+  };
+
+  const addClick2 = () => {
+    if (secondValues.val.length > 9) {
+      alert('Pilihan tidak boleh lebih dari 10');
+    } else {
+      setSecondValues({val: [...secondValues.val, '']});
+    }
+  };
+
+  const addClick3 = () => {
+    if (thirdValues.val.length > 9) {
+      alert('Pilihan tidak boleh lebih dari 10');
+    } else {
+      setThirdValues({val: [...thirdValues.val, '']});
+    }
+  };
+
+  const removeClick = () => {
+    let vals = [...values.val];
+    vals.splice(this, 1);
+    setValues({val: vals});
+  };
+
+  const removeSecondClick = () => {
+    let vals = [...secondValues.val];
+    vals.splice(this, 1);
+    setSecondValues({val: vals});
+  };
+
+  const removeThirdClick = () => {
+    let vals = [...thirdValues.val];
+    vals.splice(this, 1);
+    setThirdValues({val: vals});
   };
 
   return (
@@ -646,6 +1075,37 @@ function formTambahProduk(props) {
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
             }}
           />
+
+          {createInputs()}
+          {createInputs2()}
+          {createInputs3()}
+
+          {values.val.length === 0 ? (
+            <TouchableOpacity
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                marginBottom: height * 0.01,
+              }}
+              onPress={addClick}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 6,
+                }}>
+                <Text
+                  style={{fontSize: 14, textAlign: 'center', color: 'white'}}>
+                  AKTIFKAN VARIASI
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          ) : null}
 
           <TextInput
             label="Deskripsi Produk"
