@@ -97,7 +97,10 @@ function jualanAnda(props) {
 
   //Pergi ke Hal List Wishlist
   const gotoWishlist = () => {
-    props.navigation.navigate('Wishlist', {title: 'Produk Saya'});
+    props.navigation.navigate('Wishlist', {
+      title: 'Produk Saya',
+      removeButtonTambahProduk: 'remove button tambah',
+    });
   };
 
   const getNotif = async () => {
