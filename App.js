@@ -52,7 +52,7 @@ const Stack = createStackNavigator();
 function StackNav(props) {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash" headerMode={'none'}>
+      <Stack.Navigator initialRouteName="Login" headerMode={'none'}>
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />

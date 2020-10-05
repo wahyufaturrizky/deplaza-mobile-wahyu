@@ -53,7 +53,7 @@ function formTambahProduk(props) {
   const [weight, setWeight] = useState(null);
   const [description, setDescription] = useState('');
   const [stock, setStock] = useState(null);
-  const [priceCommission, setPriceCommission] = useState(null);
+  const [priceCommission, setPriceCommission] = useState(0);
   const [priceBasic, setPriceBasic] = useState(null);
   const [brand, setBrand] = useState('');
   const [nameProduct, setNameProduct] = useState('');
@@ -174,7 +174,8 @@ function formTambahProduk(props) {
       cropping: true,
     }).then(value => {
       console.log('handleChoosePhoto', value);
-      setFile([value]);
+      // setFile([value]);
+      setFile(value.path);
     });
   };
 
@@ -342,9 +343,6 @@ function formTambahProduk(props) {
       {name: 'weight', value: weight},
       {name: 'Kota Asal Produk', value: idCity},
       {name: 'Kecamatan Asal Produk', value: idKecataman},
-      {name: 'Bisa COD / Tidak', value: cod},
-      {name: 'Supplier (Sumber Produk)', value: source},
-      {name: 'Resi Otomatis / Tidak', value: awb},
     ];
 
     // if (awb === 1) {
@@ -380,7 +378,12 @@ function formTambahProduk(props) {
       ];
 
       let formData = new FormData();
-      file.forEach(file => formData.append('images[]', file));
+      // file.forEach(file => formData.append('images[]', file));
+      formData.append('images[]', {
+        uri: file,
+        type: 'image/jpeg', // or photo.type
+        name: 'avatar.jpg',
+      });
       formData.append('name', nameProduct);
       formData.append('description', description);
       formData.append('category_id', parseInt(categoryId));
@@ -511,7 +514,7 @@ function formTambahProduk(props) {
             }}>
             <TextInput
               label={`Variasi 1 Pilihan ${i + 1}`}
-              value={el || ''}
+              // value={el || ''}
               mode="outlined"
               onChangeText={val => handleChange.bind(i)}
               style={{
@@ -648,7 +651,7 @@ function formTambahProduk(props) {
             }}>
             <TextInput
               label={`Variasi 2 Pilihan ${i + 1}`}
-              value={el || ''}
+              // value={el || ''}
               mode="outlined"
               onChangeText={val => handleSecondChange.bind(i)}
               style={{
@@ -785,7 +788,7 @@ function formTambahProduk(props) {
             }}>
             <TextInput
               label={`Variasi 3 Pilihan ${i + 1}`}
-              value={el || ''}
+              // value={el || ''}
               mode="outlined"
               onChangeText={val => handleThirdChange.bind(i)}
               style={{
@@ -1041,7 +1044,7 @@ function formTambahProduk(props) {
             }}
           />
 
-          <TextInput
+          {/* <TextInput
             label="Komisi"
             value={priceCommission}
             keyboardType="numeric"
@@ -1057,7 +1060,7 @@ function formTambahProduk(props) {
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
             }}
-          />
+          /> */}
 
           <TextInput
             label="Stok Produk"
@@ -1145,7 +1148,7 @@ function formTambahProduk(props) {
             }}
           />
 
-          <TextInput
+          {/* <TextInput
             label="Supplier (Sumber Produk)"
             value={source}
             mode="outlined"
@@ -1160,7 +1163,7 @@ function formTambahProduk(props) {
             theme={{
               colors: {primary: '#07A9F0', underlineColor: 'transparent'},
             }}
-          />
+          /> */}
 
           <View
             style={{
@@ -1272,7 +1275,7 @@ function formTambahProduk(props) {
             />
           </View>
 
-          <View
+          {/* <View
             style={{
               borderWidth: 1,
               borderColor: 'gray',
@@ -1291,7 +1294,7 @@ function formTambahProduk(props) {
               <Picker.Item label="Iya" value={1} />
               <Picker.Item label="Tidak" value={0} />
             </Picker>
-          </View>
+          </View> */}
 
           {cod === 1 ? (
             <View
@@ -1351,7 +1354,7 @@ function formTambahProduk(props) {
             </View>
           ) : null}
 
-          <View
+          {/* <View
             style={{
               borderWidth: 1,
               borderColor: 'gray',
@@ -1370,7 +1373,7 @@ function formTambahProduk(props) {
               <Picker.Item label="Iya" value={1} />
               <Picker.Item label="Tidak" value={0} />
             </Picker>
-          </View>
+          </View> */}
 
           {awb === 1 ? (
             <View>
