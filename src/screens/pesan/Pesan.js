@@ -628,7 +628,6 @@ function Pesan(props) {
               )}
             </View>
           </View>
-
           <View style={{padding: 10}}>
             <View
               style={{
@@ -640,13 +639,17 @@ function Pesan(props) {
               <View>
                 <Text>Biaya Produk</Text>
                 <Text style={{color: 'gray', fontSize: 12}}>
-                  *Harga Sudah Termasuk Ongkir
+                  *harga suda termasuk ongkir
+                </Text>
+                <Text style={{color: 'gray', fontSize: 12}}>
+                  plus biaya pemesanan Rp 2000
                 </Text>
               </View>
               <Text>Rp. {totalBiaya.toString()}</Text>
             </View>
 
-            <View
+            {/* ----- [START TAMBAHAN MARGIN] ----- */}
+            {/* <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -682,9 +685,11 @@ function Pesan(props) {
                   />
                 </View>
               </View>
-            </View>
+            </View> */}
+            {/* ----- [END TAMBAHAN MARGIN] ----- */}
 
-            <View
+            {/* ----- [START TAMBAHAN MARGIN] ----- */}
+            {/* <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -698,9 +703,11 @@ function Pesan(props) {
                 </Text>
               </View>
               <Text>Rp. {formatRupiah(totalKeseluruhan)}</Text>
-            </View>
+            </View> */}
+            {/* ----- [END TAMBAHAN MARGIN] ----- */}
 
-            <View
+            {/* ----- [START SALDO YANG DITERIMA] ----- */}
+            {/* <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -719,7 +726,8 @@ function Pesan(props) {
                 </Text>
                 <Text>Rp. {formatRupiah(totalPendapatan)}</Text>
               </View>
-            </View>
+            </View> */}
+            {/* ----- [END SALDO YANG DITERIMA] ----- */}
           </View>
 
           <View
@@ -729,7 +737,6 @@ function Pesan(props) {
               marginVertical: height * 0.01,
             }}
           />
-
           {photo != 0 && (
             <Image
               source={{uri: photo.path}}
@@ -741,7 +748,6 @@ function Pesan(props) {
               }}
             />
           )}
-
           <View
             style={{
               backgroundColor: '#F8F8F8',
@@ -750,7 +756,6 @@ function Pesan(props) {
             }}>
             <Text style={{fontSize: 18}}>Alamat Pengiriman</Text>
           </View>
-
           <View style={{padding: 10, marginBottom: height * 0.02}}>
             <TextInput
               label="Nama Lengkap"
@@ -949,9 +954,7 @@ function Pesan(props) {
               }}
             />
           </View>
-
           <View style={{borderTopWidth: 1, borderColor: '#D5D5D5'}} />
-
           <View style={{padding: 10}}>
             <View
               style={{

@@ -53,7 +53,7 @@ function formTambahProduk(props) {
   const [weight, setWeight] = useState(null);
   const [description, setDescription] = useState('');
   const [stock, setStock] = useState(null);
-  const [priceCommission, setPriceCommission] = useState(0);
+  const [priceCommission, setPriceCommission] = useState(2000);
   const [priceBasic, setPriceBasic] = useState(null);
   const [brand, setBrand] = useState('');
   const [nameProduct, setNameProduct] = useState('');

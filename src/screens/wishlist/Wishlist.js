@@ -34,6 +34,7 @@ function wishlist(props) {
   const {height, width} = Dimensions.get('window');
   const urlWishlist = URL + 'v1/wishlist/me';
   let halaman = props.route.params.title;
+  let statusButtonTambahProduk = props.route.params.removeButtonTambahProduk;
 
   useEffect(() => {
     getWishlist();
@@ -332,7 +333,19 @@ function wishlist(props) {
         )}
       </ScrollView>
       {loading && <Loading />}
-      {status === 'true' ? null : (
+      {/* {status === 'true' ? null : (
+        <TouchableOpacity onPress={goCreateNewProduct} style={styles.button}>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={['#0956C6', '#0879D8', '#07A9F0']}
+            style={styles.button}>
+            <Icon name="plus" size={20} color="#fff" />
+            <Text style={styles.buttonText}>Tambah</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      )} */}
+      {statusButtonTambahProduk === 'remove button tambah' ? null : (
         <TouchableOpacity onPress={goCreateNewProduct} style={styles.button}>
           <LinearGradient
             start={{x: 0, y: 0}}
