@@ -35,7 +35,7 @@ function wishlist(props) {
   const urlWishlist = URL + 'v1/wishlist/me';
   let halaman = props.route.params.title;
   let statusButtonTambahProduk = props.route.params.removeButtonTambahProduk;
-
+  console.log('nav', props);
   useEffect(() => {
     getWishlist();
     getStatus();

@@ -413,14 +413,14 @@ function formTambahProduk(props) {
         method: 'POST',
         body: formData,
       })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(async result => {
-          console.log('addNewProduct', result);
+          console.log('addNewProduct', result.message);
           setLoading(false);
-          alert('Product berhasil dibuat');
+          alert(result.message);
         })
         .catch(error => {
-          console.log('error addNewProduct', error);
+          console.log('error addNewProduct', error.response);
           alert(`Gagal upload new product`);
           setLoading(false);
         });
