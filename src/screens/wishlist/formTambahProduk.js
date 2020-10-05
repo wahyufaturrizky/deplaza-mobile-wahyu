@@ -175,7 +175,7 @@ function formTambahProduk(props) {
     }).then(value => {
       console.log('handleChoosePhoto', value);
       // setFile([value]);
-      setFile(value.path);
+      setFile([value]);
     });
   };
 
@@ -317,7 +317,7 @@ function formTambahProduk(props) {
 
   // Fungsi untuk ADD NEW PRODUCT
   const addNewProduct = async () => {
-    // console.log('nameProduct', nameProduct);
+    console.log('nameProduct', file.path);
     // console.log('categoryId', categoryId);
     // console.log('brand', brand);
     // console.log('priceBasic', priceBasic);
@@ -368,7 +368,8 @@ function formTambahProduk(props) {
       let headers = {
         Authorization: `Bearer ${data.token}`,
         'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'multipart/form-data',
+        Accept: 'multipart/form-data',
+        'content-type': 'multipart/form-data',
       };
 
       const testVariation = [
@@ -380,8 +381,8 @@ function formTambahProduk(props) {
       let formData = new FormData();
       // file.forEach(file => formData.append('images[]', file));
       formData.append('images[]', {
-        uri: file,
-        type: 'image/jpeg', // or photo.type
+        uri: file[0].path,
+        type: file[0].mime, // or photo.type
         name: 'avatar.jpg',
       });
       formData.append('name', nameProduct);
@@ -396,10 +397,10 @@ function formTambahProduk(props) {
       formData.append('subdistrict_id', parseInt(idKecataman));
       formData.append('cod', parseInt(cod));
       formData.append('supplier_id', parseInt(idSupplier));
-      formData.append('length', parseInt(lengthProduct));
-      formData.append('width', parseInt(widthProduct));
-      formData.append('height', parseInt(heightProduct));
-      formData.append('is_awb_auto', parseInt(awb));
+      formData.append('length', 1);
+      formData.append('width', 1);
+      formData.append('height', 1);
+      formData.append('is_awb_auto', 1);
       formData.append('cod_city_id', JSON.stringify(codCityId));
       formData.append('price_benefit', parseInt(0));
       formData.append('user_id', data.id);
