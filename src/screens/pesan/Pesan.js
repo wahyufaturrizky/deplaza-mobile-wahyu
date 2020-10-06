@@ -420,6 +420,7 @@ function Pesan(props) {
   // console.log('subdistricts', subdistricts);
 
   const _setKecamatan = async (id_kec, i) => {
+    console.log('id_kec', id_kec);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
     setKecamatan(id_kec);
@@ -437,6 +438,7 @@ function Pesan(props) {
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
+        console.log('rajaongkir', responseData.rajaongkir.destination_details);
         await setKotaDetail(responseData.rajaongkir.destination_details);
         let tipe = await responseData.rajaongkir.results[0].costs;
         setLoading(false);
@@ -533,6 +535,7 @@ function Pesan(props) {
           delivery_address_id: 0,
           delivery_reciver_name: fullname,
           delivery_reciver_city: kota,
+          delivery_reciver_subdistrict: kecamatan,
           delivery_reciver_post: pos,
           delivery_reciver_address:
             alamat +
@@ -560,7 +563,7 @@ function Pesan(props) {
       })
         .then(response => response.json())
         .then(async responseData => {
-          console.log(responseData);
+          console.log('postProduct', responseData);
           setLoading(false);
           if (responseData.errors != null) {
             alert(responseData.message);
