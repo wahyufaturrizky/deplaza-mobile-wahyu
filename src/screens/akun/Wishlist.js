@@ -31,6 +31,8 @@ function wishlist(props) {
   const [any, setAny] = useState(true);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
+  const [dataSearch, setDataSearch] = useState('');
+
   const [pageOff, setPageOff] = useState(0);
   const {height, width} = Dimensions.get('window');
   const urlWishlist = URL + 'v1/wishlist/me';
@@ -43,12 +45,12 @@ function wishlist(props) {
       searchProduk(props.route.params.search);
     } else {
       getWishlist();
+      getStatus();
     }
-    getWishlist();
-    getStatus();
   }, []);
 
   const getWishlist = async () => {
+    setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
     let param = '';
@@ -62,7 +64,7 @@ function wishlist(props) {
     } else {
       param = '';
     }
-    param += '&keyword=' + search;
+    param += '&keyword=' + '';
 
     console.log('param', param);
 
@@ -149,7 +151,7 @@ function wishlist(props) {
     } else {
       param += '';
     }
-    param += search ? '&keyword=' + search : '';
+    param += dataSearch ? '&keyword=' + dataSearch : '';
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
@@ -157,11 +159,7 @@ function wishlist(props) {
     };
 
     await fetch(
-      urlProduk +
-        '?order_direction=desc&limit=10&offset=' +
-        pageOff +
-        '' +
-        param,
+      urlProduk + '?order_direction=desc&limit=10&offset=' + off + '' + param,
       {
         headers,
       },
@@ -169,7 +167,7 @@ function wishlist(props) {
       .then(response => response.json())
       .then(async responseData => {
         await setWishlist(wishlist.concat(responseData.data));
-        setPage(pageNow++);
+        setPage(responseData.meta.current_page);
         setLoading(false);
         if (responseData.data.length == 0) {
           setAny(false);
@@ -184,10 +182,12 @@ function wishlist(props) {
 
   const CloseSearchTrigger = async () => {
     setSearch(false);
+    setAny(true);
     getWishlist();
   };
 
   const searchProduk = async searchData => {
+    setDataSearch(searchData);
     setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
@@ -203,24 +203,27 @@ function wishlist(props) {
     } else {
       param += '';
     }
-    param += '&keyword=' + search;
+    param +=
+      '&keyword=' + searchData ||
+      searchData.toUpperCase() ||
+      searchData.toLowerCase();
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(
-      urlProduk + `?order_direction=desc&limit=10&offset=${pageOff}${param}`,
-      {
-        headers,
-      },
-    )
+    fetch(urlProduk + `?order_direction=desc&limit=10&offset=${page}${param}`, {
+      headers,
+    })
       .then(response => response.json())
       .then(async responseData => {
         await setWishlist(responseData.data);
         setLoading(false);
-        setPage(pageOff++);
+        setPage(responseData.meta.current_page);
+        if (responseData.data.length == 0) {
+          setAny(false);
+        }
       })
       .catch(e => console.log(e));
   };
@@ -376,7 +379,7 @@ function wishlist(props) {
             );
           })}
 
-        {any ? (
+        {any && wishlist ? (
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -386,8 +389,14 @@ function wishlist(props) {
             onPress={() => loadMore(page + 1)}>
             <Text>Produk Selanjutnya</Text>
           </TouchableOpacity>
-        ) : (
+        ) : wishlist.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>
+        ) : (
+          <Text style={{textAlign: 'center'}}>
+            Produk dengan kata kunci{' '}
+            <Text style={{fontWeight: 'bold'}}>{dataSearch}</Text> tidak
+            ditemukan
+          </Text>
         )}
       </ScrollView>
       {loading && <Loading />}

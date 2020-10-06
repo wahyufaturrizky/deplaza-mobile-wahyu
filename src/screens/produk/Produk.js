@@ -24,6 +24,7 @@ function produk(props) {
   const [page, setPage] = useState(0);
   const [any, setAny] = useState(true);
   const [search, setSearch] = useState(false);
+  const [dataSearch, setDataSearch] = useState('');
   const [pageOff, setPageOff] = useState(0);
 
   // Untuk Dapetin lagi di page mana
@@ -109,32 +110,32 @@ function produk(props) {
     } else {
       param += '';
     }
-    param += search ? '&keyword=' + search : '';
+    param += dataSearch ? '&keyword=' + dataSearch : '';
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
 
+    console.log('okok', param);
+
     await fetch(
-      urlProduk +
-        '?order_direction=desc&limit=10&offset=' +
-        pageOff +
-        '' +
-        param,
+      `${urlProduk}?order_direction=desc&limit=10&offset=${off}${param}`,
       {headers},
     )
       .then(response => response.json())
       .then(async responseData => {
+        console.log('ll', responseData);
         await setProducts(products.concat(responseData.data));
-        setPage(pageNow++);
+        setPage(responseData.meta.current_page);
         setLoading(false);
+
         // setLoad(true)
         if (responseData.data.length == 0) {
           setAny(false);
         }
       })
-      .catch(e => console.log(e));
+      .catch(e => console.log(e.response));
   };
 
   const OpenSearchTrigger = async () => {
@@ -143,10 +144,12 @@ function produk(props) {
 
   const CloseSearchTrigger = async () => {
     setSearch(false);
+    setAny(true);
     getProduct();
   };
 
   const searchProduk = async search => {
+    setDataSearch(search);
     setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
@@ -170,17 +173,18 @@ function produk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(
-      urlProduk + `?order_direction=desc&limit=10&offset=${pageOff}${param}`,
-      {
-        headers,
-      },
-    )
+    fetch(urlProduk + `?order_direction=desc&limit=10&offset=0${param}`, {
+      headers,
+    })
       .then(response => response.json())
       .then(async responseData => {
         await setProducts(responseData.data);
         setLoading(false);
-        setPage(pageOff++);
+        console.log(responseData);
+        setPage(responseData.meta.current_page);
+        if (responseData.data.length == 0) {
+          setAny(false);
+        }
       })
       .catch(e => console.log(e));
   };
@@ -296,7 +300,7 @@ function produk(props) {
           );
         })}
 
-        {any ? (
+        {any && products ? (
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -306,8 +310,14 @@ function produk(props) {
             onPress={() => loadMore(page + 1)}>
             <Text>Produk Selanjutnya</Text>
           </TouchableOpacity>
-        ) : (
+        ) : products.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>
+        ) : (
+          <Text style={{textAlign: 'center'}}>
+            Produk dengan kata kunci{' '}
+            <Text style={{fontWeight: 'bold'}}>{dataSearch}</Text> tidak
+            ditemukan
+          </Text>
         )}
       </ScrollView>
 

@@ -30,6 +30,8 @@ function WishlistSesungguhnya(props) {
   const [page, setPage] = useState(0);
   const [any, setAny] = useState(true);
   const [search, setSearch] = useState(false);
+  const [dataSearch, setDataSearch] = useState('');
+
   const [status, setStatus] = useState('');
   const {height, width} = Dimensions.get('window');
   const urlWishlist = URL + 'v1/wishlist/me';
@@ -41,6 +43,7 @@ function WishlistSesungguhnya(props) {
   }, []);
 
   const getWishlist = async () => {
+    setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
 
@@ -117,13 +120,18 @@ function WishlistSesungguhnya(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlWishlist + '?limit=10&offset=' + off + '&order_direction=desc', {
-      headers,
-    })
+    let param = dataSearch ? '&keyword=' + dataSearch : '';
+
+    fetch(
+      `${urlWishlist}?limit=10&offset=${off}${param}&order_direction=desc`,
+      {
+        headers,
+      },
+    )
       .then(response => response.json())
       .then(async responseData => {
         await setWishlist(wishlist.concat(responseData.data));
-        setPage(pageNow++);
+        setPage(responseData.meta.current_page);
         setLoading(false);
         if (responseData.data.length == 0) {
           setAny(false);
@@ -138,33 +146,38 @@ function WishlistSesungguhnya(props) {
 
   const CloseSearchTrigger = async () => {
     setSearch(false);
+    setAny(true);
     getWishlist();
   };
 
   const searchProduk = async searchData => {
+    setDataSearch(searchData);
     setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
     let param = '';
     // let param ="&invoice="+searchData
     // console.log(urlOrder+"?limit=10&offset="+page+""+param)
-
+    param += '&keyword=' + searchData;
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
 
     fetch(
-      `https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=0&order_direction=desc&keyword=${searchData}`,
+      `https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=${page}&order_direction=desc${param}`,
       {
         headers,
       },
     )
       .then(response => response.json())
       .then(async responseData => {
-        await setOrders(responseData.data);
-        setPage(1);
+        await setWishlist(responseData.data);
         setLoading(false);
+        setPage(responseData.meta.current_page);
+        if (responseData.data.length == 0) {
+          setAny(false);
+        }
       })
       .catch(e => console.log(e));
   };
@@ -318,7 +331,7 @@ function WishlistSesungguhnya(props) {
             );
           })}
 
-        {any ? (
+        {any && wishlist ? (
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -328,8 +341,14 @@ function WishlistSesungguhnya(props) {
             onPress={() => loadMore(page + 1)}>
             <Text>Produk Selanjutnya</Text>
           </TouchableOpacity>
-        ) : (
+        ) : wishlist.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>
+        ) : (
+          <Text style={{textAlign: 'center'}}>
+            Produk dengan kata kunci{' '}
+            <Text style={{fontWeight: 'bold'}}>{dataSearch}</Text> tidak
+            ditemukan
+          </Text>
         )}
       </ScrollView>
       {loading && <Loading />}
