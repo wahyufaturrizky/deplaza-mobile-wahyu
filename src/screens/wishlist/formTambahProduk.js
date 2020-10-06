@@ -60,9 +60,9 @@ function formTambahProduk(props) {
   const [awb, setAwb] = useState(null);
   const [idSupplier, setIdSupplier] = useState(null);
   const [getSupplier, setGetSupplier] = useState([]);
-  const [lengthProduct, setLengthProduct] = useState(null);
-  const [heightProduct, setHeightProduct] = useState(null);
-  const [widthProduct, setWidthProduct] = useState(null);
+  const [lengthProduct, setLengthProduct] = useState(1);
+  const [heightProduct, setHeightProduct] = useState(1);
+  const [widthProduct, setWidthProduct] = useState(1);
   const [file, setFile] = useState([]);
   const [source, setSource] = useState('');
   const [nameVariation, setNameVariation] = useState('');

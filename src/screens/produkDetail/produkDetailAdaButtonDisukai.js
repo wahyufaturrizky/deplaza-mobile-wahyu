@@ -27,7 +27,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Appbar from '../../components/appbarHome';
 import InputNormal from '../../components/inputNormal';
 
-function produkDetail(props) {
+function produkDetailAdaButtonDisukai(props) {
   const [dataDetail, setDataDetail] = useState([]);
   const [dataGambar, setDataGambar] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +51,7 @@ function produkDetail(props) {
   const [totalOngkir, setTotalOngkir] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
   const [metodeCOD, setmetodeCOD] = useState(false); //false kalo untuk bank
-  const [likeProduk, setLikeProduk] = useState(1);
+  const [likeProduk, setLikeProduk] = useState(0);
   const [pilihKota, setPilihKota] = useState(false);
 
   const urlProdukDetail = URL + 'v1/product/';
@@ -979,7 +979,7 @@ function produkDetail(props) {
   );
 }
 
-export default produkDetail;
+export default produkDetailAdaButtonDisukai;
 
 const styles = StyleSheet.create({
   shadow: {
