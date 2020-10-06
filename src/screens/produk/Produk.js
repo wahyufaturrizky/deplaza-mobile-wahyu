@@ -42,7 +42,10 @@ function produk(props) {
 
   //Pergi ke Hal List Produk
   const detailProduk = (id, name) => {
-    props.navigation.navigate('ProdukDetail', {id, title: name});
+    props.navigation.navigate('ProdukDetailAdaButtonDisukai', {
+      id,
+      title: name,
+    });
   };
 
   const gotoWishlist = () => {

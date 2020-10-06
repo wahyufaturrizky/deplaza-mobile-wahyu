@@ -10,10 +10,11 @@ import Home from './src/screens/home/Home';
 import JualanAnda from './src/screens/jualanAnda/jualanAnda';
 import Produk from './src/screens/produk/Produk';
 import produkDetail from './src/screens/produkDetail/produkDetail';
+import produkDetailAdaButtonDisukai from './src/screens/produkDetail/produkDetailAdaButtonDisukai';
 import Pesan from './src/screens/pesan/Pesan';
 import PesananSaya from './src/screens/pesananSaya/pesananSaya';
 import RincianPesanan from './src/screens/rincianPesanan/rincianPesanan';
-import Wishlist from './src/screens/wishlist/Wishlist';
+import Wishlist from './src/screens/akun/Wishlist';
 import TambahProduk from './src/screens/wishlist/tambahProduk';
 import Kembali from './src/screens/kembali/Kembali';
 import Bantuan from './src/screens/bantuan/Bantuan';
@@ -23,6 +24,8 @@ import BantuanLokasi from './src/screens/bantuan/bantuanLokasi';
 import BantuanLain from './src/screens/bantuan/bantuanLain';
 import Kategori from './src/screens/produk/Kategori';
 import Akun from './src/screens/akun/Akun';
+import WishlistNoButtonTambah from './src/screens/wishlist/WishlistNoButtonTambah';
+import WishlistSesungguhnya from './src/screens/wishlist/WishlistSesungguhnya';
 import EditAkun from './src/screens/akun/editAkun';
 import RincianRekening from './src/screens/akun/rincianRekening';
 import Lacak from './src/screens/lacak/Lacak';
@@ -59,10 +62,22 @@ function StackNav(props) {
         <Stack.Screen name="JualanAnda" component={JualanAnda} />
         <Stack.Screen name="Produk" component={Produk} />
         <Stack.Screen name="ProdukDetail" component={produkDetail} />
+        <Stack.Screen
+          name="ProdukDetailAdaButtonDisukai"
+          component={produkDetailAdaButtonDisukai}
+        />
         <Stack.Screen name="Pesan" component={Pesan} />
         <Stack.Screen name="PesananSaya" component={PesananSaya} />
         <Stack.Screen name="RincianPesanan" component={RincianPesanan} />
         <Stack.Screen name="Wishlist" component={Wishlist} />
+        <Stack.Screen
+          name="WishlistNoButtonTambah"
+          component={WishlistNoButtonTambah}
+        />
+        <Stack.Screen
+          name="WishlistSesungguhnya"
+          component={WishlistSesungguhnya}
+        />
         <Stack.Screen name="TambahProduk" component={TambahProduk} />
         <Stack.Screen name="Kembali" component={Kembali} />
         <Stack.Screen name="Bantuan" component={Bantuan} />

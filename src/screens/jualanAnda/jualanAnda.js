@@ -97,9 +97,14 @@ function jualanAnda(props) {
 
   //Pergi ke Hal List Wishlist
   const gotoWishlist = () => {
-    props.navigation.navigate('Wishlist', {
+    props.navigation.navigate('WishlistNoButtonTambah', {
       title: 'Produk Saya',
-      removeButtonTambahProduk: 'remove button tambah',
+    });
+  };
+
+  const gotoPalingDisukaiSesungguhnya = () => {
+    props.navigation.navigate('WishlistSesungguhnya', {
+      title: 'Produk Paling Disukai',
     });
   };
 
@@ -478,7 +483,8 @@ function jualanAnda(props) {
             )}
 
             <TouchableOpacity
-              onPress={() => listProduk('Paling Disukai')}
+              // onPress={() => listProduk('Paling Disukai')}
+              onPress={gotoPalingDisukaiSesungguhnya}
               style={{width: '32%'}}>
               <ImageBackground
                 imageStyle={{borderRadius: 10}}

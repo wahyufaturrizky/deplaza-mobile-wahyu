@@ -29,14 +29,21 @@ function wishlist(props) {
   const [Orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
   const [any, setAny] = useState(true);
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
+  const [pageOff, setPageOff] = useState(0);
   const {height, width} = Dimensions.get('window');
   const urlWishlist = URL + 'v1/wishlist/me';
+  const urlProduk = URL + 'v1/product/me';
+
   let halaman = props.route.params.title;
-  let statusButtonTambahProduk = props.route.params.removeButtonTambahProduk;
   console.log('nav', props);
   useEffect(() => {
+    if (halaman == 'Cari Produk') {
+      searchProduk(props.route.params.search);
+    } else {
+      getWishlist();
+    }
     getWishlist();
     getStatus();
   }, []);
@@ -44,15 +51,32 @@ function wishlist(props) {
   const getWishlist = async () => {
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
+    let param = '';
+
+    if (halaman === 'Komisi Terbesar') {
+      param = '&order_by=price_commission&order_direction=desc';
+    } else if (props.route.params.idKategori != null) {
+      param = '&category=' + props.route.params.idKategori;
+    } else if (halaman === 'Paling Disukai') {
+      param = '&order_by=wishlist_qty&order_direction=desc';
+    } else {
+      param = '';
+    }
+    param += '&keyword=' + search;
+
+    console.log('param', param);
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlWishlist + '?limit=10&offset=0&order_direction=desc', {headers})
+    fetch(urlProduk + '?limit=10&offset=0&order_direction=desc' + param, {
+      headers,
+    })
       .then(response => response.json())
       .then(responseData => {
+        console.log('getWishlist', responseData);
         setWishlist(responseData.data);
         setLoading(false);
         setPage(1);
@@ -112,14 +136,36 @@ function wishlist(props) {
 
     let off = 10 * pageNow;
 
+    await setPageOff(off);
+
+    let param = '';
+
+    if (halaman === 'Komisi Terbesar') {
+      param += '&order_by=price_commission&order_direction=desc';
+    } else if (props.route.params.idKategori != null) {
+      param += '&category=' + props.route.params.idKategori;
+    } else if (halaman === 'Paling Disukai') {
+      param += '&order_by=wishlist_qty&order_direction=desc';
+    } else {
+      param += '';
+    }
+    param += search ? '&keyword=' + search : '';
+
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(urlWishlist + '?limit=10&offset=' + off + '&order_direction=desc', {
-      headers,
-    })
+    await fetch(
+      urlProduk +
+        '?order_direction=desc&limit=10&offset=' +
+        pageOff +
+        '' +
+        param,
+      {
+        headers,
+      },
+    )
       .then(response => response.json())
       .then(async responseData => {
         await setWishlist(wishlist.concat(responseData.data));
@@ -148,6 +194,16 @@ function wishlist(props) {
     let param = '';
     // let param ="&invoice="+searchData
     // console.log(urlOrder+"?limit=10&offset="+page+""+param)
+    if (halaman === 'Komisi Terbesar') {
+      param += '&order_by=price_commission&order_direction=desc';
+    } else if (props.route.params.idKategori != null) {
+      param += '&category=' + props.route.params.idKategori;
+    } else if (halaman === 'Paling Disukai') {
+      param += '&order_by=wishlist_qty&order_direction=desc';
+    } else {
+      param += '';
+    }
+    param += '&keyword=' + search;
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
@@ -155,16 +211,16 @@ function wishlist(props) {
     };
 
     fetch(
-      `https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=0&order_direction=desc&keyword=${searchData}`,
+      urlProduk + `?order_direction=desc&limit=10&offset=${pageOff}${param}`,
       {
         headers,
       },
     )
       .then(response => response.json())
       .then(async responseData => {
-        await setOrders(responseData.data);
-        setPage(1);
+        await setWishlist(responseData.data);
         setLoading(false);
+        setPage(pageOff++);
       })
       .catch(e => console.log(e));
   };
@@ -185,7 +241,8 @@ function wishlist(props) {
         .reduce((a, [k, v]) => (v == null ? a : ((a[k] = v), a)), {});
     }
   };
-  const nextFilter = cleanEmpty(wishlist).filter(i => (i.product ? i : null));
+  const nextFilter = cleanEmpty(wishlist).filter(i => (i.name ? i : null));
+
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <Appbar.Header
@@ -234,11 +291,12 @@ function wishlist(props) {
       </Appbar.Header>
 
       <ScrollView style={{flex: 1, marginTop: 10}}>
+        {console.log('asdasdasd', wishlist)}
         {cleanEmpty(wishlist) &&
           nextFilter.map((data, index) => {
             return (
               <View
-                key={index}
+                key={data.id}
                 style={{
                   flexDirection: 'row',
                   marginVertical: 10,
@@ -254,7 +312,7 @@ function wishlist(props) {
                 }}>
                 <Image
                   source={{
-                    uri: data.product && data.product.images[0].image_url,
+                    uri: data && data.images[0].image_url,
                   }}
                   style={{
                     height: '100%',
@@ -272,20 +330,20 @@ function wishlist(props) {
                       textTransform: 'capitalize',
                     }}
                     numberOfLines={2}>
-                    {data.product && data.product.name}
+                    {data && data.name}
                   </Text>
                   <Text style={{fontSize: 13, marginTop: 5}}>
                     Mulai Dari Rp{' '}
-                    {data.product
+                    {data
                       ? formatRupiah(
-                          data.product.price_basic +
-                            data.product.price_benefit +
-                            data.product.price_commission,
+                          data.price_basic +
+                            data.price_benefit +
+                            data.price_commission,
                         )
                       : '0'}
                   </Text>
                   <Text style={{color: '#949494', fontSize: 12}}>
-                    Stok {data.product && data.product.stock}
+                    Stok {data && data.stock}
                   </Text>
                   <View
                     style={{
@@ -296,20 +354,20 @@ function wishlist(props) {
                       paddingBottom: 20,
                     }}>
                     {console.log('asdasdasd', data)}
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       style={{
                         width: '50%',
                       }}
                       onPress={() => hapusProduk(data.id)}>
-                      <Text style={{color: 'red'}}>Hapus Produk</Text>
-                    </TouchableOpacity>
+                      <Text style={{color: 'red'}}>
+                        Hapus Produk
+                      </Text>
+                    </TouchableOpacity> */}
                     <TouchableOpacity
                       style={{
                         width: '50%',
                       }}
-                      onPress={() =>
-                        detailProduk(data.product.id, data.product.name)
-                      }>
+                      onPress={() => detailProduk(data.id, data.name)}>
                       <Text style={{color: '#07A9F0'}}>Lihat Produk</Text>
                     </TouchableOpacity>
                   </View>
@@ -333,30 +391,16 @@ function wishlist(props) {
         )}
       </ScrollView>
       {loading && <Loading />}
-      {/* {status === 'true' ? null : (
-        <TouchableOpacity onPress={goCreateNewProduct} style={styles.button}>
-          <LinearGradient
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
-            colors={['#0956C6', '#0879D8', '#07A9F0']}
-            style={styles.button}>
-            <Icon name="plus" size={20} color="#fff" />
-            <Text style={styles.buttonText}>Tambah</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      )} */}
-      {statusButtonTambahProduk === 'remove button tambah' ? null : (
-        <TouchableOpacity onPress={goCreateNewProduct} style={styles.button}>
-          <LinearGradient
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
-            colors={['#0956C6', '#0879D8', '#07A9F0']}
-            style={styles.button}>
-            <Icon name="plus" size={20} color="#fff" />
-            <Text style={styles.buttonText}>Tambah</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity onPress={goCreateNewProduct} style={styles.button}>
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
+          colors={['#0956C6', '#0879D8', '#07A9F0']}
+          style={styles.button}>
+          <Icon name="plus" size={20} color="#fff" />
+          <Text style={styles.buttonText}>Tambah</Text>
+        </LinearGradient>
+      </TouchableOpacity>
       <BottomTab {...props} />
     </View>
   );
