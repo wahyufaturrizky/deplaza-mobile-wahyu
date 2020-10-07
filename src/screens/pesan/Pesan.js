@@ -434,7 +434,9 @@ function Pesan(props) {
     formdata.append('destination', parseInt(id_kec));
     formdata.append('weight', berat);
     formdata.append('courier', 'jne');
-
+    formdata.append('is_cod', metodeCOD);
+    formdata.append('product_id', id_produk);
+    formdata.append('qty', qty);
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
@@ -565,7 +567,7 @@ function Pesan(props) {
         .then(async responseData => {
           console.log('postProduct', responseData);
           setLoading(false);
-          if (responseData.errors != null) {
+          if (responseData.errors) {
             alert(responseData.message);
           } else {
             setIdOrder(responseData.data.id);
