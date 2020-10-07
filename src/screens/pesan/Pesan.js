@@ -578,7 +578,8 @@ function Pesan(props) {
               gotoPesanan();
             }
           }
-        });
+        })
+        .catch(e => console.log('asdasd', e));
     }
   };
 

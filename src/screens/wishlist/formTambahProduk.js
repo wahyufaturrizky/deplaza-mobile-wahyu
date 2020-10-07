@@ -49,7 +49,7 @@ function formTambahProduk(props) {
   const [idCity, setIdCity] = useState(null);
   const [idKecataman, setIdKecataman] = useState(null);
   const [codCityId, setCodCityId] = useState([]);
-  const [cod, setCod] = useState(null);
+  const [cod, setCod] = useState(1);
   const [weight, setWeight] = useState(null);
   const [description, setDescription] = useState('');
   const [stock, setStock] = useState(null);
@@ -128,17 +128,23 @@ function formTambahProduk(props) {
       'Access-Control-Allow-Origin': '*',
     };
 
-    fetch(URL_GET_PROVINCE, {headers})
-      .then(response => response.json())
-      .then(async responseData => {
-        const mapProvinsi = responseData.rajaongkir.results;
-        let data = mapProvinsi.map(s => ({
-          id: s.province_id,
-          name: 'Provinsi ' + s.province,
-        }));
-        setGetProvince(data);
-        setLoading(false);
-      });
+    if (cod === 1) {
+      fetch(URL_GET_CITIES, {headers})
+        .then(response => response.json())
+        .then(async responseData => {
+          const mapProvinsi = responseData.rajaongkir.results;
+
+          let data = mapProvinsi.map(s => ({
+            id: s.city_id,
+            name: 'Provinsi ' + s.province,
+          }));
+          setGetProvince(data);
+          setLoading(false);
+
+          // HardCodeSementara
+          setGetProvince(data.map(id => id.id));
+        });
+    }
   };
 
   const getDataSupplier = async () => {
@@ -395,13 +401,13 @@ function formTambahProduk(props) {
       formData.append('weight', parseInt(weight));
       formData.append('city_id', parseInt(idCity));
       formData.append('subdistrict_id', parseInt(idKecataman));
-      formData.append('cod', parseInt(cod));
+      formData.append('cod', cod);
       formData.append('supplier_id', parseInt(idSupplier));
       formData.append('length', 1);
       formData.append('width', 1);
       formData.append('height', 1);
       formData.append('is_awb_auto', 1);
-      formData.append('cod_city_id', JSON.stringify(codCityId));
+      formData.append('cod_city_id', JSON.stringify(getProvince));
       formData.append('price_benefit', parseInt(0));
       formData.append('user_id', data.id);
       formData.append('variation', JSON.stringify(testVariation));
@@ -1297,7 +1303,7 @@ function formTambahProduk(props) {
             </Picker>
           </View> */}
 
-          {cod === 1 ? (
+          {/* {cod === 1 ? (
             <View
               style={{
                 borderColor: 'gray',
@@ -1353,7 +1359,7 @@ function formTambahProduk(props) {
                 }}
               />
             </View>
-          ) : null}
+          ) : null} */}
 
           {/* <View
             style={{
