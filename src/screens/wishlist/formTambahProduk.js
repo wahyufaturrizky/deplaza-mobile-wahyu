@@ -423,10 +423,10 @@ function formTambahProduk(props) {
         .then(async result => {
           console.log('addNewProduct', result.message);
           setLoading(false);
+          alert(result.message);
           props.navigation.navigate('Wishlist', {
             title: 'Produk Saya',
           });
-          alert(result.message);
         })
         .catch(error => {
           console.log('error addNewProduct', error.response);
