@@ -22,6 +22,7 @@ function rincianRekening(props) {
   const [konfnoRek, setKonfNoRek] = useState('');
   const [namaRekening, setNamaRekening] = useState('');
   const [bank, setBank] = useState('kosong');
+  const [branch, setBranch] = useState('');
   const [loading, setLoading] = useState(true);
   const [allBank, setAllBank] = useState([]);
   const [allRek, setAllRek] = useState([]);
@@ -70,6 +71,7 @@ function rincianRekening(props) {
         setNoRek(responseData.data[0].number);
         setNamaRekening(responseData.data[0].name);
         setBank(responseData.data[0].bank.id);
+        setBranch(responseData.data[0].branch);
         setLoading(false);
       });
   };
@@ -98,7 +100,7 @@ function rincianRekening(props) {
         formdata.append('bank_id', bank);
         formdata.append('number', noRek);
         formdata.append('name', namaRekening);
-        formdata.append('branch', 'branch');
+        formdata.append('branch', branch);
 
         let headers = {
           Authorization: `Bearer ${data.token}`,
@@ -138,7 +140,7 @@ function rincianRekening(props) {
       formdata.append('bank_id', bank);
       formdata.append('number', noRek);
       formdata.append('name', namaRekening);
-      formdata.append('branch', 'branch');
+      formdata.append('branch', branch);
       formdata.append('_method', 'put');
 
       let headers = {
@@ -247,6 +249,25 @@ function rincianRekening(props) {
               <Picker.Item key={i} label={data.name} value={data.id} />
             ))}
           </Picker>
+          <HelperText style={{color: '#93DCFC', paddingLeft: 0}}>
+            Wajib Isi
+          </HelperText>
+        </View>
+        <View
+          style={{
+            width: '90%',
+            alignSelf: 'center',
+            marginBottom: height * 0.01,
+          }}>
+          <Text>Branch</Text>
+          <TextInput
+            value={branch}
+            onChangeText={text => setBranch(text)}
+            style={{backgroundColor: 'white'}}
+            underlineColor={'#07A9F0'}
+            underlineColorAndroid={'#07A9F0'}
+            selectionColor={'#07A9F0'}
+          />
           <HelperText style={{color: '#93DCFC', paddingLeft: 0}}>
             Wajib Isi
           </HelperText>
