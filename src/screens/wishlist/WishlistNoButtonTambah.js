@@ -81,7 +81,7 @@ function WishlistNoButtonTambah(props) {
         console.log('getWishlist', responseData);
         setWishlist(responseData.data);
         setLoading(false);
-        setPage(1);
+        setPage(0);
       })
       .catch(e => console.log(e));
   };

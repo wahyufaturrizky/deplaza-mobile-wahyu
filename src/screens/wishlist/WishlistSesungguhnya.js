@@ -36,7 +36,7 @@ function WishlistSesungguhnya(props) {
   const {height, width} = Dimensions.get('window');
   const urlWishlist = URL + 'v1/wishlist/me';
   let halaman = props.route.params.title;
-  console.log('nav', props);
+
   useEffect(() => {
     getWishlist();
     getStatus();
@@ -55,10 +55,10 @@ function WishlistSesungguhnya(props) {
     fetch(urlWishlist + '?limit=10&offset=0&order_direction=desc', {headers})
       .then(response => response.json())
       .then(responseData => {
-        console.log('WishlistSesungguhnya', urlWishlist);
+        //console.log('WishlistSesungguhnya', urlWishlist);
         setWishlist(responseData.data);
         setLoading(false);
-        setPage(1);
+        setPage(0);
       })
       .catch(e => console.log(e));
   };
@@ -74,7 +74,7 @@ function WishlistSesungguhnya(props) {
     });
   };
 
-  console.log(status);
+  //console.log(status);
 
   //Pergi ke Hal List Produk
   const detailProduk = (id, name) => {
@@ -95,7 +95,7 @@ function WishlistSesungguhnya(props) {
         headers,
       })
       .then(result => {
-        console.log('hapus produk', result);
+        // console.log('hapus produk', result);
         if (result.status === 200) {
           setLoading(false);
         }
@@ -130,7 +130,7 @@ function WishlistSesungguhnya(props) {
     )
       .then(response => response.json())
       .then(async responseData => {
-        await setWishlist(wishlist.concat(responseData.data));
+        await setWishlist(wishlist.concat(responseData.data.product));
         setPage(responseData.meta.current_page);
         setLoading(false);
         if (responseData.data.length == 0) {
@@ -151,6 +151,7 @@ function WishlistSesungguhnya(props) {
   };
 
   const searchProduk = async searchData => {
+    console.log('searc', searchData);
     setDataSearch(searchData);
     setLoading(true);
     const value = await AsyncStorage.getItem('data');
@@ -165,13 +166,14 @@ function WishlistSesungguhnya(props) {
     };
 
     fetch(
-      `https://rest-api.deplaza.id/v1/wishlist/me?limit=10&offset=${page}&order_direction=desc${param}`,
+      `${urlWishlist}?limit=10&offset=${page}&order_direction=desc${param}`,
       {
         headers,
       },
     )
       .then(response => response.json())
       .then(async responseData => {
+        console.log('oko', responseData);
         await setWishlist(responseData.data);
         setLoading(false);
         setPage(responseData.meta.current_page);
@@ -267,7 +269,9 @@ function WishlistSesungguhnya(props) {
                 }}>
                 <Image
                   source={{
-                    uri: data.product && data.product.images[0].image_url,
+                    uri: data.product.images
+                      ? data.product.images[0].image_url
+                      : 'https://lh3.googleusercontent.com/proxy/uQ57CmiuEgbf1MNThWA-PX-8sZSv6CAAMQm0DdE78twErrPaX8XhTKOI8X7g8xvLEN688sO51evXX3AIgxCcbpwZ6ArQp2EhN4KVY5L6Ec0YLpaqj2TwApSyXO32doK9Eg',
                   }}
                   style={{
                     height: '100%',
@@ -308,7 +312,6 @@ function WishlistSesungguhnya(props) {
                       marginTop: 10,
                       paddingBottom: 20,
                     }}>
-                    {console.log('asdasdasd', data)}
                     <TouchableOpacity
                       style={{
                         width: '50%',
