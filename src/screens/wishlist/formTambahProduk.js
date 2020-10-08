@@ -57,12 +57,12 @@ function formTambahProduk(props) {
   const [priceBasic, setPriceBasic] = useState(null);
   const [brand, setBrand] = useState('');
   const [nameProduct, setNameProduct] = useState('');
-  const [awb, setAwb] = useState(null);
+  const [awb, setAwb] = useState(1);
   const [idSupplier, setIdSupplier] = useState(null);
   const [getSupplier, setGetSupplier] = useState([]);
-  const [lengthProduct, setLengthProduct] = useState(1);
-  const [heightProduct, setHeightProduct] = useState(1);
-  const [widthProduct, setWidthProduct] = useState(1);
+  const [lengthProduct, setLengthProduct] = useState(0);
+  const [heightProduct, setHeightProduct] = useState(0);
+  const [widthProduct, setWidthProduct] = useState(0);
   const [file, setFile] = useState([]);
   const [source, setSource] = useState('');
   const [nameVariation, setNameVariation] = useState('');
@@ -403,10 +403,10 @@ function formTambahProduk(props) {
       formData.append('subdistrict_id', parseInt(idKecataman));
       formData.append('cod', cod);
       formData.append('supplier_id', parseInt(idSupplier));
-      formData.append('length', 1);
-      formData.append('width', 1);
-      formData.append('height', 1);
-      formData.append('is_awb_auto', 1);
+      formData.append('length', lengthProduct);
+      formData.append('width', widthProduct);
+      formData.append('height', heightProduct);
+      formData.append('is_awb_auto', awb);
       formData.append('cod_city_id', JSON.stringify(getProvince));
       formData.append('price_benefit', parseInt(0));
       formData.append('user_id', data.id);
@@ -1387,7 +1387,7 @@ function formTambahProduk(props) {
 
           {awb === 1 ? (
             <View>
-              <View
+              {/* <View
                 style={{
                   borderColor: 'gray',
                   justifyContent: 'center',
@@ -1441,7 +1441,7 @@ function formTambahProduk(props) {
                     nestedScrollEnabled: true,
                   }}
                 />
-              </View>
+              </View> */}
               <TextInput
                 label="Panjang (Cm)"
                 value={heightProduct}
