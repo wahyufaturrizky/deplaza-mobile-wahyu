@@ -81,7 +81,7 @@ function produk(props) {
       .then(async responseData => {
         await setProducts(responseData.data);
         console.log(products.data);
-        setPage(1);
+        setPage(0);
         setLoading(false);
       })
       .catch(e => console.log(e));
