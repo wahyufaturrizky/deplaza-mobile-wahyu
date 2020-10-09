@@ -255,11 +255,14 @@ function pesananSaya(props) {
                   <Text style={{fontSize: 14}}>
                     Rp.{' '}
                     {formatRupiah(
-                      data.delivery.sipping_cost +
-                        data.details[0].price * data.details[0].qty +
-                        data.details[0].benefit * data.details[0].qty +
-                        data.details[0].qty * data.details[0].commission +
-                        data.details[0].qty * data.details[0].custom_commission,
+                      data.delivery
+                        ? data.delivery.sipping_cost
+                        : 0 +
+                            data.details[0].price * data.details[0].qty +
+                            data.details[0].benefit * data.details[0].qty +
+                            data.details[0].qty * data.details[0].commission +
+                            data.details[0].qty *
+                              data.details[0].custom_commission,
                     )}
                   </Text>
                   <Text style={{color: '#949494', fontSize: 10}}>
@@ -270,18 +273,15 @@ function pesananSaya(props) {
                     )}
                   </Text>
                 </View>
-                {console.log(
-                  'data.payment.status_label',
-                  data.payment.status_label,
-                )}
+
                 <View
                   style={{
                     width: '30%',
                     borderWidth: 1,
                     borderColor:
-                      data.payment.status_label == 'Blm Dibayar' ||
-                      data.payment.status_label == 'Ditolak' ||
-                      data.payment.status_label == 'Pesanan sadang di komplain'
+                      data.status_label == 'Blm Dibayar' ||
+                      data.status_label == 'Ditolak' ||
+                      data.status_label == 'Pesanan sadang di komplain'
                         ? 'red'
                         : 'green',
                     padding: 5,
@@ -292,10 +292,9 @@ function pesananSaya(props) {
                       textAlign: 'center',
                       fontSize: 8,
                       color:
-                        data.payment.status_label == 'Blm Dibayar' ||
-                        data.payment.status_label == 'Ditolak' ||
-                        data.payment.status_label ==
-                          'Pesanan sadang di komplain'
+                        data.status_label == 'Blm Dibayar' ||
+                        data.status_label == 'Ditolak' ||
+                        data.status_label == 'Pesanan sadang di komplain'
                           ? 'red'
                           : 'green',
                     }}>
@@ -314,7 +313,7 @@ function pesananSaya(props) {
                   paddingBottom: 20,
                 }}>
                 <View style={{justifyContent: 'space-around', width: '40%'}}>
-                  {data.delivery.tracking_id != '' ? (
+                  {data.delivery ? (
                     <Text style={{fontSize: 8}}>
                       {data.delivery.tracking_id}
                     </Text>

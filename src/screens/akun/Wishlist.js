@@ -386,8 +386,13 @@ function wishlist(props) {
               alignItems: 'center',
               width: '100%',
             }}
-            onPress={() => loadMore(page + 1)}>
-            <Text>Produk Selanjutnya</Text>
+            onPress={() => loadMore(page + 1)}
+            disabled={wishlist.length !== 0 ? false : true}>
+            <Text>
+              {wishlist.length !== 0
+                ? 'Produk Selanjutnya'
+                : 'Tidak Ada Produk'}
+            </Text>
           </TouchableOpacity>
         ) : wishlist.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>

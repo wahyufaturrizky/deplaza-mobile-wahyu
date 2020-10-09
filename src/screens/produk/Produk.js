@@ -68,6 +68,7 @@ function produk(props) {
     } else {
       param = '';
     }
+    console.log('param', param);
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
@@ -189,7 +190,7 @@ function produk(props) {
       .catch(e => console.log(e));
   };
 
-  // console.log('product', products);
+  console.log('product', props.route.params.idKategori);
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -307,8 +308,13 @@ function produk(props) {
               alignItems: 'center',
               width: '100%',
             }}
-            onPress={() => loadMore(page + 1)}>
-            <Text>Produk Selanjutnya</Text>
+            onPress={() => loadMore(page + 1)}
+            disabled={products.length !== 0 ? false : true}>
+            <Text>
+              {products.length !== 0
+                ? 'Produk Selanjutnya'
+                : 'Tidak Ada Produk'}
+            </Text>
           </TouchableOpacity>
         ) : products.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>
