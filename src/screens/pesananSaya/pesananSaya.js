@@ -193,7 +193,6 @@ function pesananSaya(props) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-        {console.log('data pesanan saya', orders)}
         {orders.map((data, index) => (
           <View
             key={index}
@@ -255,9 +254,6 @@ function pesananSaya(props) {
                   <Text style={{fontSize: 14}}>
                     Rp.{' '}
                     {formatRupiah(
-                      data.delivery
-                        ? data.delivery.sipping_cost
-                        : 0 +
                             data.details[0].price * data.details[0].qty +
                             data.details[0].benefit * data.details[0].qty +
                             data.details[0].qty * data.details[0].commission +
@@ -313,7 +309,7 @@ function pesananSaya(props) {
                   paddingBottom: 20,
                 }}>
                 <View style={{justifyContent: 'space-around', width: '40%'}}>
-                  {data.delivery ? (
+                  {/* {data.delivery ? (
                     <Text style={{fontSize: 8}}>
                       {data.delivery.tracking_id}
                     </Text>
@@ -321,7 +317,7 @@ function pesananSaya(props) {
                     <Text style={{fontSize: 8, color: 'red', marginBottom: 4}}>
                       Resi Belum di Input
                     </Text>
-                  )}
+                  )} */}
                   <Text
                     style={{color: '#949494', fontSize: 10, marginBottom: 4}}>
                     Pembeli: {data.customer.fullname}

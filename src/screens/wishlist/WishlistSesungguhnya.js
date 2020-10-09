@@ -130,7 +130,7 @@ function WishlistSesungguhnya(props) {
     )
       .then(response => response.json())
       .then(async responseData => {
-        await setWishlist(wishlist.concat(responseData.data.product));
+        await setWishlist(wishlist.concat(responseData.data));
         setPage(responseData.meta.current_page);
         setLoading(false);
         if (responseData.data.length == 0) {
