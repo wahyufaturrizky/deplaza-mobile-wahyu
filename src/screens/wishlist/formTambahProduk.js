@@ -483,13 +483,12 @@ function formTambahProduk(props) {
     setCodCityId(getDataCities);
   };
 
-  function handleChange(event) {
+  const handleChange = (event, index) => {
     let vals = [...values.val];
-    vals[this] = event.target.value;
+    vals[index] = event;
     setValues({val: vals});
     // setVariation([...variation, nameVariation, ...values.val])
-    console.log('vals', event);
-  }
+  };
 
   function createInputs() {
     return (
@@ -526,7 +525,7 @@ function formTambahProduk(props) {
               label={`Variasi 1 Pilihan ${i + 1}`}
               // value={el || ''}
               mode="outlined"
-              onChangeText={val => handleChange.bind(i)}
+              onChangeText={val => handleChange(val, i)}
               style={{
                 width: '90%',
                 alignSelf: 'center',
@@ -620,13 +619,12 @@ function formTambahProduk(props) {
     );
   }
 
-  function handleSecondChange(event) {
+  const handleSecondChange = (event, index) => {
     let vals = [...secondValues.val];
-    vals[this] = event.target.value;
+    vals[index] = event;
     setSecondValues({val: vals});
     // setVariation([...variation, nameSecondVariation, secondValues.val])
-    console.log(vals);
-  }
+  };
 
   function createInputs2() {
     return (
@@ -663,7 +661,7 @@ function formTambahProduk(props) {
               label={`Variasi 2 Pilihan ${i + 1}`}
               // value={el || ''}
               mode="outlined"
-              onChangeText={val => handleSecondChange.bind(i)}
+              onChangeText={val => handleSecondChange(val, i)}
               style={{
                 width: '90%',
                 alignSelf: 'center',
@@ -757,13 +755,12 @@ function formTambahProduk(props) {
     );
   }
 
-  function handleThirdChange(event) {
+  const handleThirdChange = (event, index) => {
     let vals = [...thirdValues.val];
-    vals[this] = event.target.value;
+    vals[index] = event;
     setThirdValues({val: vals});
     // setVariation([...variation, nameThirdVariation, thirdValues.val])
-    console.log(vals);
-  }
+  };
 
   function createInputs3() {
     return (
@@ -800,7 +797,7 @@ function formTambahProduk(props) {
               label={`Variasi 3 Pilihan ${i + 1}`}
               // value={el || ''}
               mode="outlined"
-              onChangeText={val => handleThirdChange.bind(i)}
+              onChangeText={val => handleThirdChange(val, i)}
               style={{
                 width: '90%',
                 alignSelf: 'center',
@@ -905,6 +902,12 @@ function formTambahProduk(props) {
     vals.splice(this, 1);
     setThirdValues({val: vals});
   };
+
+  console.log('nameVariation', [
+    {[nameVariation]: values.val},
+    {[nameSecondVariation]: secondValues.val},
+    {[nameThirdVariation]: thirdValues.val},
+  ]);
 
   return (
     <View style={{flex: 1, height: '100%'}}>
