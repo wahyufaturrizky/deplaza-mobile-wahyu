@@ -101,7 +101,6 @@ function produkDetail(props) {
         console.log('dfdsf', id, data.product_id);
         let row = 1;
         res.map((data, i) => {
-          console.log('okok', data.product_id);
           if (data.product_id === id) {
             setLikeProduk(1);
           }
@@ -524,7 +523,7 @@ function produkDetail(props) {
     setSelectVariasi(filtered.concat(data));
   };
 
-  // console.log('Kecamatan', totalHarga);
+   console.log('Kecamatan', kota);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
