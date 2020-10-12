@@ -88,22 +88,21 @@ function produkDetailAdaButtonDisukai(props) {
     setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
-   
+
     let headers = {
       Authorization: `Bearer ${data.token}`,
       'Access-Control-Allow-Origin': '*',
     };
-    setLoading(true)
+    setLoading(true);
     await fetch(urlWishlistMe, {headers})
       .then(response => response.json())
       .then(async responseData => {
         let res = await responseData.data;
         let row = 1;
-       await res.map(async (data, i) => {
+        await res.map(async (data, i) => {
           if (data.product_id === id) {
             setLikeProduk(1);
           }
-       
         }, setLoading(false));
       })
       .catch(e => console.log(e));
@@ -178,7 +177,9 @@ function produkDetailAdaButtonDisukai(props) {
   };
 
   const gotoRincianProduk = () => {
-    props.navigation.navigate('WishlistSesungguhnya', {title: 'Produk Paling Disukai'});
+    props.navigation.navigate('WishlistSesungguhnya', {
+      title: 'Produk yang Ditandai',
+    });
   };
 
   const gotoPesan = () => {
@@ -204,7 +205,6 @@ function produkDetailAdaButtonDisukai(props) {
   };
 
   const getDetailProduct = async () => {
-   
     setDataGambar([]);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
@@ -217,7 +217,7 @@ function produkDetailAdaButtonDisukai(props) {
       .then(response => response.json())
       .then(async responseData => {
         await setDataDetail(responseData.data);
-       
+
         setTotalKomisi(responseData.data.price_commission);
 
         if (responseData.data.variation_data != null) {
@@ -235,7 +235,6 @@ function produkDetailAdaButtonDisukai(props) {
 
           await setDataGambar(dataG);
         });
-       
       });
   };
 
@@ -504,7 +503,7 @@ function produkDetailAdaButtonDisukai(props) {
       .then(async responseData => {
         console.log(responseData);
         setLoading(false);
-        alert(responseData.message)
+        alert(responseData.message);
         gotoRincianProduk();
       })
       .catch(e => console.log(e))
@@ -542,7 +541,11 @@ function produkDetailAdaButtonDisukai(props) {
           }}>
           <SliderBox
             images={dataGambar}
-            style={{width: '90%', height: height * 0.4, resizeMode: 'contain'}}
+            style={{
+              width: '90%',
+              height: height * 0.4,
+              resizeMode: 'contain',
+            }}
           />
           <Text
             style={{
@@ -647,7 +650,8 @@ function produkDetailAdaButtonDisukai(props) {
                 }}
               />
             </View>
-            <TouchableOpacity style={{width: '34%'}}>
+            {/* ------- [START BUTTON CHECK HARGA] ------- */}
+            {/* <TouchableOpacity style={{width: '34%'}}>
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
@@ -657,7 +661,8 @@ function produkDetailAdaButtonDisukai(props) {
                   Cek Harga
                 </Text>
               </LinearGradient>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            {/* ------- [END BUTTON CHECK HARGA] ------- */}
           </View>
 
           {!metodeCOD && pilihKota && (
@@ -908,53 +913,54 @@ function produkDetailAdaButtonDisukai(props) {
             styles.shadow,
             {flexDirection: 'row', height: height * 0.06},
           ]}>
-              {loading ? null :
-          <TouchableOpacity
-            style={{width: '50%', height: height * 0.06}}
-            onPress={checkPermission}>
-            <View
-              style={{
-                flexDirection: 'row',
-                padding: height * 0.01,
-                justifyContent: 'space-around',
-                alignItems: 'center',
-              }}>
-              <Icon
-                name="cloud-download"
-                size={height * 0.04}
-                color="#07A9F0"
-              />
-              <Text style={{fontSize: width * 0.03, color: '#07A9F0'}}>
-                Simpan Gambar
-              </Text>
-            </View>
-          </TouchableOpacity>}
-          {loading ? null :
-          <TouchableOpacity
-            style={{width: '50%', height: height * 0.06}}
-            onPress={gotoPesan}>
-            <LinearGradient
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 1}}
-              colors={['#0956C6', '#0879D8', '#07A9F0']}
-              style={{
-                flexDirection: 'row',
-                padding: height * 0.01,
-                justifyContent: 'space-around',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={require('../../assets/images/inbox.png')}
-                style={{width: width * 0.08, height: width * 0.08}}
-              />
-              <Text style={{fontSize: width * 0.03, color: '#fff'}}>
-                Pesan {'&'} Kirim
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>}
+          {loading ? null : (
+            <TouchableOpacity
+              style={{width: '50%', height: height * 0.06}}
+              onPress={checkPermission}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  padding: height * 0.01,
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="cloud-download"
+                  size={height * 0.04}
+                  color="#07A9F0"
+                />
+                <Text style={{fontSize: width * 0.03, color: '#07A9F0'}}>
+                  Simpan Gambar
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          {loading ? null : (
+            <TouchableOpacity
+              style={{width: '50%', height: height * 0.06}}
+              onPress={gotoPesan}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                style={{
+                  flexDirection: 'row',
+                  padding: height * 0.01,
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={require('../../assets/images/inbox.png')}
+                  style={{width: width * 0.08, height: width * 0.08}}
+                />
+                <Text style={{fontSize: width * 0.03, color: '#fff'}}>
+                  Pesan {'&'} Kirim
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
         </View>
-      ) : (
-        loading ? null :
+      ) : loading ? null : (
         <TouchableOpacity onPress={() => postWishlist(dataDetail.id)}>
           <LinearGradient
             start={{x: 0, y: 0}}

@@ -98,13 +98,13 @@ function jualanAnda(props) {
   //Pergi ke Hal List Wishlist
   const gotoWishlist = () => {
     props.navigation.navigate('WishlistNoButtonTambah', {
-      title: 'Produk Saya',
+      title: 'Tambah Produk Saya',
     });
   };
 
   const gotoPalingDisukaiSesungguhnya = () => {
     props.navigation.navigate('WishlistSesungguhnya', {
-      title: 'Produk Paling Disukai',
+      title: 'Produk yang Ditandai',
     });
   };
 
@@ -348,7 +348,7 @@ function jualanAnda(props) {
                   padding: 10,
                   alignItems: 'center',
                 }}>
-                <Text style={{fontSize: 16}}>Produk Terlaris</Text>
+                <Text style={{fontSize: 16}}>Produk Deplaza</Text>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -501,7 +501,7 @@ function jualanAnda(props) {
                     marginLeft: width * 0.01,
                     fontSize: width * 0.03,
                   }}>
-                  Paling Disukai
+                  Produk Ditandai
                 </Text>
                 <View
                   style={{
@@ -542,7 +542,7 @@ function jualanAnda(props) {
                       fontSize: width * 0.03,
                       marginLeft: width * 0.01,
                     }}>
-                    Produk Lain
+                    Kategori
                   </Text>
                   <View
                     style={{
@@ -584,7 +584,7 @@ function jualanAnda(props) {
                       marginLeft: width * 0.01,
                       fontSize: width * 0.03,
                     }}>
-                    Produk Lain
+                    Kategori
                   </Text>
                   <View
                     style={{
