@@ -424,8 +424,8 @@ function formTambahProduk(props) {
           console.log('addNewProduct', result.message);
           setLoading(false);
           alert(result.message);
-          props.navigation.navigate('Akun', {
-            title: 'Akun Saya',
+          props.navigation.navigate('EditAkun', {
+            title: 'Edit Akun',
           });
         })
         .catch(error => {

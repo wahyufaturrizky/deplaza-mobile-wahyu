@@ -440,7 +440,8 @@ function jualanAnda(props) {
               </TouchableOpacity>
             )}
 
-            {wishlist == 0 && (
+            {/* ----- [START KOMISI TERBESAR] ----- */}
+            {/* {wishlist == 0 && (
               <TouchableOpacity
                 onPress={() => listProduk('Komisi Terbesar')}
                 style={{width: '32%'}}>
@@ -480,7 +481,8 @@ function jualanAnda(props) {
                   </View>
                 </ImageBackground>
               </TouchableOpacity>
-            )}
+            )} */}
+            {/* ----- [END KOMISI TERBESAR] ----- */}
 
             <TouchableOpacity
               // onPress={() => listProduk('Paling Disukai')}
