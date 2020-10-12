@@ -77,7 +77,7 @@ function Akun(props) {
   };
 
   const gotoWishlist = () => {
-    props.navigation.navigate('Wishlist', {title: 'Produk Saya'});
+    props.navigation.navigate('Wishlist', {title: 'Tambah Produk Saya'});
   };
 
   const gotoNotifikasi = () => {

@@ -44,8 +44,11 @@ function produkDetail(props) {
 
   const [varian, setVarian] = useState([]);
 
+  const [codeCourier, setCodeCourier] = useState('');
+
   const [kota, setKota] = useState([]);
   const [kecamatan, setKecamatan] = useState([]);
+  const [courier, setCourier] = useState([]);
   const [idCity, setIdCity] = useState(0);
   const [est, setEst] = useState('');
   const [totalOngkir, setTotalOngkir] = useState(0);
@@ -56,6 +59,7 @@ function produkDetail(props) {
 
   const urlProdukDetail = URL + 'v1/product/';
   const urlKota = URL + 'v1/shipment/cities';
+  const urlCourier = URL + 'v1/courier';
   const urlKecamatan = URL + 'v1/shipment/subdistrict/city';
   const urlOngkir = URL + 'v1/shipment/cost/subdistrict';
   const urlWishlistMe = URL + 'v1/wishlist/me?limit=1000000';
@@ -69,6 +73,7 @@ function produkDetail(props) {
   useEffect(() => {
     getDetailProduct();
     getKota();
+    getCourier();
     CekTandai();
   }, []);
 
@@ -190,6 +195,7 @@ function produkDetail(props) {
     } else {
       props.navigation.navigate('Pesan', {
         title: 'Pesan & Kirim',
+        product_sendiri: true,
         data: {
           id_produk: id,
           variation: selectVariasi,
@@ -342,6 +348,28 @@ function produkDetail(props) {
       .catch(e => console.log(e));
   };
 
+  const getCourier = async () => {
+    const value = await AsyncStorage.getItem('data');
+    const data = JSON.parse(value);
+
+    let headers = {
+      Authorization: `Bearer ${data.token}`,
+      'Access-Control-Allow-Origin': '*',
+    };
+
+    fetch(urlCourier, {headers})
+      .then(response => response.json())
+      .then(responseData => {
+        const mapCourier = responseData.data;
+        let data = mapCourier.map(s => ({
+          id: s.code,
+          name: s.name,
+        }));
+        setCourier(data);
+      })
+      .catch(e => console.log(e));
+  };
+
   const _selectKota = async data_kota => {
     await setLoading(true);
     await setIdCity(data_kota.id);
@@ -418,6 +446,12 @@ function produkDetail(props) {
     // })
   };
 
+  const _selectCourier = async data_courier => {
+    await setLoading(true);
+    await setCodeCourier(data_courier.id);
+    await setLoading(false);
+  };
+
   // console.log('sfsdf', dataDetail);
   const _selectKecamatan = async data_kota => {
     setLoading(true);
@@ -448,7 +482,7 @@ function produkDetail(props) {
     formdata.append('origin', dataDetail.city_id);
     formdata.append('destination', parseInt(data_kota.id));
     formdata.append('weight', dataDetail.weight);
-    formdata.append('courier', 'jne');
+    formdata.append('courier', codeCourier);
 
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
@@ -523,7 +557,7 @@ function produkDetail(props) {
     setSelectVariasi(filtered.concat(data));
   };
 
-   console.log('Kecamatan', kota);
+  console.log('Kecamatan', kota);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
@@ -539,7 +573,11 @@ function produkDetail(props) {
           }}>
           <SliderBox
             images={dataGambar}
-            style={{width: '90%', height: height * 0.4, resizeMode: 'contain'}}
+            style={{
+              width: '90%',
+              height: height * 0.4,
+              resizeMode: 'contain',
+            }}
           />
           <Text
             style={{
@@ -606,6 +644,49 @@ function produkDetail(props) {
                   const items = selectKota;
                   items.push(item);
                   setSelectKota(items);
+                  _selectCourier(item);
+                }}
+                containerStyle={{width: '100%', borderRadius: 10}}
+                onRemoveItem={(item, index) => {
+                  const items = selectKota.filter(
+                    sitem => sitem.id !== item.id,
+                  );
+                  setSelectKota(items);
+                }}
+                itemStyle={{
+                  padding: 10,
+                  marginTop: 2,
+                  backgroundColor: '#ddd',
+                  borderColor: '#bbb',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  width: '100%',
+                }}
+                itemTextStyle={{color: '#222'}}
+                itemsContainerStyle={{borderRadius: 10}}
+                items={courier}
+                defaultIndex={2}
+                resetValue={false}
+                textInputProps={{
+                  placeholder: 'Pilih Courier',
+                  underlineColorAndroid: 'transparent',
+                  style: {
+                    padding: 12,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                  },
+                }}
+                listProps={{
+                  nestedScrollEnabled: true,
+                }}
+              />
+
+              <SearchableDropdown
+                onItemSelect={item => {
+                  const items = selectKota;
+                  items.push(item);
+                  setSelectKota(items);
                   _selectKecamatan(item);
                 }}
                 containerStyle={{width: '100%', borderRadius: 10}}
@@ -644,7 +725,8 @@ function produkDetail(props) {
                 }}
               />
             </View>
-            <TouchableOpacity style={{width: '34%'}}>
+            {/* ------- [START BUTTON CHECK HARGA] ------- */}
+            {/* <TouchableOpacity style={{width: '34%'}}>
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
@@ -654,7 +736,8 @@ function produkDetail(props) {
                   Cek Harga
                 </Text>
               </LinearGradient>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            {/* ------- [END BUTTON CHECK HARGA] ------- */}
           </View>
 
           {!metodeCOD && pilihKota && (

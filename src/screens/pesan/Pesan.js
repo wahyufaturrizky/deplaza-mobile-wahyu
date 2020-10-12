@@ -66,6 +66,10 @@ function Pesan(props) {
     props.route.params.data.totalOngkir,
   );
 
+  const [statusProdukSendiri, setStatusProdukSendiri] = useState(
+    props.route.params.product_sendiri,
+  );
+
   const metodeCOD = props.route.params.data.metodeCOD;
   const id_produk = props.route.params.data.id_produk;
   // const totalOngkir = props.route.params.data.totalOngkir
@@ -595,24 +599,27 @@ function Pesan(props) {
           <View style={{backgroundColor: '#F8F8F8', padding: 10}}>
             <Text style={{fontSize: 18}}>Metode Pembayaran</Text>
             <View style={{}}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: height * 0.01,
-                }}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Icon name={'card-text'} size={24} />
-                  <Text style={{fontSize: 20}}> Transfer Bank</Text>
-                </View>
+              {statusProdukSendiri === true ? null : (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: height * 0.01,
+                  }}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Icon name={'card-text'} size={24} />
+                    <Text style={{fontSize: 20}}> Transfer Bank</Text>
+                  </View>
 
-                <RadioButton
-                  value="Transfer"
-                  status={metode ? 'checked' : 'unchecked'}
-                  onPress={() => metodeTrue()}
-                />
-              </View>
+                  <RadioButton
+                    value="Transfer"
+                    status={metode ? 'checked' : 'unchecked'}
+                    onPress={() => metodeTrue()}
+                  />
+                </View>
+              )}
+
               {metodeCOD && (
                 <View
                   style={{
