@@ -91,12 +91,12 @@ function formTambahProduk(props) {
   const urlProfile = URL + 'v1/my-profile';
 
   useEffect(() => {
+    getAlamat();
     getDataSupplier();
     getDataCategory();
     getDataCity();
     getDataProvinces();
     getProvinsi();
-    getAlamat();
     // getProfile();
   }, []);
 
@@ -198,12 +198,21 @@ function formTambahProduk(props) {
       .then(response => response.json())
       .then(async responseData => {
         let data = responseData.data;
-        data.reverse();
-        await setAllAlamat(data[0]);
-        setAlamat(data[0].address);
-        setKota(data[0].city_id);
-        setProvinsi(data[0].prov_id);
-        setPos(data[0].zip_code);
+        console.log('okok', data);
+        if(data.length > 0){
+          data.reverse();
+          await setAllAlamat(data[0]);
+          setAlamat(data[0].address);
+          setKota(data[0].city_id);
+          setProvinsi(data[0].prov_id);
+          setPos(data[0].zip_code);
+        }else{
+          await alert('Anda harus mengisi alamat anda terlebih dahulu')
+          props.navigation.navigate('EditAkun', {
+            title: 'Edit Akun',
+          });
+        }
+       
         // console.log(data[0].zip_code);
       });
   };
@@ -424,8 +433,8 @@ function formTambahProduk(props) {
           console.log('addNewProduct', result.message);
           setLoading(false);
           alert(result.message);
-          props.navigation.navigate('EditAkun', {
-            title: 'Edit Akun',
+          props.navigation.navigate('Akun', {
+            title: 'Akun Saya',
           });
         })
         .catch(error => {

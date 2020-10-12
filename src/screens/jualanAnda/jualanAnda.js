@@ -232,23 +232,23 @@ function jualanAnda(props) {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
-      {wishlist > 0 ? (
+      {/* {wishlist > 0 ? ( */}
         <AppbarT
           params={props}
           haveProduk={haveProduk}
           notif={notif}
           wishlist={wishlist}
         />
-      ) : (
+      {/* ) : (
         <Appbar
           params={props}
           haveProduk={haveProduk}
           notif={notif}
           wishlist={wishlist}
         />
-      )}
+      )} */}
 
-      {wishlist < 1 ? (
+      {/* {wishlist < 1 ? (
         <Image
           source={require('../../assets/images/banner-home.png')}
           style={{width: width * 1, height: height * 0.3}}
@@ -256,7 +256,7 @@ function jualanAnda(props) {
           height={height * 0.25}
           resizeMode="contain"
         />
-      ) : (
+      ) : ( */}
         <ImageBackground
           source={require('../../assets/images/banner-home2.png')}
           style={{justifyContent: 'flex-start', height: height * 0.2}}>
@@ -280,8 +280,8 @@ function jualanAnda(props) {
             </View>
           </View>
         </ImageBackground>
-      )}
-      {wishlist > 0 && (
+      {/* )} */}
+      {/* {wishlist > 0 && ( */}
         <View
           style={[
             styles.shadow,
@@ -321,7 +321,7 @@ function jualanAnda(props) {
           />
           <Icon style={{padding: 10}} name="camera" size={30} color="#07A9F0" />
         </View>
-      )}
+      {/* )} */}
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -362,7 +362,7 @@ function jualanAnda(props) {
             </Card>
           </TouchableOpacity>
 
-          {wishlist > 0 && (
+          {/* {wishlist > 0 && ( */}
             <TouchableOpacity onPress={gotoWishlist} style={{marginBottom: 10}}>
               <LinearGradient
                 start={{x: 0, y: 0}}
@@ -390,7 +390,7 @@ function jualanAnda(props) {
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
-          )}
+          {/* )} */}
 
           <View
             style={{
@@ -398,7 +398,7 @@ function jualanAnda(props) {
               justifyContent: 'space-between',
               marginTop: height * 0.01,
             }}>
-            {wishlist > 0 && (
+            {/* {wishlist > 0 && ( */}
               <TouchableOpacity
                 imageStyle={{borderRadius: 10}}
                 onPress={() => gotoPesanan()}
@@ -438,7 +438,7 @@ function jualanAnda(props) {
                   </View>
                 </ImageBackground>
               </TouchableOpacity>
-            )}
+            {/* )} */}
 
             {/* ----- [START KOMISI TERBESAR] ----- */}
             {/* {wishlist == 0 && (
@@ -525,7 +525,7 @@ function jualanAnda(props) {
               </ImageBackground>
             </TouchableOpacity>
 
-            {wishlist > 0 && (
+            {/* {wishlist > 0 && ( */}
               <TouchableOpacity
                 onPress={() => gotoKategori()}
                 style={{width: '32%'}}>
@@ -565,9 +565,9 @@ function jualanAnda(props) {
                   </View>
                 </ImageBackground>
               </TouchableOpacity>
-            )}
+            {/* )} */}
 
-            {wishlist == 0 && (
+            {/* {wishlist == 0 && (
               <TouchableOpacity
                 imageStyle={{borderRadius: 10}}
                 onPress={() => gotoKategori()}
@@ -607,7 +607,7 @@ function jualanAnda(props) {
                   </View>
                 </ImageBackground>
               </TouchableOpacity>
-            )}
+            )} */}
           </View>
         </View>
       </ScrollView>

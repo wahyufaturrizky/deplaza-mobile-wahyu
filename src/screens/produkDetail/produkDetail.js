@@ -445,7 +445,7 @@ function produkDetail(props) {
     //     })
     // })
   };
-
+console.log('asdasd', dataDetail.qty);
   const _selectCourier = async data_courier => {
     await setLoading(true);
     await setCodeCourier(data_courier.id);
@@ -481,7 +481,7 @@ function produkDetail(props) {
     let formdata = new FormData();
     formdata.append('origin', dataDetail.city_id);
     formdata.append('destination', parseInt(data_kota.id));
-    formdata.append('weight', dataDetail.weight);
+    formdata.append('weight', dataDetail.weight * qty);
     formdata.append('courier', codeCourier);
 
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})

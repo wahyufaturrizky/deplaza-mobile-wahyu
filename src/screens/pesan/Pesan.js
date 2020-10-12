@@ -576,8 +576,8 @@ function Pesan(props) {
           } else {
             setIdOrder(responseData.data.id);
             setPesan(true);
-            if (metode) {
-              alert('Pesanan Sudah Di Masukkan');
+            if (!metode) {
+              alert('Pesanan Sudah Di Masukkan, label resi akan dikirimkan ke email anda');
               gotoPesanan();
             } else {
               alert('Pesanan Sudah Di Masukkan');
@@ -652,7 +652,7 @@ function Pesan(props) {
               <View>
                 <Text>Biaya Produk</Text>
                 <Text style={{color: 'gray', fontSize: 12}}>
-                  *harga suda termasuk ongkir
+                  *harga sudah termasuk ongkir
                 </Text>
                 <Text style={{color: 'gray', fontSize: 12}}>
                   plus biaya pemesanan Rp 2000
