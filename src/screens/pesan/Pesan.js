@@ -437,7 +437,7 @@ function Pesan(props) {
     formdata.append('origin', parseInt(kotaAsal));
     formdata.append('destination', parseInt(id_kec));
     formdata.append('weight', berat);
-    formdata.append('courier', 'jne');
+    formdata.append('courier', props.route.params.data.codeKurir);
     formdata.append('is_cod', metodeCOD);
     formdata.append('product_id', id_produk);
     formdata.append('qty', qty);
@@ -553,8 +553,8 @@ function Pesan(props) {
             provinsiDetail.province,
         },
         shipping: {
-          courier_id: 1, //kurir dari raja ongkir (JNE)
-          package_courier: 'REG',
+          courier_id: parseInt(props.route.params.data.courier_id), //kurir dari raja ongkir (JNE)
+          package_courier: props.route.params.data.codeKurir,
           sipping_cost: totalOngkir,
         },
         payment_method_id: id_metode, // 1 atau 3 = 1(COD), 3 (Transfer)

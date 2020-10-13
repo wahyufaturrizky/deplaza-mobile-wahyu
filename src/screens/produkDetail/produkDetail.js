@@ -7,6 +7,7 @@ import {
   Text,
   Dimensions,
   StyleSheet,
+  Picker,
   PermissionsAndroid,
 } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
@@ -43,9 +44,9 @@ function produkDetail(props) {
   const [totalKomisi, setTotalKomisi] = useState('0');
 
   const [varian, setVarian] = useState([]);
-
+const [courierId, setCourierId] = useState('')
   const [codeCourier, setCodeCourier] = useState('');
-
+const [service, setService] = useState([])
   const [kota, setKota] = useState([]);
   const [kecamatan, setKecamatan] = useState([]);
   const [courier, setCourier] = useState([]);
@@ -56,7 +57,7 @@ function produkDetail(props) {
   const [metodeCOD, setmetodeCOD] = useState(false); //false kalo untuk bank
   const [likeProduk, setLikeProduk] = useState(1);
   const [pilihKota, setPilihKota] = useState(false);
-
+const [selectedValue, setselectedValue] = useState('Pilih Layanan')
   const urlProdukDetail = URL + 'v1/product/';
   const urlKota = URL + 'v1/shipment/cities';
   const urlCourier = URL + 'v1/courier';
@@ -68,7 +69,7 @@ function produkDetail(props) {
 
   const {height, width} = Dimensions.get('window');
   let id = props.route.params.id;
-  console.log('id', id);
+ // console.log('id', id);
 
   useEffect(() => {
     getDetailProduct();
@@ -92,7 +93,7 @@ function produkDetail(props) {
   const CekTandai = async () => {
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
-    console.log('token', data.token);
+   // console.log('token', data.token);
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
@@ -103,7 +104,7 @@ function produkDetail(props) {
       .then(response => response.json())
       .then(responseData => {
         let res = responseData.data;
-        console.log('dfdsf', id, data.product_id);
+      //  console.log('dfdsf', id, data.product_id);
         let row = 1;
         res.map((data, i) => {
           if (data.product_id === id) {
@@ -114,7 +115,7 @@ function produkDetail(props) {
       .catch(e => console.log(e));
   };
 
-  console.log('kkk', likeProduk);
+  console.log('kkk', service);
 
   const changeQty = simbol => {
     let hargaProduk = parseInt(
@@ -197,6 +198,8 @@ function produkDetail(props) {
         title: 'Pesan & Kirim',
         product_sendiri: true,
         data: {
+          courier_id: courierId,
+          codeKurir: codeCourier,
           id_produk: id,
           variation: selectVariasi,
           qty,
@@ -362,7 +365,8 @@ function produkDetail(props) {
       .then(responseData => {
         const mapCourier = responseData.data;
         let data = mapCourier.map(s => ({
-          id: s.code,
+          id: s.id,
+          code: s.code,
           name: s.name,
         }));
         setCourier(data);
@@ -445,14 +449,37 @@ function produkDetail(props) {
     //     })
     // })
   };
-console.log('asdasd', dataDetail.qty);
+
+ // console.log('adasff', courier);
   const _selectCourier = async data_courier => {
+   const codeKurir = await courier.find(json => json.id === data_courier.id).code
     await setLoading(true);
-    await setCodeCourier(data_courier.id);
+    await setCourierId(data_courier.id)
+    await setCodeCourier(codeKurir);
     await setLoading(false);
   };
 
   // console.log('sfsdf', dataDetail);
+
+  const setSelectedService = async (dataService) => {
+    // const type = service.find(i => i.service === dataService)
+    // console.log('okoki', type.cost[0].value);
+     setselectedValue(dataService)
+    const type = await service.find(i => i.service === dataService)
+    setLoading(false);
+    setPilihKota(true);
+    setEst(type.cost[0].etd);
+    setTotalOngkir(type.cost[0].value);
+    // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+    setTotalHarga(
+      dataDetail.price_basic +
+        dataDetail.price_commission +
+        dataDetail.price_benefit +
+        type.cost[0].value,
+    );
+  }
+
+  console.log('adsasdq', codeCourier);
   const _selectKecamatan = async data_kota => {
     setLoading(true);
 
@@ -467,7 +494,7 @@ console.log('asdasd', dataDetail.qty);
       .then(response => response.json())
       .then(responseData => {
         // var cod_city = JSON.parse(dataDetail.cod_city_id)
-        console.log(cod_city);
+       // console.log(cod_city);
         // var n = cod_city.includes(data_kota.id);
         // console.log('codiii', data_kota.id);
         // if(n) {
@@ -483,29 +510,17 @@ console.log('asdasd', dataDetail.qty);
     formdata.append('destination', parseInt(data_kota.id));
     formdata.append('weight', dataDetail.weight * qty);
     formdata.append('courier', codeCourier);
+    formdata.append('qty', qty);
+    formdata.append('product_id', dataDetail.id);
 
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
-        console.log('uuu', responseData);
+       //console.log('uuu', responseData.rajaongkir.results);
         let tipe = await responseData.rajaongkir.results[0].costs;
-        console.log('tipe', tipe);
+       setService(tipe)
+       console.log('tipe', tipe);
         setLoading(false);
-        tipe.map(type => {
-          if (type.service === 'REG' || type.service === 'CTC') {
-            setLoading(false);
-            setPilihKota(true);
-            setEst(type.cost[0].etd);
-            setTotalOngkir(type.cost[0].value);
-            // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
-            setTotalHarga(
-              dataDetail.price_basic +
-                dataDetail.price_commission +
-                dataDetail.price_benefit +
-                type.cost[0].value,
-            );
-          }
-        });
       });
   };
 
@@ -534,7 +549,7 @@ console.log('asdasd', dataDetail.qty);
     })
       .then(response => response.json())
       .then(async responseData => {
-        console.log(responseData);
+      //  console.log(responseData);
         setLoading(false);
         gotoRincianProduk();
       })
@@ -557,7 +572,7 @@ console.log('asdasd', dataDetail.qty);
     setSelectVariasi(filtered.concat(data));
   };
 
-  console.log('Kecamatan', kota);
+ // console.log('Kecamatan', kota);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
@@ -724,6 +739,17 @@ console.log('asdasd', dataDetail.qty);
                   nestedScrollEnabled: true,
                 }}
               />
+              <Text>Layanan: </Text>
+               <Picker
+        selectedValue={selectedValue ? selectedValue : 'Pilih Layanan'}
+        style={{ height: 50, width: 200}}
+        onValueChange={(itemValue, itemIndex) => setSelectedService(itemValue)}
+      >
+        {service.map(data => 
+        <Picker.Item label={data ? data.service : 'Pilih Layanan'} value={data ? data.service : 'Pilih Layanan'}/>
+          )}
+        
+      </Picker>
             </View>
             {/* ------- [START BUTTON CHECK HARGA] ------- */}
             {/* <TouchableOpacity style={{width: '34%'}}>
