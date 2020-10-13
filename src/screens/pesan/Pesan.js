@@ -554,7 +554,7 @@ function Pesan(props) {
         },
         shipping: {
           courier_id: parseInt(props.route.params.data.courier_id), //kurir dari raja ongkir (JNE)
-          package_courier: props.route.params.data.codeKurir,
+          package_courier: props.route.params.data.serviceFinal,
           sipping_cost: totalOngkir,
         },
         payment_method_id: id_metode, // 1 atau 3 = 1(COD), 3 (Transfer)

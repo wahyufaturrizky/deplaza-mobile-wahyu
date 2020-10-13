@@ -52,6 +52,7 @@ const [service, setService] = useState([])
   const [courier, setCourier] = useState([]);
   const [idCity, setIdCity] = useState(0);
   const [est, setEst] = useState('');
+  const [serviceFinal, setServiceFinal] = useState('')
   const [totalOngkir, setTotalOngkir] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
   const [metodeCOD, setmetodeCOD] = useState(false); //false kalo untuk bank
@@ -199,6 +200,7 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
         product_sendiri: true,
         data: {
           courier_id: courierId,
+          serviceFinal: serviceFinal,
           codeKurir: codeCourier,
           id_produk: id,
           variation: selectVariasi,
@@ -453,6 +455,7 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
  // console.log('adasff', courier);
   const _selectCourier = async data_courier => {
    const codeKurir = await courier.find(json => json.id === data_courier.id).code
+   console.log('aq', data_courier, codeKurir);
     await setLoading(true);
     await setCourierId(data_courier.id)
     await setCodeCourier(codeKurir);
@@ -463,11 +466,13 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
 
   const setSelectedService = async (dataService) => {
     // const type = service.find(i => i.service === dataService)
-    // console.log('okoki', type.cost[0].value);
+    // console.log('okoki', type.cost[0].service);
      setselectedValue(dataService)
     const type = await service.find(i => i.service === dataService)
+    console.log('baji', type);
     setLoading(false);
     setPilihKota(true);
+    setServiceFinal(type.service)
     setEst(type.cost[0].etd);
     setTotalOngkir(type.cost[0].value);
     // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
@@ -519,7 +524,7 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
        //console.log('uuu', responseData.rajaongkir.results);
         let tipe = await responseData.rajaongkir.results[0].costs;
        setService(tipe)
-       console.log('tipe', tipe);
+      setServiceFinal(tipe[0].service);
         setLoading(false);
       });
   };
