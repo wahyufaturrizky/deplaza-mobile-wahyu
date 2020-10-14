@@ -56,7 +56,7 @@ function appbarHome(props) {
         {
           backgroundColor: wishlist > 0 ? 'transparent' : 'white',
           width: '100%',
-          height: wishlist > 0 ? 70 : 70,
+          height: wishlist > 0 ? 60 : 60,
           position: wishlist > 0 ? 'absolute' : 'relative',
           top: 0,
         },
