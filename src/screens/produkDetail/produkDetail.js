@@ -18,6 +18,7 @@ import HTML from 'react-native-render-html';
 import {URL, formatRupiah} from '../../utils/global';
 import RNFetchBlob from 'rn-fetch-blob';
 import Loading from '../../components/loading';
+import {TextInput, RadioButton} from 'react-native-paper';
 
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
@@ -35,11 +36,11 @@ function produkDetail(props) {
 
   const [copy, setCopy] = useState(false);
   const [qty, setQty] = useState(1);
-
+const [postalCode, setPostalCode] = useState(0)
   const [selectVariasi, setSelectVariasi] = useState([]);
 
   const [pressSize, setPressSize] = useState(false);
-
+const [failCod, setFailCod] = useState(false)
   const [selectKota, setSelectKota] = useState([]);
   const [totalKomisi, setTotalKomisi] = useState('0');
 
@@ -63,7 +64,7 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
   const urlKota = URL + 'v1/shipment/cities';
   const urlCourier = URL + 'v1/courier';
   const urlKecamatan = URL + 'v1/shipment/subdistrict/city';
-  const urlOngkir = URL + 'v1/shipment/cost/subdistrict';
+  const urlOngkir = URL + 'v1/shipment/new/cost/subdistrict';
   const urlWishlistMe = URL + 'v1/wishlist/me?limit=1000000';
   const urlWishlist = URL + 'v1/wishlist';
   const urlKotaDetail = URL + 'v1/shipment/city/';
@@ -473,18 +474,18 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
     setLoading(false);
     setPilihKota(true);
     setServiceFinal(type.service)
-    setEst(type.cost[0].etd);
-    setTotalOngkir(type.cost[0].value);
+    setEst(type.duration);
+    setTotalOngkir(parseInt(type.price));
     // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
     setTotalHarga(
       dataDetail.price_basic +
         dataDetail.price_commission +
         dataDetail.price_benefit +
-        type.cost[0].value,
+        parseInt(type.price),
     );
   }
 
-  console.log('adsasdq', codeCourier);
+  console.log('adsasdq', service);
   const _selectKecamatan = async data_kota => {
     setLoading(true);
 
@@ -511,25 +512,54 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
       .catch(e => console.log(e.response));
 
     let formdata = new FormData();
-    formdata.append('origin', dataDetail.city_id);
+    formdata.append('origin', dataDetail.subdistrict_id);
     formdata.append('destination', parseInt(data_kota.id));
     formdata.append('weight', dataDetail.weight * qty);
     formdata.append('courier', codeCourier);
+    formdata.append('postal_code', postalCode)
     formdata.append('qty', qty);
     formdata.append('product_id', dataDetail.id);
-
+    formdata.append('is_cod', metodeCOD ? 1 : 0)
+    console.log('testing', formdata)
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
-       //console.log('uuu', responseData.rajaongkir.results);
-        let tipe = await responseData.rajaongkir.results[0].costs;
-       setService(tipe)
-      setServiceFinal(tipe[0].service);
-        setLoading(false);
+        //console.log('rtys', responseData.data.data[0].errors);
+        if(responseData.message === 'COD tidak bisa dilakukan'){
+          alert(responseData.message)
+          setFailCod(true)
+          setService([])
+          setTotalOngkir(0);
+          setTotalHarga(0)
+          setLoading(false);
+        } else if(responseData.data.data[0].errors){
+          alert(responseData.data.data[0].errors[0].message)
+          setFailCod(true)
+          setTotalOngkir(0);
+          setTotalHarga(0)
+          setService([])
+          setLoading(false);
+        } else {
+          let tipe = await responseData.data.data
+          setFailCod(false)
+          setService(tipe)
+           setServiceFinal(tipe[0].service);
+           setEst(tipe[0].duration);
+           setTotalOngkir(parseInt(tipe[0].price));
+           // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+           setTotalHarga(
+             dataDetail.price_basic +
+               dataDetail.price_commission +
+               dataDetail.price_benefit +
+               parseInt(tipe[0].price),
+           );
+            setLoading(false);
+        }
       });
   };
 
-  // console.log('est', est);
+
+   console.log('est', metodeCOD);
 
   const postWishlist = async id => {
     setLoading(true);
@@ -577,7 +607,7 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
     setSelectVariasi(filtered.concat(data));
   };
 
- // console.log('Kecamatan', kota);
+  //console.log('Kecamatan', postalCode);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
@@ -658,6 +688,22 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
                   nestedScrollEnabled: true,
                 }}
               />
+
+<TextInput
+              label="Kode Pos"
+              value={postalCode}
+              mode="outlined"
+              onChangeText={val => setPostalCode(val)}
+              style={{
+                width: '100%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                borderRadius: 10,
+              }}
+              theme={{
+                colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+              }}
+            />
 
               <SearchableDropdown
                 onItemSelect={item => {
@@ -1042,11 +1088,13 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
 
           <TouchableOpacity
             style={{width: '50%', height: height * 0.06}}
-            onPress={gotoPesan}>
+            onPress={gotoPesan}
+            disabled={failCod ? true : false}
+            >
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              colors={['#0956C6', '#0879D8', '#07A9F0']}
+              colors={failCod ? ['#dedede', '#dedede', '#dedede'] : ['#0956C6', '#0879D8', '#07A9F0']}
               style={{
                 flexDirection: 'row',
                 padding: height * 0.01,

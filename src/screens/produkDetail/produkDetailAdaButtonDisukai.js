@@ -7,6 +7,7 @@ import {
   Text,
   Dimensions,
   StyleSheet,
+  Picker,
   PermissionsAndroid,
 } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
@@ -17,6 +18,7 @@ import HTML from 'react-native-render-html';
 import {URL, formatRupiah} from '../../utils/global';
 import RNFetchBlob from 'rn-fetch-blob';
 import Loading from '../../components/loading';
+import {TextInput, RadioButton} from 'react-native-paper';
 
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
@@ -34,6 +36,7 @@ function produkDetailAdaButtonDisukai(props) {
 
   const [copy, setCopy] = useState(false);
   const [qty, setQty] = useState(1);
+  const [postalCode, setPostalCode] = useState(0)
 
   const [selectVariasi, setSelectVariasi] = useState([]);
 
@@ -41,9 +44,12 @@ function produkDetailAdaButtonDisukai(props) {
 
   const [selectKota, setSelectKota] = useState([]);
   const [totalKomisi, setTotalKomisi] = useState('0');
+  const [service, setService] = useState([])
+  const [serviceFinal, setServiceFinal] = useState('')
 
   const [varian, setVarian] = useState([]);
-
+  const [courierId, setCourierId] = useState('')
+  const [codeCourier, setCodeCourier] = useState('');
   const [kota, setKota] = useState([]);
   const [kecamatan, setKecamatan] = useState([]);
   const [idCity, setIdCity] = useState(0);
@@ -53,11 +59,14 @@ function produkDetailAdaButtonDisukai(props) {
   const [metodeCOD, setmetodeCOD] = useState(false); //false kalo untuk bank
   const [likeProduk, setLikeProduk] = useState(0);
   const [pilihKota, setPilihKota] = useState(false);
+  const [courier, setCourier] = useState([]);
+  const [selectedValue, setselectedValue] = useState('Pilih Layanan')
 
   const urlProdukDetail = URL + 'v1/product/';
   const urlKota = URL + 'v1/shipment/cities';
+  const urlCourier = URL + 'v1/courier';
   const urlKecamatan = URL + 'v1/shipment/subdistrict/city';
-  const urlOngkir = URL + 'v1/shipment/cost/subdistrict';
+  const urlOngkir = URL + 'v1/shipment/new/cost/subdistrict';
   const urlWishlistMe = URL + 'v1/wishlist/me?limit=1000000';
   const urlWishlist = URL + 'v1/wishlist';
   const urlKotaDetail = URL + 'v1/shipment/city/';
@@ -70,7 +79,31 @@ function produkDetailAdaButtonDisukai(props) {
     CekTandai();
     getDetailProduct();
     getKota();
+    getCourier();
   }, []);
+
+  const getCourier = async () => {
+    const value = await AsyncStorage.getItem('data');
+    const data = JSON.parse(value);
+
+    let headers = {
+      Authorization: `Bearer ${data.token}`,
+      'Access-Control-Allow-Origin': '*',
+    };
+
+    fetch(urlCourier, {headers})
+      .then(response => response.json())
+      .then(responseData => {
+        const mapCourier = responseData.data;
+        let data = mapCourier.map(s => ({
+          id: s.id,
+          code: s.code,
+          name: s.name,
+        }));
+        setCourier(data);
+      })
+      .catch(e => console.log(e));
+  };
 
   const copyToClipboard = async () => {
     const copyText = `Harga : Rp. ${formatRupiah(
@@ -382,17 +415,17 @@ function produkDetailAdaButtonDisukai(props) {
         // console.log('response_city',responseData)
         // console.log('dataDetail',dataDetail.cod_city_id)
 
-        var cod_city = JSON.parse(dataDetail.cod_city_id);
-        var n = cod_city.includes(data_kota.id);
+        // var cod_city = JSON.parse(dataDetail.cod_city_id);
+        // var n = cod_city.includes(data_kota.id);
 
-        // console.log('metodeCod', n)
-        // console.log('cityselect', data_kota.id)
+        // // console.log('metodeCod', n)
+        // // console.log('cityselect', data_kota.id)
 
-        if (n) {
-          setmetodeCOD(true);
-        } else {
-          setmetodeCOD(false);
-        }
+        // if (n) {
+        //   setmetodeCOD(true);
+        // } else {
+        //   setmetodeCOD(false);
+        // }
         setPilihKota(true);
       })
       .catch(e => console.log(e));
@@ -418,6 +451,36 @@ function produkDetailAdaButtonDisukai(props) {
     //     })
     // })
   };
+
+
+  const setSelectedService = async (dataService) => {
+    // const type = service.find(i => i.service === dataService)
+    // console.log('okoki', type.cost[0].service);
+     setselectedValue(dataService)
+    const type = await service.find(i => i.service === dataService)
+    console.log('baji', type);
+    setLoading(false);
+    setPilihKota(true);
+    setServiceFinal(type.service)
+    setEst(type.duration);
+    setTotalOngkir(parseInt(type.price));
+    // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+    setTotalHarga(
+      dataDetail.price_basic +
+        dataDetail.price_commission +
+        dataDetail.price_benefit +
+        parseInt(type.price),
+    );
+  }
+
+  const _selectCourier = async data_courier => {
+    const codeKurir = await courier.find(json => json.id === data_courier.id).code
+    console.log('aq', data_courier, codeKurir);
+     await setLoading(true);
+     await setCourierId(data_courier.id)
+     await setCodeCourier(codeKurir);
+     await setLoading(false);
+   };
 
   // console.log('sfsdf', dataDetail);
   const _selectKecamatan = async data_kota => {
@@ -446,33 +509,66 @@ function produkDetailAdaButtonDisukai(props) {
       .catch(e => console.log(e.response));
 
     let formdata = new FormData();
-    formdata.append('origin', dataDetail.city_id);
+    formdata.append('origin', parseInt(dataDetail.subdistrict_id));
     formdata.append('destination', parseInt(data_kota.id));
-    formdata.append('weight', dataDetail.weight);
-    formdata.append('courier', 'jne');
-
+    formdata.append('weight', dataDetail.weight * qty);
+    formdata.append('postal_code', postalCode)
+    formdata.append('courier',  dataDetail.is_awb_auto === 1 ?  codeCourier : 'jne');
+    formdata.append('qty', qty);
+    formdata.append('product_id', dataDetail.id);
+    formdata.append('is_cod', metodeCOD ? 1 : 0)
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
-        console.log('uuu', responseData);
-        let tipe = await responseData.rajaongkir.results[0].costs;
-        console.log('tipe', tipe);
-        setLoading(false);
-        tipe.map(type => {
-          if (type.service === 'REG' || type.service === 'CTC') {
-            setLoading(false);
-            setPilihKota(true);
-            setEst(type.cost[0].etd);
-            setTotalOngkir(type.cost[0].value);
-            // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
-            setTotalHarga(
-              dataDetail.price_basic +
+        console.log('uuu', responseData.data.data);
+        if(responseData.message === 'COD tidak bisa dilakukan'){
+          setmetodeCOD(false);
+          setService([])
+          setTotalOngkir(0);
+          setTotalHarga(0)
+          setLoading(false);
+        } else if(responseData.data.data[0].errors){
+          setmetodeCOD(false);
+          setTotalOngkir(0);
+          setTotalHarga(0)
+          setService([])
+          setLoading(false);
+        } else {
+          let tipe = await responseData.data.data
+          const getJne = await tipe.find(item => item.service === 'REG').price
+          console.log('getjne', getJne);
+          setmetodeCOD(true);
+          setService(tipe)
+           setServiceFinal(tipe[0].service);
+           setEst(tipe[0].duration);
+           setTotalOngkir(dataDetail.is_awb_auto === 1 ? parseInt(tipe[0].price) : parseInt(getJne));
+           // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+           setTotalHarga(
+            dataDetail.is_awb_auto === 1 ?
+             dataDetail.price_basic +
+               dataDetail.price_commission +
+               dataDetail.price_benefit +
+                parseInt(tipe[0].price) :  dataDetail.price_basic +
                 dataDetail.price_commission +
-                dataDetail.price_benefit +
-                type.cost[0].value,
-            );
-          }
-        });
+                dataDetail.price_benefit + parseInt(getJne),
+           );
+            setLoading(false);
+        }
+        // tipe.map(type => {
+        //   if (type.service === 'REG' || type.service === 'CTC') {
+        //     setLoading(false);
+        //     setPilihKota(true);
+        //     setEst(type.cost[0].etd);
+        //     setTotalOngkir(type.cost[0].value);
+        //     // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+        //     setTotalHarga(
+        //       dataDetail.price_basic +
+        //         dataDetail.price_commission +
+        //         dataDetail.price_benefit +
+        //         type.cost[0].value,
+        //     );
+        //   }
+        // });
       });
   };
 
@@ -606,6 +702,64 @@ function produkDetailAdaButtonDisukai(props) {
                   nestedScrollEnabled: true,
                 }}
               />
+              <TextInput
+              label="Kode Pos"
+              value={postalCode}
+              mode="outlined"
+              onChangeText={val => setPostalCode(val)}
+              style={{
+                width: '100%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                borderRadius: 10,
+              }}
+              theme={{
+                colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+              }}
+            />
+ {dataDetail.is_awb_auto === 1 ?
+            <SearchableDropdown
+                onItemSelect={item => {
+                  const items = selectKota;
+                  items.push(item);
+                  setSelectKota(items);
+                  _selectCourier(item);
+                }}
+                containerStyle={{width: '100%', borderRadius: 10}}
+                onRemoveItem={(item, index) => {
+                  const items = selectKota.filter(
+                    sitem => sitem.id !== item.id,
+                  );
+                  setSelectKota(items);
+                }}
+                itemStyle={{
+                  padding: 10,
+                  marginTop: 2,
+                  backgroundColor: '#ddd',
+                  borderColor: '#bbb',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  width: '100%',
+                }}
+                itemTextStyle={{color: '#222'}}
+                itemsContainerStyle={{borderRadius: 10}}
+                items={courier}
+                defaultIndex={2}
+                resetValue={false}
+                textInputProps={{
+                  placeholder: 'Pilih Courier',
+                  underlineColorAndroid: 'transparent',
+                  style: {
+                    padding: 12,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                  },
+                }}
+                listProps={{
+                  nestedScrollEnabled: true,
+                }}
+              /> : null }
 
               <SearchableDropdown
                 onItemSelect={item => {
@@ -649,6 +803,19 @@ function produkDetailAdaButtonDisukai(props) {
                   nestedScrollEnabled: true,
                 }}
               />
+              {dataDetail.is_awb_auto === 1 ?
+              <View>
+               <Text>Layanan: </Text>
+               <Picker
+        selectedValue={selectedValue ? selectedValue : 'Pilih Layanan'}
+        style={{ height: 50, width: 200}}
+        onValueChange={(itemValue, itemIndex) => setSelectedService(itemValue)}
+      >
+        {service.map(data => 
+        <Picker.Item label={data ? data.service : 'Pilih Layanan'} value={data ? data.service : 'Pilih Layanan'}/>
+          )}
+        
+      </Picker></View> : null }
             </View>
             {/* ------- [START BUTTON CHECK HARGA] ------- */}
             {/* <TouchableOpacity style={{width: '34%'}}>
