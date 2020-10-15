@@ -60,7 +60,7 @@ function MyTabBar(props) {
       <View
         style={[
           styles.shadow,
-          {flexDirection: 'row', paddingTop: 20, backgroundColor: 'white'},
+          {flexDirection: 'row', paddingTop: 13, backgroundColor: 'white'},
         ]}>
         {props.state.routes.map((route, index) => {
           const {options} = props.descriptors[route.key];
@@ -110,7 +110,7 @@ function MyTabBar(props) {
               <Text
                 style={{
                   textAlign: 'center',
-                  paddingBottom: 30,
+                  paddingBottom: 17,
                   fontSize: 20,
                   borderBottomWidth: 2,
                   borderBottomColor: isFocused ? '#07A9F0' : 'gray',
