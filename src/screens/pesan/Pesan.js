@@ -74,7 +74,7 @@ function Pesan(props) {
   const id_produk = props.route.params.data.id_produk;
   // const totalOngkir = props.route.params.data.totalOngkir
   const imageDetail = props.route.params.data.imageDetail;
-
+console.log('asass', metodeCOD);
   const indonesia = '../../assets/images/indonesia.png';
   const urlProdukDetail = URL + 'v1/product/';
   const urlProvinces = URL + 'v1/shipment/provinces';
@@ -620,7 +620,7 @@ function Pesan(props) {
                 </View>
               )}
 
-              {metodeCOD && (
+              {metodeCOD ? (
                 <View
                   style={{
                     flexDirection: 'row',
@@ -638,7 +638,7 @@ function Pesan(props) {
                     onPress={() => metodeFalse()}
                   />
                 </View>
-              )}
+              ) : null}
             </View>
           </View>
           <View style={{padding: 10}}>

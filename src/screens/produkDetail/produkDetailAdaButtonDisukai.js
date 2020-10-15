@@ -56,7 +56,7 @@ function produkDetailAdaButtonDisukai(props) {
   const [est, setEst] = useState('');
   const [totalOngkir, setTotalOngkir] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
-  const [metodeCOD, setmetodeCOD] = useState(false); //false kalo untuk bank
+  const [metodeCOD, setmetodeCOD] = useState(true); //false kalo untuk bank
   const [likeProduk, setLikeProduk] = useState(0);
   const [pilihKota, setPilihKota] = useState(false);
   const [courier, setCourier] = useState([]);
@@ -225,6 +225,9 @@ function produkDetailAdaButtonDisukai(props) {
       props.navigation.navigate('Pesan', {
         title: 'Pesan & Kirim',
         data: {
+          courier_id:  dataDetail.is_awb_auto === 1 ? courierId : 1,
+          serviceFinal: serviceFinal,
+          codeKurir: dataDetail.is_awb_auto === 1 ?  codeCourier : 'jne',
           id_produk: id,
           variation: selectVariasi,
           qty,
@@ -516,17 +519,55 @@ function produkDetailAdaButtonDisukai(props) {
     formdata.append('courier',  dataDetail.is_awb_auto === 1 ?  codeCourier : 'jne');
     formdata.append('qty', qty);
     formdata.append('product_id', dataDetail.id);
-    formdata.append('is_cod', metodeCOD ? 1 : 0)
+    formdata.append('is_cod', dataDetail.cod)
+    console.log('rtrds', formdata);
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
-        console.log('uuu', responseData.data.data);
+        console.log('uuu', responseData);
         if(responseData.message === 'COD tidak bisa dilakukan'){
-          setmetodeCOD(false);
-          setService([])
-          setTotalOngkir(0);
-          setTotalHarga(0)
-          setLoading(false);
+          console.log('cek dulu');
+          if(dataDetail.is_awb_auto === 1){
+            setmetodeCOD(false);
+            setService([])
+            setTotalOngkir(0);
+            setTotalHarga(0)
+            setLoading(false);
+          } else {
+            console.log('render ulang');
+            setmetodeCOD(false);
+            let codFalse = new FormData();
+            codFalse.append('origin', parseInt(dataDetail.subdistrict_id));
+            codFalse.append('destination', parseInt(data_kota.id));
+            codFalse.append('weight', dataDetail.weight * qty);
+            codFalse.append('postal_code', postalCode)
+            codFalse.append('courier', 'jne');
+            codFalse.append('qty', qty);
+            codFalse.append('product_id', dataDetail.id);
+            codFalse.append('is_cod', 0)
+            console.log('rtrds', codFalse);
+            fetch(urlOngkir, {method: 'POST', headers, body: codFalse})
+              .then(response => response.json())
+              .then(async responseCod => {
+                let tipe = await responseCod.data.data
+                const getJne = await tipe.find(i => i.service === 'REG') ? tipe.find(i => i.service === 'REG') : tipe.find(i => i.service === 'CTC')
+                //const getJneSecond = await tipe.find(item => item.service === 'CTC').price
+                const getService = tipe[0].service === 'REG' ? 'REG' : 'CTC'
+                console.log('getjne', getJne);
+               await setService(tipe)
+                await setServiceFinal(getService );
+                await setEst(tipe[0].duration);
+                await setTotalOngkir(parseInt(getJne.price));
+                 // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+                await setTotalHarga(
+                  dataDetail.price_basic +
+                      dataDetail.price_commission +
+                      dataDetail.price_benefit + parseInt(getJne.price),
+                 );
+              })
+              setLoading(false);
+          }
+          
         } else if(responseData.data.data[0].errors){
           setmetodeCOD(false);
           setTotalOngkir(0);
@@ -535,22 +576,24 @@ function produkDetailAdaButtonDisukai(props) {
           setLoading(false);
         } else {
           let tipe = await responseData.data.data
-          const getJne = await tipe.find(item => item.service === 'REG').price
+          const getJne = await tipe.find(i => i.service === 'REG') ? tipe.find(i => i.service === 'REG') : tipe.find(i => i.service === 'CTC')
+          //const getJneSecond = await tipe.find(item => item.service === 'CTC').price
+          const getService = tipe[0].service === 'REG' ? 'REG' : 'CTC'
           console.log('getjne', getJne);
-          setmetodeCOD(true);
-          setService(tipe)
-           setServiceFinal(tipe[0].service);
-           setEst(tipe[0].duration);
-           setTotalOngkir(dataDetail.is_awb_auto === 1 ? parseInt(tipe[0].price) : parseInt(getJne));
+         await setmetodeCOD(true);
+         await setService(tipe)
+          await setServiceFinal(dataDetail.is_awb_auto === 1 ? tipe[0].service : getService );
+          await setEst(tipe[0].duration);
+          await setTotalOngkir(dataDetail.is_awb_auto === 1 ? parseInt(tipe[0].price) : parseInt(getJne.price));
            // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
-           setTotalHarga(
+          await setTotalHarga(
             dataDetail.is_awb_auto === 1 ?
              dataDetail.price_basic +
                dataDetail.price_commission +
                dataDetail.price_benefit +
                 parseInt(tipe[0].price) :  dataDetail.price_basic +
                 dataDetail.price_commission +
-                dataDetail.price_benefit + parseInt(getJne),
+                dataDetail.price_benefit + parseInt(getJne.price),
            );
             setLoading(false);
         }
@@ -621,7 +664,7 @@ function produkDetailAdaButtonDisukai(props) {
     setSelectVariasi(filtered.concat(data));
   };
 
-  // console.log('Kecamatan', totalHarga);
+  console.log('Kecamatan', metodeCOD);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
@@ -832,7 +875,7 @@ function produkDetailAdaButtonDisukai(props) {
             {/* ------- [END BUTTON CHECK HARGA] ------- */}
           </View>
 
-          {!metodeCOD && pilihKota && (
+          {metodeCOD === false ?  (
             <View
               style={{
                 padding: 10,
@@ -845,10 +888,10 @@ function produkDetailAdaButtonDisukai(props) {
               <Icon name="alert" size={14} color="#07A9F0" />
               <Text style={{fontSize: 10}}>
                 {' '}
-                Metode Pembayaran COD tidak tersedia di lokasi ini
+                Metode Pembayaran COD tidak tersedia di lokasi ini atau pilih kurir yang lainnya
               </Text>
             </View>
-          )}
+          ) : null}
 
           {pilihKota && (
             <View
@@ -902,7 +945,7 @@ function produkDetailAdaButtonDisukai(props) {
               justifyContent: 'flex-start',
             }}>
             <Icon name="calendar" size={16} color="#000" />
-            <Text style={{fontSize: 12}}> Akan Dikirimkan {est} hari</Text>
+            <Text style={{fontSize: 12}}> Akan Dikirimkan {est}</Text>
           </View>
         </View>
 
@@ -1105,11 +1148,13 @@ function produkDetailAdaButtonDisukai(props) {
           {loading ? null : (
             <TouchableOpacity
               style={{width: '50%', height: height * 0.06}}
-              onPress={gotoPesan}>
+              onPress={gotoPesan}
+              disabled={metodeCOD === false && dataDetail.is_awb_auto === 1 ? true : false}
+              >
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
-                colors={['#0956C6', '#0879D8', '#07A9F0']}
+                colors={metodeCOD === false && dataDetail.is_awb_auto === 1 ? ['#dedede', '#dedede', '#dedede'] : ['#0956C6', '#0879D8', '#07A9F0']}
                 style={{
                   flexDirection: 'row',
                   padding: height * 0.01,
