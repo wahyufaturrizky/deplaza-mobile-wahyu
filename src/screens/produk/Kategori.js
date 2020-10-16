@@ -95,7 +95,7 @@ function Kategori(props) {
               key={i}
               style={{
                 width: '30%',
-                height: height * 0.24,
+                height: height * 0.23,
                 justifyContent: 'space-between',
                 marginVertical: height * 0.01,
                 borderRadius: 10,

@@ -100,6 +100,7 @@ function WishlistSesungguhnya(props) {
       .then(result => {
         // console.log('hapus produk', result);
         if (result.status === 200) {
+          getWishlist();
           setLoading(false);
         }
       })

@@ -79,10 +79,10 @@ function rincianRekening(props) {
   const postRekening = async () => {
     console.log('postRekening');
     let dataRincianRekening = [
-      {name: 'bank', value: bank},
-      {name: 'noRek', value: noRek},
-      {name: 'namaRekening', value: namaRekening},
-      {name: 'branch', value: branch},
+      {name: 'Bank', value: bank},
+      {name: 'Nomor Rekening', value: noRek},
+      {name: 'Nama Rekening', value: namaRekening},
+      {name: 'Branch', value: branch},
     ];
 
     let emptyField = dataRincianRekening.find(field => field.value === '');
@@ -122,7 +122,7 @@ function rincianRekening(props) {
           .done();
       }
     } else {
-      alert(`Field ${emptyField.field} wajib di isi`);
+      alert(`Field ${emptyField.name} wajib di isi`);
     }
   };
 
