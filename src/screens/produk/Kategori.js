@@ -8,6 +8,7 @@ import Appbar from '../../components/appbarHome';
 import BottomTab from '../../components/bottomTab';
 import Loading from '../../components/loading';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import LinearGradient from 'react-native-linear-gradient';
 
 function Kategori(props) {
   const [kategori, setKategori] = useState([]);
@@ -142,9 +143,15 @@ function Kategori(props) {
               top: -5,
             }}
             onPress={() => loadMore(page + 1)}>
-            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
-              Kategori Selanjutnya
-            </Text>
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#0956C6', '#0879D8', '#07A9F0']}
+              style={{padding: 15, borderRadius: 10}}>
+              <Text style={{fontWeight: 'bold', fontSize: 10, color: 'white'}}>
+                Kategori Selanjutnya
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         ) : (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>

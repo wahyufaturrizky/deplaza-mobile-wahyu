@@ -19,6 +19,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {URL, formatRupiah} from '../../utils/global';
 import Loading from '../../components/loading';
 import InputNormal from '../../components/inputNormal';
+import LinearGradient from 'react-native-linear-gradient';
 
 const wait = timeout => {
   return new Promise(resolve => {
@@ -345,9 +346,15 @@ function pesananSaya(props) {
               width: '100%',
             }}
             onPress={() => loadMore(page + 1)}>
-            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
-              Pesanan Selanjutnya
-            </Text>
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#0956C6', '#0879D8', '#07A9F0']}
+              style={{padding: 15, borderRadius: 10}}>
+              <Text style={{fontWeight: 'bold', fontSize: 12, color: 'white'}}>
+                Pesanan Selanjutnya
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         ) : (
           <Text style={{textAlign: 'center'}}>Tidak Ada Pesanan lagi</Text>

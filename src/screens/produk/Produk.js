@@ -17,6 +17,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {URL, formatRupiah} from '../../utils/global';
 import Loading from '../../components/loading';
 import InputNormal from '../../components/inputNormal';
+import LinearGradient from 'react-native-linear-gradient';
 
 function produk(props) {
   const [products, setProducts] = useState([]);
@@ -310,11 +311,17 @@ function produk(props) {
             }}
             onPress={() => loadMore(page + 1)}
             disabled={products.length !== 0 ? false : true}>
-            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
-              {products.length !== 0
-                ? 'Produk Selanjutnya'
-                : 'Tidak Ada Produk'}
-            </Text>
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#0956C6', '#0879D8', '#07A9F0']}
+              style={{padding: 15, borderRadius: 10}}>
+              <Text style={{fontWeight: 'bold', fontSize: 12, color: 'white'}}>
+                {products.length !== 0
+                  ? 'Produk Selanjutnya'
+                  : 'Tidak Ada Produk'}
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         ) : products.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>
