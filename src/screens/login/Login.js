@@ -27,7 +27,7 @@ function Login(props) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
 
@@ -260,7 +260,10 @@ function Login(props) {
                   underlineColor={'#07A9F0'}
                   underlineColorAndroid={'#07A9F0'}
                   theme={{
-                    colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+                    colors: {
+                      primary: '#07A9F0',
+                      underlineColor: 'transparent',
+                    },
                   }}
                   style={{width: '70%', backgroundColor: 'white'}}
                 />
@@ -299,12 +302,68 @@ function Login(props) {
               </TouchableOpacity>
             </View>
 
-            {/* <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center', marginTop:height*0.01}}>
-                            <TouchableOpacity onPress={forgotTrigger}>
-                                <Text style={{color:'#07A9F0'}}> Lupa Password ?</Text>
-                            </TouchableOpacity>
-                        </View> */}
+            {/* <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: height * 0.01,
+              }}>
+              <TouchableOpacity onPress={forgotTrigger}>
+                <Text style={{color: '#07A9F0'}}> Lupa Password ?</Text>
+              </TouchableOpacity>
+            </View> */}
+
+            {!login ? (
+              <TouchableOpacity
+                style={{
+                  width: '90%',
+                  alignSelf: 'center',
+                  marginTop: 16,
+                  marginBottom: 16,
+                }}
+                onPress={SignUp}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{padding: 15, borderRadius: 10}}>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      textAlign: 'center',
+                      color: 'white',
+                    }}>
+                    Sign Up
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={{
+                  width: '90%',
+                  alignSelf: 'center',
+                  marginTop: 16,
+                }}
+                onPress={SignIn}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#0956C6', '#0879D8', '#07A9F0']}
+                  style={{padding: 15, borderRadius: 10}}>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      textAlign: 'center',
+                      color: 'white',
+                    }}>
+                    Sign In
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            )}
           </View>
+
           {modal && (
             <View
               style={{
@@ -345,7 +404,10 @@ function Login(props) {
                   underlineColor={'#07A9F0'}
                   underlineColorAndroid={'#07A9F0'}
                   theme={{
-                    colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+                    colors: {
+                      primary: '#07A9F0',
+                      underlineColor: 'transparent',
+                    },
                   }}
                   style={{
                     width: '90%',
@@ -379,7 +441,8 @@ function Login(props) {
 
       {loading && <Loading />}
 
-      {!login ? (
+      {/* ----- [START BUTTON BOTTOM OF PAGE] ----- */}
+      {/* {!login ? (
         <TouchableOpacity onPress={SignUp}>
           <LinearGradient
             start={{x: 0, y: 0}}
@@ -403,7 +466,8 @@ function Login(props) {
             </Text>
           </LinearGradient>
         </TouchableOpacity>
-      )}
+      )} */}
+      {/* ----- [END BUTTON BOTTOM OF PAGE] ----- */}
     </View>
   );
 }

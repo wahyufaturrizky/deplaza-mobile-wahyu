@@ -254,11 +254,10 @@ function pesananSaya(props) {
                   <Text style={{fontSize: 14}}>
                     Rp.{' '}
                     {formatRupiah(
-                            data.details[0].price * data.details[0].qty +
-                            data.details[0].benefit * data.details[0].qty +
-                            data.details[0].qty * data.details[0].commission +
-                            data.details[0].qty *
-                              data.details[0].custom_commission,
+                      data.details[0].price * data.details[0].qty +
+                        data.details[0].benefit * data.details[0].qty +
+                        data.details[0].qty * data.details[0].commission +
+                        data.details[0].qty * data.details[0].custom_commission,
                     )}
                   </Text>
                   <Text style={{color: '#949494', fontSize: 10}}>
