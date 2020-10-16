@@ -32,11 +32,14 @@ const wait = timeout => {
 
 function jualanAnda(props) {
   const [refreshing, setRefreshing] = useState(false);
-  const [wishlist, setWishlist] = useState(0);
+  const [wishlist, setWishlist] = useState(null);
+  const [jumlahProdukDitandai, setJumlahProdukDitandai] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [saldo, setSaldo] = useState('0');
   const [totalOrder, setTotalOrder] = useState([]);
+  const [jumlahPesanan, setJumlahPesanan] = useState(null);
+  const [jumlahKategori, setJumlahKategori] = useState(null);
   const [popup, setPopup] = useState([]);
   const [modal, setModal] = useState(true);
   const [notif, setNotif] = useState(0);
@@ -44,6 +47,7 @@ function jualanAnda(props) {
   const {height, width} = Dimensions.get('window');
   const haveProduk = true;
   const urlWishlist = URL + 'v1/wishlist/me';
+  const urlCategory = URL + 'v1/category';
   const urlSaldo = URL + 'v1/saldo/my';
   const urlTotalOrder = URL + 'v1/orders/my-order?status=5';
   const urlPopup = URL + 'v1/popup';
@@ -61,6 +65,7 @@ function jualanAnda(props) {
     getTotalOrder();
     getPopup();
     getNotif();
+    getKategori();
   }, []);
 
   //Pergi ke Hal List Produk
@@ -137,6 +142,26 @@ function jualanAnda(props) {
       });
   };
 
+  const getKategori = async () => {
+    const value = await AsyncStorage.getItem('data');
+    const data = JSON.parse(value);
+
+    let headers = {
+      Authorization: `Bearer ${data.token}`,
+      'Access-Control-Allow-Origin': '*',
+    };
+
+    fetch(urlCategory + '?limit=9&offset=0', {headers})
+      .then(response => response.json())
+      .then(responseData => {
+        setLoading(false);
+        let totalData = responseData.data.length;
+        // console.log('urlCategory', totalData);
+        setJumlahKategori(responseData.meta.total_data);
+      })
+      .catch(e => console.log(e));
+  };
+
   //Untuk Ngecek Berapa saldonya
   const getSaldo = async () => {
     const value = await AsyncStorage.getItem('data');
@@ -171,8 +196,9 @@ function jualanAnda(props) {
       .then(responseData => {
         setLoading(false);
         let totalData = responseData.data.length;
-        // console.log(totalData)
+        // console.log('urlWishlist', responseData);
         setWishlist(totalData);
+        setJumlahProdukDitandai(responseData.meta.total_data);
       })
       .catch(e => console.log(e));
   };
@@ -193,6 +219,7 @@ function jualanAnda(props) {
         console.log('yyyy', responseData);
         setLoading(false);
         setTotalOrder(responseData.data);
+        setJumlahPesanan(responseData.meta.total_data);
       })
       .catch(e => console.log(e));
   };
@@ -233,12 +260,12 @@ function jualanAnda(props) {
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       {/* {wishlist > 0 ? ( */}
-        <AppbarT
-          params={props}
-          haveProduk={haveProduk}
-          notif={notif}
-          wishlist={wishlist}
-        />
+      <AppbarT
+        params={props}
+        haveProduk={haveProduk}
+        notif={notif}
+        wishlist={wishlist}
+      />
       {/* ) : (
         <Appbar
           params={props}
@@ -257,70 +284,65 @@ function jualanAnda(props) {
           resizeMode="contain"
         />
       ) : ( */}
-        <ImageBackground
-          source={require('../../assets/images/banner-home2.png')}
-          style={{justifyContent: 'flex-start', height: height * 0.2}}>
-          <View
-            style={{
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: height * 0.09,
-            }}>
-            <Text style={{color: 'white', marginVertical: 5}}>
-              Saldo Komisi dan Margin
+      <ImageBackground
+        source={require('../../assets/images/banner-home2.png')}
+        style={{justifyContent: 'flex-start', height: height * 0.2}}>
+        <View
+          style={{
+            width: '90%',
+            alignSelf: 'center',
+            marginTop: height * 0.09,
+          }}>
+          <Text style={{color: 'white', marginVertical: 5}}>
+            Saldo Komisi dan Margin
+          </Text>
+          <View style={{flexDirection: 'row', marginVertical: 5}}>
+            <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+              Rp{' '}
             </Text>
-            <View style={{flexDirection: 'row', marginVertical: 5}}>
-              <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
-                Rp{' '}
-              </Text>
-              <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
-                {' '}
-                {saldo} / {totalOrder.length} Produk
-              </Text>
-            </View>
+            <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+              {' '}
+              {saldo} / {totalOrder.length} Produk
+            </Text>
           </View>
-        </ImageBackground>
+        </View>
+      </ImageBackground>
       {/* )} */}
       {/* {wishlist > 0 && ( */}
-        <View
-          style={[
-            styles.shadow,
-            {
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: '#fff',
-              borderRadius: 10,
-              bottom: 10,
-              width: '90%',
-              alignSelf: 'center',
-              marginBottom: 10,
-            },
-          ]}>
-          <Icon
-            style={{padding: 10}}
-            name="magnify"
-            size={20}
-            color="#949494"
-          />
-          <TextInput
-            style={{
-              flex: 1,
-              paddingTop: 10,
-              paddingRight: 10,
-              paddingBottom: 10,
-              paddingLeft: 0,
-              backgroundColor: '#fff',
-              color: '#424242',
-              height: 50,
-            }}
-            onChangeText={val => setSearch(val)}
-            placeholder="Cari Produk"
-            underlineColorAndroid="transparent"
-            onSubmitEditing={searchProduk}
-          />
-          <Icon style={{padding: 10}} name="camera" size={30} color="#07A9F0" />
-        </View>
+      <View
+        style={[
+          styles.shadow,
+          {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff',
+            borderRadius: 10,
+            bottom: 10,
+            width: '90%',
+            alignSelf: 'center',
+            marginBottom: 10,
+          },
+        ]}>
+        <Icon style={{padding: 10}} name="magnify" size={20} color="#949494" />
+        <TextInput
+          style={{
+            flex: 1,
+            paddingTop: 10,
+            paddingRight: 10,
+            paddingBottom: 10,
+            paddingLeft: 0,
+            backgroundColor: '#fff',
+            color: '#424242',
+            height: 50,
+          }}
+          onChangeText={val => setSearch(val)}
+          placeholder="Cari Produk"
+          underlineColorAndroid="transparent"
+          onSubmitEditing={searchProduk}
+        />
+        <Icon style={{padding: 10}} name="camera" size={30} color="#07A9F0" />
+      </View>
       {/* )} */}
       <ScrollView
         refreshControl={
@@ -363,33 +385,33 @@ function jualanAnda(props) {
           </TouchableOpacity>
 
           {/* {wishlist > 0 && ( */}
-            <TouchableOpacity onPress={gotoWishlist} style={{marginBottom: 10}}>
-              <LinearGradient
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1}}
-                colors={['#0956C6', '#0879D8', '#07A9F0']}
+          <TouchableOpacity onPress={gotoWishlist} style={{marginBottom: 10}}>
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#0956C6', '#0879D8', '#07A9F0']}
+              style={{
+                padding: 15,
+                flexDirection: 'row',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Image
+                source={require('../../assets/images/box2.png')}
+                style={{width: width * 0.05, height: width * 0.05}}
+              />
+              <Text
                 style={{
-                  padding: 15,
-                  flexDirection: 'row',
-                  borderRadius: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  fontSize: 18,
+                  textAlign: 'center',
+                  color: 'white',
+                  marginLeft: width * 0.04,
                 }}>
-                <Image
-                  source={require('../../assets/images/box2.png')}
-                  style={{width: width * 0.05, height: width * 0.05}}
-                />
-                <Text
-                  style={{
-                    fontSize: 18,
-                    textAlign: 'center',
-                    color: 'white',
-                    marginLeft: width * 0.04,
-                  }}>
-                  Produk Saya
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+                Produk Saya
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
           {/* )} */}
 
           <View
@@ -399,45 +421,45 @@ function jualanAnda(props) {
               marginTop: height * 0.01,
             }}>
             {/* {wishlist > 0 && ( */}
-              <TouchableOpacity
-                imageStyle={{borderRadius: 10}}
-                onPress={() => gotoPesanan()}
-                style={{width: '32%'}}>
-                <ImageBackground
-                  source={require('../../assets/images/produk-lain.png')}
-                  resizeMode="stretch"
+            <TouchableOpacity
+              imageStyle={{borderRadius: 10}}
+              onPress={() => gotoPesanan()}
+              style={{width: '32%'}}>
+              <ImageBackground
+                source={require('../../assets/images/produk-lain.png')}
+                resizeMode="stretch"
+                style={{
+                  justifyContent: 'flex-end',
+                  padding: 10,
+                  height: height * 0.2,
+                }}>
+                <Text
                   style={{
-                    justifyContent: 'flex-end',
-                    padding: 10,
-                    height: height * 0.2,
+                    color: 'white',
+                    marginLeft: width * 0.01,
+                    fontSize: width * 0.03,
                   }}>
+                  Pesanan Saya
+                </Text>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    marginBottom: height * 0.01,
+                    marginLeft: width * 0.01,
+                  }}>
+                  <Icon name="circle" size={width * 0.01} color="#fff" />
                   <Text
                     style={{
                       color: 'white',
                       marginLeft: width * 0.01,
                       fontSize: width * 0.03,
                     }}>
-                    Pesanan Saya
+                    {jumlahPesanan} pesanan
                   </Text>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginBottom: height * 0.01,
-                      marginLeft: width * 0.01,
-                    }}>
-                    <Icon name="circle" size={width * 0.01} color="#fff" />
-                    <Text
-                      style={{
-                        color: 'white',
-                        marginLeft: width * 0.01,
-                        fontSize: width * 0.03,
-                      }}>
-                      123 produk
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </TouchableOpacity>
+                </View>
+              </ImageBackground>
+            </TouchableOpacity>
             {/* )} */}
 
             {/* ----- [START KOMISI TERBESAR] ----- */}
@@ -519,52 +541,52 @@ function jualanAnda(props) {
                       marginLeft: width * 0.01,
                       fontSize: width * 0.03,
                     }}>
-                    123 produk
+                    {jumlahProdukDitandai} produk
                   </Text>
                 </View>
               </ImageBackground>
             </TouchableOpacity>
 
             {/* {wishlist > 0 && ( */}
-              <TouchableOpacity
-                onPress={() => gotoKategori()}
-                style={{width: '32%'}}>
-                <ImageBackground
-                  imageStyle={{borderRadius: 10}}
-                  source={require('../../assets/images/komisi-terbesar.png')}
-                  resizeMode="stretch"
+            <TouchableOpacity
+              onPress={() => gotoKategori()}
+              style={{width: '32%'}}>
+              <ImageBackground
+                imageStyle={{borderRadius: 10}}
+                source={require('../../assets/images/komisi-terbesar.png')}
+                resizeMode="stretch"
+                style={{
+                  justifyContent: 'flex-end',
+                  padding: 10,
+                  height: height * 0.2,
+                }}>
+                <Text
                   style={{
-                    justifyContent: 'flex-end',
-                    padding: 10,
-                    height: height * 0.2,
+                    color: 'white',
+                    fontSize: width * 0.03,
+                    marginLeft: width * 0.01,
                   }}>
+                  Kategori
+                </Text>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    marginBottom: height * 0.01,
+                    marginLeft: width * 0.01,
+                  }}>
+                  <Icon name="circle" size={width * 0.01} color="#fff" />
                   <Text
                     style={{
                       color: 'white',
+                      marginLeft: width * 0.01,
                       fontSize: width * 0.03,
-                      marginLeft: width * 0.01,
                     }}>
-                    Kategori
+                    {jumlahKategori} kategori
                   </Text>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginBottom: height * 0.01,
-                      marginLeft: width * 0.01,
-                    }}>
-                    <Icon name="circle" size={width * 0.01} color="#fff" />
-                    <Text
-                      style={{
-                        color: 'white',
-                        marginLeft: width * 0.01,
-                        fontSize: width * 0.03,
-                      }}>
-                      123 produk
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </TouchableOpacity>
+                </View>
+              </ImageBackground>
+            </TouchableOpacity>
             {/* )} */}
 
             {/* {wishlist == 0 && (

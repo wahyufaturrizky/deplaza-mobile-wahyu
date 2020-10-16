@@ -94,7 +94,7 @@ function Kategori(props) {
               key={i}
               style={{
                 width: '30%',
-                height: height * 0.22,
+                height: height * 0.24,
                 justifyContent: 'space-between',
                 marginVertical: height * 0.01,
                 borderRadius: 10,
@@ -142,7 +142,7 @@ function Kategori(props) {
               top: -5,
             }}
             onPress={() => loadMore(page + 1)}>
-            <Text style={{fontWeight: 'bold', fontSize: 15}}>
+            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
               Kategori Selanjutnya
             </Text>
           </TouchableOpacity>
