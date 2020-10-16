@@ -524,20 +524,13 @@ const [selectedValue, setselectedValue] = useState('Pilih Layanan')
     fetch(urlOngkir, {method: 'POST', headers, body: formdata})
       .then(response => response.json())
       .then(async responseData => {
-        //console.log('rtys', responseData.data.data[0].errors);
-        if(responseData.message === 'COD tidak bisa dilakukan'){
+        console.log('rtys', responseData);
+        if(responseData.success === false){
           alert(responseData.message)
           setFailCod(true)
           setService([])
           setTotalOngkir(0);
           setTotalHarga(0)
-          setLoading(false);
-        } else if(responseData.data.data[0].errors){
-          alert(responseData.data.data[0].errors[0].message)
-          setFailCod(true)
-          setTotalOngkir(0);
-          setTotalHarga(0)
-          setService([])
           setLoading(false);
         } else {
           let tipe = await responseData.data.data
