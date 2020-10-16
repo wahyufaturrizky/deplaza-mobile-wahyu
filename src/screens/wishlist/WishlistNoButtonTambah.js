@@ -384,7 +384,9 @@ function WishlistNoButtonTambah(props) {
               width: '100%',
             }}
             onPress={() => loadMore(page + 1)}>
-            <Text>Produk Selanjutnya</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
+              Produk Selanjutnya
+            </Text>
           </TouchableOpacity>
         ) : wishlist.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>

@@ -345,7 +345,9 @@ function pesananSaya(props) {
               width: '100%',
             }}
             onPress={() => loadMore(page + 1)}>
-            <Text>Pesanan Selanjutnya</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
+              Pesanan Selanjutnya
+            </Text>
           </TouchableOpacity>
         ) : (
           <Text style={{textAlign: 'center'}}>Tidak Ada Pesanan lagi</Text>

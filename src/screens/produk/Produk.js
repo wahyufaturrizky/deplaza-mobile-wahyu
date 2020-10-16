@@ -310,7 +310,7 @@ function produk(props) {
             }}
             onPress={() => loadMore(page + 1)}
             disabled={products.length !== 0 ? false : true}>
-            <Text>
+            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
               {products.length !== 0
                 ? 'Produk Selanjutnya'
                 : 'Tidak Ada Produk'}
