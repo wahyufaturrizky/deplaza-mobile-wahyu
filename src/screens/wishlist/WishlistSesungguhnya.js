@@ -345,9 +345,15 @@ function WishlistSesungguhnya(props) {
               width: '100%',
             }}
             onPress={() => loadMore(page + 1)}>
-            <Text style={{fontWeight: 'bold', fontSize: 15, color: '#0956C6'}}>
-              Produk Selanjutnya
-            </Text>
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#0956C6', '#0879D8', '#07A9F0']}
+              style={{padding: 15, borderRadius: 10}}>
+              <Text style={{fontWeight: 'bold', fontSize: 12, color: 'white'}}>
+                Produk Selanjutnya
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         ) : wishlist.length !== 0 ? (
           <Text style={{textAlign: 'center'}}>Tidak Ada Produk lagi</Text>
