@@ -259,7 +259,7 @@ function produk(props) {
                 borderLeftWidth: 0,
               }}>
               <Image
-                source={{uri: product.images[0].image_url}}
+                source={{uri: product?.images[0]?.image_url}}
                 style={{height: '100%', width: '30%', borderRadius: 10}}
               />
 
