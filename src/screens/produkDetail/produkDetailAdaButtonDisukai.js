@@ -36,7 +36,7 @@ function produkDetailAdaButtonDisukai(props) {
 
   const [copy, setCopy] = useState(false);
   const [qty, setQty] = useState(1);
-  const [postalCode, setPostalCode] = useState(0)
+  const [postalCode, setPostalCode] = useState(0);
 
   const [selectVariasi, setSelectVariasi] = useState([]);
 
@@ -44,11 +44,11 @@ function produkDetailAdaButtonDisukai(props) {
 
   const [selectKota, setSelectKota] = useState([]);
   const [totalKomisi, setTotalKomisi] = useState('0');
-  const [service, setService] = useState([])
-  const [serviceFinal, setServiceFinal] = useState('')
+  const [service, setService] = useState([]);
+  const [serviceFinal, setServiceFinal] = useState('');
 
   const [varian, setVarian] = useState([]);
-  const [courierId, setCourierId] = useState('')
+  const [courierId, setCourierId] = useState('');
   const [codeCourier, setCodeCourier] = useState('');
   const [kota, setKota] = useState([]);
   const [kecamatan, setKecamatan] = useState([]);
@@ -60,7 +60,7 @@ function produkDetailAdaButtonDisukai(props) {
   const [likeProduk, setLikeProduk] = useState(0);
   const [pilihKota, setPilihKota] = useState(false);
   const [courier, setCourier] = useState([]);
-  const [selectedValue, setselectedValue] = useState('Pilih Layanan')
+  const [selectedValue, setselectedValue] = useState('Pilih Layanan');
 
   const urlProdukDetail = URL + 'v1/product/';
   const urlKota = URL + 'v1/shipment/cities';
@@ -222,12 +222,13 @@ function produkDetailAdaButtonDisukai(props) {
     } else if (stock < 1) {
       alert('Mohon Maaf.., stok produk ini sedang habis');
     } else {
+      console.log('gotoPesan');
       props.navigation.navigate('Pesan', {
         title: 'Pesan & Kirim',
         data: {
-          courier_id:  dataDetail.is_awb_auto === 1 ? courierId : 1,
+          courier_id: dataDetail.is_awb_auto === 1 ? courierId : 1,
           serviceFinal: serviceFinal,
-          codeKurir: dataDetail.is_awb_auto === 1 ?  codeCourier : 'jne',
+          codeKurir: dataDetail.is_awb_auto === 1 ? codeCourier : 'jne',
           id_produk: id,
           variation: selectVariasi,
           qty,
@@ -380,6 +381,7 @@ function produkDetailAdaButtonDisukai(props) {
   };
 
   const _selectKota = async data_kota => {
+    console.log('data_kota', data_kota);
     await setLoading(true);
     await setIdCity(data_kota.id);
     setPilihKota(false);
@@ -455,16 +457,15 @@ function produkDetailAdaButtonDisukai(props) {
     // })
   };
 
-
-  const setSelectedService = async (dataService) => {
+  const setSelectedService = async dataService => {
     // const type = service.find(i => i.service === dataService)
     // console.log('okoki', type.cost[0].service);
-     setselectedValue(dataService)
-    const type = await service.find(i => i.service === dataService)
+    setselectedValue(dataService);
+    const type = await service.find(i => i.service === dataService);
     console.log('baji', type);
     setLoading(false);
     setPilihKota(true);
-    setServiceFinal(type.service)
+    setServiceFinal(type.service);
     setEst(type.duration);
     setTotalOngkir(parseInt(type.price));
     // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
@@ -474,23 +475,27 @@ function produkDetailAdaButtonDisukai(props) {
         dataDetail.price_benefit +
         parseInt(type.price),
     );
-  }
+  };
 
   const _selectCourier = async data_courier => {
-    const codeKurir = await courier.find(json => json.id === data_courier.id).code
+    const codeKurir = await courier.find(json => json.id === data_courier.id)
+      .code;
     console.log('aq', data_courier, codeKurir);
-     await setLoading(true);
-     await setCourierId(data_courier.id)
-     await setCodeCourier(codeKurir);
-     await setLoading(false);
-   };
+    await setLoading(true);
+    await setCourierId(data_courier.id);
+    await setCodeCourier(codeKurir);
+    await setLoading(false);
+  };
 
   // console.log('sfsdf', dataDetail);
   const _selectKecamatan = async data_kota => {
+    console.log('_selectKecamatan', data_kota);
     setLoading(true);
 
     const value = await AsyncStorage.getItem('data');
+
     const data = JSON.parse(value);
+    console.log('data', data);
 
     let headers = {
       Authorization: `Bearer ${data.token}`,
@@ -511,108 +516,134 @@ function produkDetailAdaButtonDisukai(props) {
       })
       .catch(e => console.log(e.response));
 
-    let formdata = new FormData();
-    formdata.append('origin', parseInt(dataDetail.subdistrict_id));
-    formdata.append('destination', parseInt(data_kota.id));
-    formdata.append('weight', dataDetail.weight * qty);
-    formdata.append('postal_code', postalCode)
-    formdata.append('courier',  dataDetail.is_awb_auto === 1 ?  codeCourier : 'jne');
-    formdata.append('qty', qty);
-    formdata.append('product_id', dataDetail.id);
-    formdata.append('is_cod', dataDetail.cod)
-    console.log('rtrds', formdata);
-    fetch(urlOngkir, {method: 'POST', headers, body: formdata})
-      .then(response => response.json())
-      .then(async responseData => {
-        console.log('uuu', responseData);
-        if(responseData.message === 'COD tidak bisa dilakukan'){
-          console.log('cek dulu');
-          if(dataDetail.is_awb_auto === 1){
+    console.log('dataDetail.subdistrict_id', dataDetail.subdistrict_id);
+    if (dataDetail.subdistrict_id === null) {
+      alert(
+        'Alamat asal produk tidak ada, mohon hubungin customer Service Kami',
+      );
+      setLoading(false);
+    } else {
+      let formdata = new FormData();
+      formdata.append('origin', parseInt(dataDetail.subdistrict_id));
+      formdata.append('destination', parseInt(data_kota.id));
+      formdata.append('weight', dataDetail.weight * qty);
+      formdata.append('postal_code', postalCode);
+      formdata.append(
+        'courier',
+        dataDetail.is_awb_auto === 1 ? codeCourier : 'jne',
+      );
+      formdata.append('qty', qty);
+      formdata.append('product_id', dataDetail.id);
+      formdata.append('is_cod', dataDetail.cod);
+      console.log('rtrds', formdata);
+      fetch(urlOngkir, {method: 'POST', headers, body: formdata})
+        .then(response => response.json())
+        .then(async responseData => {
+          console.log('uuu', responseData);
+          if (responseData.message === 'COD tidak bisa dilakukan') {
+            console.log('cek dulu');
+            if (dataDetail.is_awb_auto === 1) {
+              setmetodeCOD(false);
+              setService([]);
+              setTotalOngkir(0);
+              setTotalHarga(0);
+              setLoading(false);
+            } else {
+              console.log('render ulang');
+              setmetodeCOD(false);
+              let codFalse = new FormData();
+              codFalse.append('origin', parseInt(dataDetail.subdistrict_id));
+              codFalse.append('destination', parseInt(data_kota.id));
+              codFalse.append('weight', dataDetail.weight * qty);
+              codFalse.append('postal_code', postalCode);
+              codFalse.append('courier', 'jne');
+              codFalse.append('qty', qty);
+              codFalse.append('product_id', dataDetail.id);
+              codFalse.append('is_cod', 0);
+              console.log('rtrds', codFalse);
+              fetch(urlOngkir, {method: 'POST', headers, body: codFalse})
+                .then(response => response.json())
+                .then(async responseCod => {
+                  let tipe = await responseCod.data.data;
+                  const getJne = (await tipe.find(i => i.service === 'REG'))
+                    ? tipe.find(i => i.service === 'REG')
+                    : tipe.find(i => i.service === 'CTC');
+                  //const getJneSecond = await tipe.find(item => item.service === 'CTC').price
+                  const getService = tipe[0].service === 'REG' ? 'REG' : 'CTC';
+                  console.log('getjne', getJne);
+                  await setService(tipe);
+                  await setServiceFinal(getService);
+                  await setEst(tipe[0].duration);
+                  await setTotalOngkir(parseInt(getJne.price));
+                  // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+                  await setTotalHarga(
+                    dataDetail.price_basic +
+                      dataDetail.price_commission +
+                      dataDetail.price_benefit +
+                      parseInt(getJne.price),
+                  );
+                })
+                .catch(e => {
+                  console.log('check harga produk', e);
+                });
+              setLoading(false);
+            }
+          } else if (responseData.data.data[0].errors) {
             setmetodeCOD(false);
-            setService([])
             setTotalOngkir(0);
-            setTotalHarga(0)
+            setTotalHarga(0);
+            setService([]);
             setLoading(false);
           } else {
-            console.log('render ulang');
-            setmetodeCOD(false);
-            let codFalse = new FormData();
-            codFalse.append('origin', parseInt(dataDetail.subdistrict_id));
-            codFalse.append('destination', parseInt(data_kota.id));
-            codFalse.append('weight', dataDetail.weight * qty);
-            codFalse.append('postal_code', postalCode)
-            codFalse.append('courier', 'jne');
-            codFalse.append('qty', qty);
-            codFalse.append('product_id', dataDetail.id);
-            codFalse.append('is_cod', 0)
-            console.log('rtrds', codFalse);
-            fetch(urlOngkir, {method: 'POST', headers, body: codFalse})
-              .then(response => response.json())
-              .then(async responseCod => {
-                let tipe = await responseCod.data.data
-                const getJne = await tipe.find(i => i.service === 'REG') ? tipe.find(i => i.service === 'REG') : tipe.find(i => i.service === 'CTC')
-                //const getJneSecond = await tipe.find(item => item.service === 'CTC').price
-                const getService = tipe[0].service === 'REG' ? 'REG' : 'CTC'
-                console.log('getjne', getJne);
-               await setService(tipe)
-                await setServiceFinal(getService );
-                await setEst(tipe[0].duration);
-                await setTotalOngkir(parseInt(getJne.price));
-                 // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
-                await setTotalHarga(
-                  dataDetail.price_basic +
-                      dataDetail.price_commission +
-                      dataDetail.price_benefit + parseInt(getJne.price),
-                 );
-              })
-              setLoading(false);
-          }
-          
-        } else if(responseData.data.data[0].errors){
-          setmetodeCOD(false);
-          setTotalOngkir(0);
-          setTotalHarga(0)
-          setService([])
-          setLoading(false);
-        } else {
-          let tipe = await responseData.data.data
-          const getJne = await tipe.find(i => i.service === 'REG') ? tipe.find(i => i.service === 'REG') : tipe.find(i => i.service === 'CTC')
-          //const getJneSecond = await tipe.find(item => item.service === 'CTC').price
-          const getService = tipe[0].service === 'REG' ? 'REG' : 'CTC'
-          console.log('getjne', getJne);
-         await setmetodeCOD(true);
-         await setService(tipe)
-          await setServiceFinal(dataDetail.is_awb_auto === 1 ? tipe[0].service : getService );
-          await setEst(tipe[0].duration);
-          await setTotalOngkir(dataDetail.is_awb_auto === 1 ? parseInt(tipe[0].price) : parseInt(getJne.price));
-           // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
-          await setTotalHarga(
-            dataDetail.is_awb_auto === 1 ?
-             dataDetail.price_basic +
-               dataDetail.price_commission +
-               dataDetail.price_benefit +
-                parseInt(tipe[0].price) :  dataDetail.price_basic +
-                dataDetail.price_commission +
-                dataDetail.price_benefit + parseInt(getJne.price),
-           );
+            let tipe = await responseData.data.data;
+            const getJne = (await tipe.find(i => i.service === 'REG'))
+              ? tipe.find(i => i.service === 'REG')
+              : tipe.find(i => i.service === 'CTC');
+            //const getJneSecond = await tipe.find(item => item.service === 'CTC').price
+            const getService = tipe[0].service === 'REG' ? 'REG' : 'CTC';
+            console.log('getjne', getJne);
+            await setmetodeCOD(true);
+            await setService(tipe);
+            await setServiceFinal(
+              dataDetail.is_awb_auto === 1 ? tipe[0].service : getService,
+            );
+            await setEst(tipe[0].duration);
+            await setTotalOngkir(
+              dataDetail.is_awb_auto === 1
+                ? parseInt(tipe[0].price)
+                : parseInt(getJne.price),
+            );
+            // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+            await setTotalHarga(
+              dataDetail.is_awb_auto === 1
+                ? dataDetail.price_basic +
+                    dataDetail.price_commission +
+                    dataDetail.price_benefit +
+                    parseInt(tipe[0].price)
+                : dataDetail.price_basic +
+                    dataDetail.price_commission +
+                    dataDetail.price_benefit +
+                    parseInt(getJne.price),
+            );
             setLoading(false);
-        }
-        // tipe.map(type => {
-        //   if (type.service === 'REG' || type.service === 'CTC') {
-        //     setLoading(false);
-        //     setPilihKota(true);
-        //     setEst(type.cost[0].etd);
-        //     setTotalOngkir(type.cost[0].value);
-        //     // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
-        //     setTotalHarga(
-        //       dataDetail.price_basic +
-        //         dataDetail.price_commission +
-        //         dataDetail.price_benefit +
-        //         type.cost[0].value,
-        //     );
-        //   }
-        // });
-      });
+          }
+          // tipe.map(type => {
+          //   if (type.service === 'REG' || type.service === 'CTC') {
+          //     setLoading(false);
+          //     setPilihKota(true);
+          //     setEst(type.cost[0].etd);
+          //     setTotalOngkir(type.cost[0].value);
+          //     // console.log("harga total = "+type.cost[0].value+" "+dataDetail.price_basic+" "+dataDetail.price_commission+" "+dataDetail.price_benefit)
+          //     setTotalHarga(
+          //       dataDetail.price_basic +
+          //         dataDetail.price_commission +
+          //         dataDetail.price_benefit +
+          //         type.cost[0].value,
+          //     );
+          //   }
+          // });
+        });
+    }
   };
 
   // console.log('est', est);
@@ -746,63 +777,64 @@ function produkDetailAdaButtonDisukai(props) {
                 }}
               />
               <TextInput
-              label="Kode Pos"
-              value={postalCode}
-              mode="outlined"
-              onChangeText={val => setPostalCode(val)}
-              style={{
-                width: '100%',
-                alignSelf: 'center',
-                backgroundColor: 'white',
-                borderRadius: 10,
-              }}
-              theme={{
-                colors: {primary: '#07A9F0', underlineColor: 'transparent'},
-              }}
-            />
- {dataDetail.is_awb_auto === 1 ?
-            <SearchableDropdown
-                onItemSelect={item => {
-                  const items = selectKota;
-                  items.push(item);
-                  setSelectKota(items);
-                  _selectCourier(item);
-                }}
-                containerStyle={{width: '100%', borderRadius: 10}}
-                onRemoveItem={(item, index) => {
-                  const items = selectKota.filter(
-                    sitem => sitem.id !== item.id,
-                  );
-                  setSelectKota(items);
-                }}
-                itemStyle={{
-                  padding: 10,
-                  marginTop: 2,
-                  backgroundColor: '#ddd',
-                  borderColor: '#bbb',
-                  borderWidth: 1,
-                  borderRadius: 5,
+                label="Kode Pos"
+                value={postalCode}
+                mode="outlined"
+                onChangeText={val => setPostalCode(val)}
+                style={{
                   width: '100%',
+                  alignSelf: 'center',
+                  backgroundColor: 'white',
+                  borderRadius: 10,
                 }}
-                itemTextStyle={{color: '#222'}}
-                itemsContainerStyle={{borderRadius: 10}}
-                items={courier}
-                defaultIndex={2}
-                resetValue={false}
-                textInputProps={{
-                  placeholder: 'Pilih Courier',
-                  underlineColorAndroid: 'transparent',
-                  style: {
-                    padding: 12,
+                theme={{
+                  colors: {primary: '#07A9F0', underlineColor: 'transparent'},
+                }}
+              />
+              {dataDetail.is_awb_auto === 1 ? (
+                <SearchableDropdown
+                  onItemSelect={item => {
+                    const items = selectKota;
+                    items.push(item);
+                    setSelectKota(items);
+                    _selectCourier(item);
+                  }}
+                  containerStyle={{width: '100%', borderRadius: 10}}
+                  onRemoveItem={(item, index) => {
+                    const items = selectKota.filter(
+                      sitem => sitem.id !== item.id,
+                    );
+                    setSelectKota(items);
+                  }}
+                  itemStyle={{
+                    padding: 10,
+                    marginTop: 2,
+                    backgroundColor: '#ddd',
+                    borderColor: '#bbb',
                     borderWidth: 1,
-                    borderColor: '#ccc',
                     borderRadius: 5,
-                  },
-                }}
-                listProps={{
-                  nestedScrollEnabled: true,
-                }}
-              /> : null }
+                    width: '100%',
+                  }}
+                  itemTextStyle={{color: '#222'}}
+                  itemsContainerStyle={{borderRadius: 10}}
+                  items={courier}
+                  defaultIndex={2}
+                  resetValue={false}
+                  textInputProps={{
+                    placeholder: 'Pilih Courier',
+                    underlineColorAndroid: 'transparent',
+                    style: {
+                      padding: 12,
+                      borderWidth: 1,
+                      borderColor: '#ccc',
+                      borderRadius: 5,
+                    },
+                  }}
+                  listProps={{
+                    nestedScrollEnabled: true,
+                  }}
+                />
+              ) : null}
 
               <SearchableDropdown
                 onItemSelect={item => {
@@ -846,19 +878,26 @@ function produkDetailAdaButtonDisukai(props) {
                   nestedScrollEnabled: true,
                 }}
               />
-              {dataDetail.is_awb_auto === 1 ?
-              <View>
-               <Text>Layanan: </Text>
-               <Picker
-        selectedValue={selectedValue ? selectedValue : 'Pilih Layanan'}
-        style={{ height: 50, width: 200}}
-        onValueChange={(itemValue, itemIndex) => setSelectedService(itemValue)}
-      >
-        {service.map(data => 
-        <Picker.Item label={data ? data.service : 'Pilih Layanan'} value={data ? data.service : 'Pilih Layanan'}/>
-          )}
-        
-      </Picker></View> : null }
+              {dataDetail.is_awb_auto === 1 ? (
+                <View>
+                  <Text>Layanan: </Text>
+                  <Picker
+                    selectedValue={
+                      selectedValue ? selectedValue : 'Pilih Layanan'
+                    }
+                    style={{height: 50, width: 200}}
+                    onValueChange={(itemValue, itemIndex) =>
+                      setSelectedService(itemValue)
+                    }>
+                    {service.map(data => (
+                      <Picker.Item
+                        label={data ? data.service : 'Pilih Layanan'}
+                        value={data ? data.service : 'Pilih Layanan'}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+              ) : null}
             </View>
             {/* ------- [START BUTTON CHECK HARGA] ------- */}
             {/* <TouchableOpacity style={{width: '34%'}}>
@@ -875,7 +914,7 @@ function produkDetailAdaButtonDisukai(props) {
             {/* ------- [END BUTTON CHECK HARGA] ------- */}
           </View>
 
-          {metodeCOD === false ?  (
+          {metodeCOD === false ? (
             <View
               style={{
                 padding: 10,
@@ -888,7 +927,8 @@ function produkDetailAdaButtonDisukai(props) {
               <Icon name="alert" size={14} color="#07A9F0" />
               <Text style={{fontSize: 10}}>
                 {' '}
-                Metode Pembayaran COD tidak tersedia di lokasi ini atau pilih kurir yang lainnya
+                Metode Pembayaran COD tidak tersedia di lokasi ini atau pilih
+                kurir yang lainnya
               </Text>
             </View>
           ) : null}
@@ -1149,12 +1189,19 @@ function produkDetailAdaButtonDisukai(props) {
             <TouchableOpacity
               style={{width: '50%', height: height * 0.06}}
               onPress={gotoPesan}
-              disabled={metodeCOD === false && dataDetail.is_awb_auto === 1 ? true : false}
-              >
+              disabled={
+                metodeCOD === false && dataDetail.is_awb_auto === 1
+                  ? true
+                  : false
+              }>
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
-                colors={metodeCOD === false && dataDetail.is_awb_auto === 1 ? ['#dedede', '#dedede', '#dedede'] : ['#0956C6', '#0879D8', '#07A9F0']}
+                colors={
+                  metodeCOD === false && dataDetail.is_awb_auto === 1
+                    ? ['#dedede', '#dedede', '#dedede']
+                    : ['#0956C6', '#0879D8', '#07A9F0']
+                }
                 style={{
                   flexDirection: 'row',
                   padding: height * 0.01,
