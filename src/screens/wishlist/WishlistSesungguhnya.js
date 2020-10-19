@@ -273,8 +273,8 @@ function WishlistSesungguhnya(props) {
                 }}>
                 <Image
                   source={{
-                    uri: data.product.images
-                      ? data.product.images[0].image_url
+                    uri: data?.product?.images
+                      ? data?.product?.images[0]?.image_url
                       : 'https://lh3.googleusercontent.com/proxy/uQ57CmiuEgbf1MNThWA-PX-8sZSv6CAAMQm0DdE78twErrPaX8XhTKOI8X7g8xvLEN688sO51evXX3AIgxCcbpwZ6ArQp2EhN4KVY5L6Ec0YLpaqj2TwApSyXO32doK9Eg',
                   }}
                   style={{

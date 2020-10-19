@@ -36,7 +36,7 @@ function produkDetailAdaButtonDisukai(props) {
 
   const [copy, setCopy] = useState(false);
   const [qty, setQty] = useState(1);
-  const [postalCode, setPostalCode] = useState(0);
+  const [postalCode, setPostalCode] = useState(1);
 
   const [selectVariasi, setSelectVariasi] = useState([]);
 
@@ -776,21 +776,7 @@ function produkDetailAdaButtonDisukai(props) {
                   nestedScrollEnabled: true,
                 }}
               />
-              <TextInput
-                label="Kode Pos"
-                value={postalCode}
-                mode="outlined"
-                onChangeText={val => setPostalCode(val)}
-                style={{
-                  width: '100%',
-                  alignSelf: 'center',
-                  backgroundColor: 'white',
-                  borderRadius: 10,
-                }}
-                theme={{
-                  colors: {primary: '#07A9F0', underlineColor: 'transparent'},
-                }}
-              />
+
               {dataDetail.is_awb_auto === 1 ? (
                 <SearchableDropdown
                   onItemSelect={item => {
@@ -876,6 +862,21 @@ function produkDetailAdaButtonDisukai(props) {
                 }}
                 listProps={{
                   nestedScrollEnabled: true,
+                }}
+              />
+              <TextInput
+                label="Kode Pos"
+                value={postalCode}
+                mode="outlined"
+                onChangeText={val => setPostalCode(val)}
+                style={{
+                  width: '100%',
+                  alignSelf: 'center',
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                }}
+                theme={{
+                  colors: {primary: '#07A9F0', underlineColor: 'transparent'},
                 }}
               />
               {dataDetail.is_awb_auto === 1 ? (

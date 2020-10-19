@@ -143,6 +143,7 @@ function jualanAnda(props) {
   };
 
   const getKategori = async () => {
+    setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
 
@@ -205,6 +206,7 @@ function jualanAnda(props) {
 
   //Untuk dapetin udah berapa banyak yang order
   const getTotalOrder = async () => {
+    setLoading(true);
     const value = await AsyncStorage.getItem('data');
     const data = JSON.parse(value);
 
@@ -455,7 +457,7 @@ function jualanAnda(props) {
                       marginLeft: width * 0.01,
                       fontSize: width * 0.03,
                     }}>
-                    {jumlahPesanan} pesanan
+                    {jumlahPesanan ? jumlahPesanan : 'Loading...'} pesanan
                   </Text>
                 </View>
               </ImageBackground>
@@ -541,7 +543,8 @@ function jualanAnda(props) {
                       marginLeft: width * 0.01,
                       fontSize: width * 0.03,
                     }}>
-                    {jumlahProdukDitandai} produk
+                    {jumlahProdukDitandai ? jumlahProdukDitandai : 'Loading...'}{' '}
+                    produk
                   </Text>
                 </View>
               </ImageBackground>
@@ -582,7 +585,7 @@ function jualanAnda(props) {
                       marginLeft: width * 0.01,
                       fontSize: width * 0.03,
                     }}>
-                    {jumlahKategori} kategori
+                    {jumlahKategori ? jumlahKategori : 'Loading...'} kategori
                   </Text>
                 </View>
               </ImageBackground>

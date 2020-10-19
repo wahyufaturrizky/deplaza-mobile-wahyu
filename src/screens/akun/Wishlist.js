@@ -92,8 +92,8 @@ function wishlist(props) {
   };
 
   const goCreateNewProduct = () => {
-    props.navigation.navigate('TambahProduk', {
-      title: 'Tambah Produk',
+    props.navigation.navigate('WishlistNoButtonTambah', {
+      title: 'Tambah Produk Saya',
     });
   };
 
