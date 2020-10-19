@@ -519,7 +519,7 @@ function produkDetailAdaButtonDisukai(props) {
     console.log('dataDetail.subdistrict_id', dataDetail.subdistrict_id);
     if (dataDetail.subdistrict_id === null) {
       alert(
-        'Alamat asal produk tidak ada, mohon hubungin customer Service Kami',
+        'Alamat asal produk tidak ada, mohon hubungin Customer Service kami di 0878 0229 7802',
       );
       setLoading(false);
     } else {
